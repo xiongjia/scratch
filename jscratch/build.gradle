@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+mainClassName = 'scratch.Scratch'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    /* Add Java dependencies here:
+     * Example:
+     * compile "org.zeromq:jeromq:0.3.4"
+     * compile "org.lwjgl.lwjgl:lwjgl:2.9.1"
+     */
+}
+
+jar {
+    baseName = 'jscratch'
+    version =  '0.1.0'
+    manifest.mainAttributes('Main-Class' : 'scratch.Scratch')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+

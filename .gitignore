@@ -1,0 +1,24 @@
+# OS junk files
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYLE.BIN/
+
+# IDE or Editor generated files
+*.swp
+tags
+.tern-port
+
+# java git ignore
+*.class
+.classpath
+.project
+.settings
+.gradle
+
+jscratch/build
+

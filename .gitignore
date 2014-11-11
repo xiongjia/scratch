@@ -20,5 +20,7 @@ tags
 .settings
 .gradle
 
+jscratch/.gitignore
+jscratch/bin
 jscratch/build
 

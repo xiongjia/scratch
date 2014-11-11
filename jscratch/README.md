@@ -10,7 +10,8 @@ JScratch is A simple gradle template for a Java application.
 
 ## Tasks
 * Build the project: `gradle build`
-* Run the Java application: `gradle run`
+* Runs the Java application: `gradle run`
+* Runs JUnit Tests: `gradle test`
 * Import to Eclipse:
   1. Generating the eclipse project files: `gradle eclipse` 
   2. Importing this project to the Eclipse

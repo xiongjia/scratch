@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+/* JMeter is using 1.6. 
+ * The plugin must use the same version.
+ */
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    String jmeterVersion = '2.11'
+
+    compile group: 'org.apache.jmeter', version: jmeterVersion, name: 'ApacheJMeter_core'
+    compile group: 'org.apache.jmeter', version: jmeterVersion, name: 'jorphan'
+}
+
+jar {
+    baseName = 'jmeter-example-sampler'
+    version =  '0.1.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+

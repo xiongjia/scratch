@@ -23,4 +23,5 @@ tags
 jscratch/.gitignore
 jscratch/bin
 jscratch/build
+jmeter-example-sampler/build
 

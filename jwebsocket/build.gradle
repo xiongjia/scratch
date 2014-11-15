@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+mainClassName = 'xiongjia.echo.Main'
+
+repositories {
+    mavenLocal()
+    maven {
+        url 'http://maven.oschina.net/content/groups/public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.3.+'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+}
+
+jar {
+    baseName = 'jwebsocket'
+    version =  '0.0.1'
+    mainClassName = 'xiongjia.echo.Main'
+    manifest.mainAttributes('Main-Class' : 'xiongjia.echo.Main')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+
+task startServ(type: JavaExec) {
+    main = 'xiongjia.echo.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['-startServ']
+}
+
+task sendMsg(type: JavaExec) {
+    main = 'xiongjia.echo.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['-message', 'Hello WebSocket']
+}
+

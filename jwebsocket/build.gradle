@@ -23,6 +23,7 @@ jar {
 
 task fatJar(type: Jar) {
     baseName = jar.baseName + '-' + jar.version + '-all'
+    manifest.mainAttributes('Main-Class' : 'xiongjia.echo.Main')
     from {
         configurations.compile.collect {
             it.isDirectory() ? it : zipTree(it)

@@ -7,9 +7,6 @@ mainClassName = 'xiongjia.echo.Main'
 
 repositories {
     mavenLocal()
-    maven {
-        url 'http://maven.oschina.net/content/groups/public/'
-    }
     mavenCentral()
 }
 
@@ -21,8 +18,17 @@ dependencies {
 jar {
     baseName = 'jwebsocket'
     version =  '0.0.1'
-    mainClassName = 'xiongjia.echo.Main'
     manifest.mainAttributes('Main-Class' : 'xiongjia.echo.Main')
+}
+
+task fatJar(type: Jar) {
+    baseName = jar.baseName + '-' + jar.version + '-all'
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
 }
 
 task wrapper(type: Wrapper) {

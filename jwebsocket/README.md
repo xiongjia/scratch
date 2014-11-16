@@ -16,6 +16,9 @@ A sample Echo Server & Client for [Java WebSocket](https://github.com/TooTallNat
 ## Building
 * Builds the server & client: `gradle build` 
 * (Option) Imports the project to Eclipse : `gradle eclipse` & Import the folder to your Eclipse
+### Build the fat JAR (One .jar file with all dependencies)
+* Run Task: `gradle fatJar` (The target .jar file is jwebsocket-{version}-all.jar. )
+* Check the usage of this jar file: `java -jar jwebsocket-{version}-all.jar -help`
 
 ## Usage
 1. Start the Echo Server: `gradle startServ`

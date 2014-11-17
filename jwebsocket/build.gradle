@@ -4,6 +4,9 @@ apply plugin: 'maven'
 apply plugin: 'application'
 
 mainClassName = 'xiongjia.echo.Main'
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 
 repositories {
     mavenLocal()

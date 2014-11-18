@@ -18,6 +18,9 @@ dependencies {
 
     compile group: 'org.apache.jmeter', version: jmeterVersion, name: 'ApacheJMeter_core'
     compile group: 'org.apache.jmeter', version: jmeterVersion, name: 'jorphan'
+
+    /* test compile dependencies */
+    testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
 jar {

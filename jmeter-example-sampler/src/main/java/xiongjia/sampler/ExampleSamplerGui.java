@@ -21,6 +21,7 @@ public class ExampleSamplerGui extends AbstractSamplerGui {
     
     private static final String samplerLab = "My Example";
     private static final String samplerComment = "My Example Sampler";
+    private static final String defaultRepData = "Exmaple Response";
     private JTextArea samplerRepData; 
 
     public ExampleSamplerGui() {
@@ -40,7 +41,7 @@ public class ExampleSamplerGui extends AbstractSamplerGui {
     private Component createConfigPanel() {
         samplerRepData = new JTextArea();
         samplerRepData.setName(ExampleSampler.REP_DATA);
-        samplerRepData.setText("Exmaple Response");
+        samplerRepData.setText(defaultRepData);
 
         final JLabel label = new JLabel("Response data:");
         label.setLabelFor(samplerRepData);
@@ -102,6 +103,6 @@ public class ExampleSamplerGui extends AbstractSamplerGui {
     @Override
     public void clearGui() {
         super.clearGui();
-        samplerRepData.setText("Exmaple Response");
+        samplerRepData.setText(defaultRepData);
     }
 }

@@ -22,7 +22,7 @@ public class TestExampleSamplerGui {
     public void setUp() {
         LOG.info("TestExampleSamplerGui::setUp()");
         JMeterUtils.setLocale(new Locale("ignoreResources"));
-        
+
         LOG.info("Creating ExampleSamplerGui");
         exampleGui = new ExampleSamplerGui();
         assertNotNull(exampleGui);
@@ -46,3 +46,4 @@ public class TestExampleSamplerGui {
         assertEquals(repData, "Exmaple Response");
     }
 }
+

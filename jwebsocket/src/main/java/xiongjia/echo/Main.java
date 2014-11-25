@@ -49,7 +49,7 @@ public class Main {
     private static void startEchoServ(int port) {
         LOG.info("Creating Echo server. (Port = " + port + ")");
         try {
-            final EchoServer srv = new EchoServer(port);
+            final EchoServer srv = EchoServer.create(port);
             srv.start();
         }
         catch (Exception ex) {
@@ -61,7 +61,7 @@ public class Main {
     private static void sendMsg(final String uri, final String msg) {
         LOG.info("Sending " + msg + " to " + uri);
         try {
-            final EchoClient client = new EchoClient(new URI(uri), new Draft_10(), msg);
+            final EchoClient client = EchoClient.create(new URI(uri), new Draft_10(), msg);
             client.connect();
         }
         catch (URISyntaxException uriErr) {

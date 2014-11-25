@@ -8,12 +8,27 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import xiongjia.echo.EchoEventListener;
+
 public class EchoServer extends WebSocketServer {
     private final static Logger LOG = Logger.getLogger(EchoServer.class.getName()); 
+    private EchoEventListener evtListener;
 
-    public EchoServer(int port) throws UnknownHostException {
+    private EchoServer(int port, EchoEventListener listener) 
+            throws UnknownHostException {
         super(new InetSocketAddress(port));
+        evtListener = listener;
         LOG.info("EchoServer() : " + port);
+    }
+
+    public static EchoServer create(int port, EchoEventListener listener)
+            throws UnknownHostException {
+        return new EchoServer(port, listener);
+    }
+
+    public static EchoServer create(int port)
+            throws UnknownHostException {
+        return new EchoServer(port, null);
     }
 
     @Override
@@ -32,6 +47,9 @@ public class EchoServer extends WebSocketServer {
     public void onMessage(WebSocket conn, String message) {
         LOG.info("New Message, connection: " + conn +
                  "Message: " + message);
+        if (evtListener != null) {
+            evtListener.onMessage(message);
+        }
         /* send this message back */
         conn.send(message);
     }

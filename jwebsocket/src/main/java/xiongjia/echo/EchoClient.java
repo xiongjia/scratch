@@ -7,18 +7,30 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
 
+import xiongjia.echo.EchoEventListener;
+
 public class EchoClient extends WebSocketClient {
     private final static Logger LOG = Logger.getLogger(EchoClient.class.getName());
+    private EchoEventListener evtListener;
     private String echoMsg = "";
-    
-    public EchoClient(final URI srvURI, final Draft draft, final String msg) {
+
+    private EchoClient(final URI srvURI, final Draft draft, final String msg, EchoEventListener listener) {
         super(srvURI, draft);
         LOG.info("Server URI: " + srvURI +
                  "; Draft: " + draft.toString() +
                  "; Message: " + msg);
         echoMsg = msg;
+        evtListener = listener;
+    }
+    
+    public static EchoClient create(final URI srvURI, final Draft draft, final String msg, EchoEventListener listener) {
+        return new EchoClient(srvURI, draft, msg, listener);
     }
 
+    public static EchoClient create(final URI srvURI, final Draft draft, final String msg) {
+        return new EchoClient(srvURI, draft, msg, null);
+    }
+    
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         LOG.info("onOpen: " + handshakedata.toString());
@@ -28,6 +40,9 @@ public class EchoClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         LOG.info("onMessage: " + message);
+        if (evtListener != null) {
+            evtListener.onMessage(message);
+        }
         this.close();
     }
 

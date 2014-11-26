@@ -1,59 +1,82 @@
 package xiongjia.echo;
 
 import java.net.URI;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
+import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.handshake.ServerHandshake;
 
-import xiongjia.echo.EchoEventListener;
-
 public class EchoClient extends WebSocketClient {
-    private final static Logger LOG = Logger.getLogger(EchoClient.class.getName());
-    private EchoEventListener evtListener;
-    private String echoMsg = "";
+    private final static Log LOG = LogFactory.getLog(EchoClient.class);
 
-    private EchoClient(final URI srvURI, final Draft draft, final String msg, EchoEventListener listener) {
+    public interface Listener {
+        void onOpen(EchoClient client);
+        void onClose(EchoClient client);
+        void onError(EchoClient client, Exception ex);
+
+        void onMessage(EchoClient client, String message);
+    }
+
+    private Listener listener;
+
+    private EchoClient(final URI srvURI, final Draft draft, Listener listener) {
         super(srvURI, draft);
-        LOG.info("Server URI: " + srvURI +
-                 "; Draft: " + draft.toString() +
-                 "; Message: " + msg);
-        echoMsg = msg;
-        evtListener = listener;
-    }
-    
-    public static EchoClient create(final URI srvURI, final Draft draft, final String msg, EchoEventListener listener) {
-        return new EchoClient(srvURI, draft, msg, listener);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Server URI: " + srvURI + "; Draft: " + draft.toString());
+        }
+        this.listener = listener;
     }
 
-    public static EchoClient create(final URI srvURI, final Draft draft, final String msg) {
-        return new EchoClient(srvURI, draft, msg, null);
+    public static EchoClient create(final URI srvURI, Listener listener) {
+        return new EchoClient(srvURI, new Draft_10(), listener);
     }
-    
+
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        LOG.info("onOpen: " + handshakedata.toString());
-        this.send(echoMsg);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("onOpen: " + handshakedata.toString());
+        }
+
+        if (listener != null) {
+            listener.onOpen(this);
+        }
     }
 
     @Override
     public void onMessage(String message) {
-        LOG.info("onMessage: " + message);
-        if (evtListener != null) {
-            evtListener.onMessage(message);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("onMessage: " + message);
         }
-        this.close();
+
+        if (listener != null) {
+            listener.onMessage(this, message);
+        }
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        LOG.info("onClose: code = " + code + "; reason = " + reason +
-                 "; remote = " + remote);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("onClose: code = " + code +
+                      "; reason = " + reason + 
+                      "; remote = " + remote);
+        }
+
+        if (listener != null) {
+            listener.onClose(this);
+        }
     }
 
     @Override
     public void onError(Exception ex) {
-        LOG.warning("Client Error: " + ex.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Client Error: " + ex.toString());
+        }
+
+        if (listener != null) {
+            listener.onError(this, ex);
+        }
     }
 }

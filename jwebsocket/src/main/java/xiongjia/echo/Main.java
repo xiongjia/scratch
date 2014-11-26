@@ -2,7 +2,6 @@ package xiongjia.echo;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Logger;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,13 +10,15 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.java_websocket.WebSocket;
 
-import org.java_websocket.drafts.Draft_10;
 import xiongjia.echo.EchoServer;
 import xiongjia.echo.EchoClient;
 
 public class Main {
-    private final static Logger LOG = Logger.getLogger(Main.class.getName());
+    private final static Log LOG = LogFactory.getLog(Main.class);
     private final static Options OPTS = createOptions();
 
     private final static int DEFAULT_SRV_PORT = 9005;
@@ -49,23 +50,66 @@ public class Main {
     private static void startEchoServ(int port) {
         LOG.info("Creating Echo server. (Port = " + port + ")");
         try {
-            final EchoServer srv = EchoServer.create(port);
+            final EchoServer srv = EchoServer.create(port, new EchoServer.Listener() {
+                @Override
+                public void onOpen(EchoServer serv, WebSocket conn) {
+                    LOG.debug("new connection");
+                }
+                
+                @Override
+                public void onMessage(EchoServer serv, WebSocket conn, String message) {
+                    LOG.info("Server receive: [" + message + "]");
+                }
+                
+                @Override
+                public void onError(EchoServer serv, WebSocket conn, Exception ex) {
+                    LOG.error("Echo server error: " + ex.toString());
+                }
+                
+                @Override
+                public void onClose(EchoServer serv, WebSocket conn) {
+                    LOG.debug("Serv closed");
+                }
+            });
             srv.start();
         }
         catch (Exception ex) {
-            LOG.warning("EchoServer err: " + ex.toString());
+            LOG.error("EchoServer err: " + ex.toString());
             ex.printStackTrace();
         }
     }
 
     private static void sendMsg(final String uri, final String msg) {
-        LOG.info("Sending " + msg + " to " + uri);
         try {
-            final EchoClient client = EchoClient.create(new URI(uri), new Draft_10(), msg);
+            final EchoClient client = EchoClient.create(new URI(uri), new EchoClient.Listener() {
+                @Override
+                public void onOpen(EchoClient client) {
+                    /* sending message */
+                    LOG.info("Sending [" + msg + "] to " + uri);
+                    client.send(msg);
+                }
+
+                @Override
+                public void onMessage(EchoClient client, String message) {
+                    LOG.info("Echo client receive: [" + message + "]");
+                    client.close();
+                }
+
+                @Override
+                public void onError(EchoClient client, Exception ex) {
+                    LOG.error("Echo client error: " + ex.toString());
+                    client.close();
+                }
+
+                @Override
+                public void onClose(EchoClient client) {
+                    LOG.debug("Closing echo client");
+                }
+            });
             client.connect();
         }
         catch (URISyntaxException uriErr) {
-            LOG.warning("Invalid URI: " + uri + "; Err: " + uriErr.toString());
+            LOG.error("Invalid URI: " + uri + "; Err: " + uriErr.toString());
         }
     }
 
@@ -96,15 +140,17 @@ public class Main {
             }
         }
         catch (ParseException parseErr) {
-            LOG.warning("Command line parse exception: " + parseErr.toString());
+            LOG.error("Command line parse exception: " + parseErr.toString());
             printHelp();
             return;
         }
 
         if (startServ) {
+            /* starting echo server */
             startEchoServ(servPort);
         }
         else {
+            /* starting echo client and send the message */
             sendMsg(targetServ, sndTxt);
         }
     }

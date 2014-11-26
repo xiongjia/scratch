@@ -2,26 +2,37 @@ package xiongjia.echo;
 
 import java.net.UnknownHostException;
 import java.net.InetSocketAddress;
-import java.util.logging.Logger;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import xiongjia.echo.EchoEventListener;
 
 public class EchoServer extends WebSocketServer {
-    private final static Logger LOG = Logger.getLogger(EchoServer.class.getName()); 
-    private EchoEventListener evtListener;
+    private final static Log LOG = LogFactory.getLog(EchoServer.class);
+    
+    public interface Listener {
+        void onOpen(EchoServer serv, WebSocket conn);
+        void onClose(EchoServer serv, WebSocket conn);
 
-    private EchoServer(int port, EchoEventListener listener) 
-            throws UnknownHostException {
-        super(new InetSocketAddress(port));
-        evtListener = listener;
-        LOG.info("EchoServer() : " + port);
+        void onError(EchoServer serv, WebSocket conn, Exception ex);
+        
+        void onMessage(EchoServer serv, WebSocket conn, String message);
     }
 
-    public static EchoServer create(int port, EchoEventListener listener)
+    private Listener listener;
+
+    private EchoServer(int port, Listener listener) throws UnknownHostException {
+        super(new InetSocketAddress(port));
+        this.listener = listener;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("EchoServer() : " + port);
+        }
+    }
+
+    public static EchoServer create(int port, Listener listener)
             throws UnknownHostException {
         return new EchoServer(port, listener);
     }
@@ -33,29 +44,50 @@ public class EchoServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        LOG.info("New connection: " + handshake.getResourceDescriptor() +
-                 "; Remote Address: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("New connection: " + handshake.getResourceDescriptor() +
+                      "; Remote Address: " +
+                      conn.getRemoteSocketAddress().getAddress().getHostAddress());
+        }
+
+        if (listener != null) {
+            listener.onOpen(this, conn);
+        }
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        LOG.info("Close connection: " + conn + "; Reason: " + reason +
-                 "; Code: " + code + "; Remote: " + remote);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Close connection: " + conn +
+                      "; Reason: " + reason +
+                      "; Code: " + code + "; Remote: " + remote);
+        }
+        if (listener != null) {
+            listener.onClose(this, conn);
+        }        
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        LOG.info("New Message, connection: " + conn +
-                 "Message: " + message);
-        if (evtListener != null) {
-            evtListener.onMessage(message);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("New Message, connection: " + conn +
+                      "Message: " + message);
         }
-        /* send this message back */
+
+        if (listener != null) {
+            listener.onMessage(this, conn, message);
+        }
         conn.send(message);
     }
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        LOG.warning("EchoServer error : " + ex.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("EchoServer error : " + ex.toString());
+        }
+
+        if (listener != null) {
+            listener.onError(this, conn, ex);
+        }
     }
 }

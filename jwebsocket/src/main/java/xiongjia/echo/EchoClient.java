@@ -10,7 +10,7 @@ import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.handshake.ServerHandshake;
 
 public class EchoClient extends WebSocketClient {
-    private final static Log LOG = LogFactory.getLog(EchoClient.class);
+    private static final Log LOG = LogFactory.getLog(EchoClient.class);
 
     public interface Listener {
         void onOpen(EchoClient client);

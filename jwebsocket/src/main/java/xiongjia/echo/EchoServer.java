@@ -11,14 +11,13 @@ import org.apache.commons.logging.LogFactory;
 
 
 public class EchoServer extends WebSocketServer {
-    private final static Log LOG = LogFactory.getLog(EchoServer.class);
-    
+    private static final Log LOG = LogFactory.getLog(EchoServer.class);
+
     public interface Listener {
         void onOpen(EchoServer serv, WebSocket conn);
         void onClose(EchoServer serv, WebSocket conn);
-
         void onError(EchoServer serv, WebSocket conn, Exception ex);
-        
+
         void onMessage(EchoServer serv, WebSocket conn, String message);
     }
 
@@ -64,7 +63,7 @@ public class EchoServer extends WebSocketServer {
         }
         if (listener != null) {
             listener.onClose(this, conn);
-        }        
+        }
     }
 
     @Override

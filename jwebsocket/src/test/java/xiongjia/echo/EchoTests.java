@@ -1,7 +1,6 @@
 package xiongjia.echo;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -97,7 +96,7 @@ public class EchoTests {
             client.connect();
             lock.await(3000, TimeUnit.MILLISECONDS);
         }
-        catch (Exception uriErr) {
+        catch (Exception ex) {
             fail();
         }
     }

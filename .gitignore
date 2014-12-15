@@ -28,3 +28,6 @@ jmeter-example-sampler/build
 jwebsocket/bin
 jwebsocket/build
 
+# CMake projects
+roach/build
+

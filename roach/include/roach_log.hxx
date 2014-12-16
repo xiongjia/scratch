@@ -11,6 +11,12 @@
 
 namespace roach {
 
+class LoggerHandler : boost::noncopyable
+{
+public:
+    virtual void OnLog(const char *log) = 0;
+};
+
 class Logger : boost::noncopyable
 {
 public:
@@ -25,16 +31,13 @@ public:
     typedef enum _Level
     {
         LevelNone = 0, LevelErr, LevelInf, LevelWar, LevelDbg, LevelAll
-    } Level;
-
-    typedef std::function<void(const char *log)> Handler;
+    } Level;   
 
 public:
-    static boost::shared_ptr<Logger> Create(Level logLevel = LevelNone,
-                                            Handler handler = nullptr);
+    static boost::shared_ptr<Logger> Create(void);
 
-    virtual void SetHandler(Handler handler) = 0;
     virtual void SetLevel(Level logLevel) = 0;
+    virtual void RegisterHandler(boost::shared_ptr<LoggerHandler> handler) = 0;
 
     virtual void Log(Mask mask, const char *fmt, ...) = 0;
     virtual void LogNoFmt(Mask mask, const char *log) = 0;

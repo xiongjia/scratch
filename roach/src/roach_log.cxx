@@ -3,10 +3,12 @@
  */
 
 #include <stdarg.h>
+#include <vector>
 #include "boost/thread/thread.hpp"
 #include "boost/thread/mutex.hpp"
 #include "boost/utility.hpp"
-
+#include "boost/make_shared.hpp"
+#include "boost/foreach.hpp"
 #include "roach_log.hxx"
 
 namespace roach {
@@ -14,22 +16,21 @@ namespace roach {
 class LoggerImpl : public Logger
 {
 private:
-    Level        m_level;
-    Handler      m_handler;
     boost::mutex m_mutex;
+    Level        m_level;
+    std::vector<boost::shared_ptr<LoggerHandler>> m_handler;
 
 public:
-    LoggerImpl(Level logLevel, Handler handler)
+    LoggerImpl(void)
         : Logger()
-        , m_level(logLevel)
-        , m_handler(handler)
+        , m_level(LevelErr)
     {
         /* NOP */
     }
 
     bool IsIgnore(Mask mask)
     {
-        if (m_handler == nullptr)
+        if (m_handler.empty())
         {
             return true;
         }
@@ -83,13 +84,16 @@ public:
         {
             return;
         }
-        m_handler(log);
+        BOOST_FOREACH(auto handler, m_handler)
+        {
+            handler->OnLog(log);
+        }
     }
 
-    virtual void SetHandler(Handler handler)
+    virtual void RegisterHandler(boost::shared_ptr<LoggerHandler> handler)
     {
         boost::mutex::scoped_lock scopedLock(m_mutex);
-        m_handler = handler;
+        m_handler.push_back(handler);
     }
 
     virtual void SetLevel(Level logLevel)
@@ -104,10 +108,9 @@ Logger::Logger(void)
     /* NOP */
 }
 
-boost::shared_ptr<Logger> Logger::Create(Level logLevel,
-                                         Handler handler)
+boost::shared_ptr<Logger> Logger::Create(void)
 {
-    return boost::shared_ptr<Logger>(new LoggerImpl(logLevel, handler));
+    return boost::make_shared<LoggerImpl>();
 }
 
 } /* namespace roach */

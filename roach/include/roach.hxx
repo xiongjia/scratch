@@ -16,11 +16,11 @@ namespace roach {
 class Roach : boost::noncopyable
 {
 public:
-    static boost::shared_ptr<Roach> Create(Logger::Level level = Logger::LevelNone,
-                                           Logger::Handler handler = nullptr);
+    static boost::shared_ptr<Roach> Create(void);
 
 public:
-    virtual void SetLogger(Logger::Level level, Logger::Handler handler) = 0;
+    virtual void SetLevel(Logger::Level logLevel) = 0;
+    virtual void RegisterHandler(boost::shared_ptr<LoggerHandler> handler) = 0;
 
     virtual boost::shared_ptr<Server> CreateServ(void) = 0;
 

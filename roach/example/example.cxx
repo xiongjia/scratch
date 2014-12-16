@@ -3,19 +3,27 @@
  */
 
 #include "roach.hxx"
+#include "boost/make_shared.hpp"
 
-static void Logger(const char *msg)
+
+
+class ConsoleLogger : public roach::LoggerHandler
 {
-    fprintf(stdout, "%s\n", msg);
-}
+public:
+    virtual void OnLog(const char *log)
+    {
+       fprintf(stdout, "%s\n", log);
+    }
+};
 
 int main(int argc, char **argv)
 {
-    auto roach = roach::Roach::Create(roach::Logger::LevelDbg, Logger);
-    auto serv = roach->CreateServ();
+    auto roach = roach::Roach::Create();
+    roach->SetLevel(roach::Logger::LevelDbg);
+    roach->RegisterHandler(boost::make_shared<ConsoleLogger>());
 
+    auto serv = roach->CreateServ();
     serv->Listen("0.0.0.0", 8999);
     serv->Run();
-
     return 0;
 }

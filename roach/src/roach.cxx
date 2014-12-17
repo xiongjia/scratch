@@ -11,29 +11,25 @@ class RoachImpl : public Roach
 {
 private:
     boost::shared_ptr<Logger> m_logger;
+    boost::shared_ptr<Context> m_ctx;
 
 public:
     RoachImpl()
         : Roach()
         , m_logger(Logger::Create())
     {
-        /* NOP */
+        m_ctx = Context::Create(m_logger);
     }
 
     virtual boost::shared_ptr<Server> CreateServ(void)
     {
         m_logger->Log(Logger::Dbg, "Creating server");
-        return Server::Create(m_logger);
+        return Server::Create(m_ctx);
     }
 
-    virtual void SetLevel(Logger::Level logLevel)
+    virtual boost::shared_ptr<Context> GetContext(void)
     {
-        m_logger->SetLevel(logLevel);
-    }
-
-    virtual void RegisterHandler(boost::shared_ptr<LoggerHandler> handler)
-    {
-        m_logger->RegisterHandler(handler);
+        return m_ctx;
     }
 };
 

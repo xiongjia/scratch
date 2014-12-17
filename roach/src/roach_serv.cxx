@@ -13,16 +13,19 @@ class ServerImpl : public Server
 {
 private:
     boost::shared_ptr<Logger> m_logger;
+    boost::shared_ptr<Context> m_ctx;
 
     uv_loop_t *m_uvLoop;
     uv_tcp_t  m_listener;
 
 public:
-    ServerImpl(boost::shared_ptr<Logger> logger)
+    ServerImpl(boost::shared_ptr<Context> ctx)
         : Server()
-        , m_logger(logger)
+        , m_ctx(ctx)
+        , m_logger(ctx->GetLogger())
         , m_uvLoop(uv_default_loop())
     {
+        /* NOP */
     }
 
     static void OnConnect(uv_stream_t* server_handle, int status)
@@ -79,9 +82,9 @@ Server::Server(void)
     /* NOP */
 }
 
-boost::shared_ptr<Server> Server::Create(boost::shared_ptr<Logger> logger)
+boost::shared_ptr<Server> Server::Create(boost::shared_ptr<Context> ctx)
 {
-    return boost::shared_ptr<Server>(new ServerImpl(logger));
+    return boost::shared_ptr<Server>(new ServerImpl(ctx));
 }
 
 } /* namespace roach */

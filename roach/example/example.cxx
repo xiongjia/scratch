@@ -5,8 +5,6 @@
 #include "roach.hxx"
 #include "boost/make_shared.hpp"
 
-
-
 class ConsoleLogger : public roach::LoggerHandler
 {
 public:
@@ -19,8 +17,9 @@ public:
 int main(int argc, char **argv)
 {
     auto roach = roach::Roach::Create();
-    roach->SetLevel(roach::Logger::LevelDbg);
-    roach->RegisterHandler(boost::make_shared<ConsoleLogger>());
+    auto logger = roach->GetContext()->GetLogger();
+    logger->SetLevel(roach::Logger::LevelDbg);
+    logger->RegisterHandler(boost::make_shared<ConsoleLogger>());
 
     auto serv = roach->CreateServ();
     serv->Listen("0.0.0.0", 8999);

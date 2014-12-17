@@ -62,6 +62,8 @@ set(roach_opt_libs
 add_library(roach STATIC
     "${PROJECT_SOURCE_DIR}/src/roach.cxx"
     "${PROJECT_SOURCE_DIR}/include/roach.hxx"
+    "${PROJECT_SOURCE_DIR}/src/roach_context.cxx"
+    "${PROJECT_SOURCE_DIR}/include/roach_context.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_log.cxx"
     "${PROJECT_SOURCE_DIR}/include/roach_log.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_serv.cxx"

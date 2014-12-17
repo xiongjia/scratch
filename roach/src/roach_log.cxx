@@ -92,6 +92,10 @@ public:
 
     virtual void RegisterHandler(boost::shared_ptr<LoggerHandler> handler)
     {
+        if (!handler)
+        {
+            return;
+        }
         boost::mutex::scoped_lock scopedLock(m_mutex);
         m_handler.push_back(handler);
     }

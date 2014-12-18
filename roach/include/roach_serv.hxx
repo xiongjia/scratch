@@ -16,8 +16,10 @@ class Server : boost::noncopyable
 public:
     static boost::shared_ptr<Server> Create(boost::shared_ptr<Context> ctx);
 
-    virtual bool Listen(const char *ip, const int port) = 0;
-    virtual bool Run(void) = 0;
+    virtual bool Run(const char *ip, const int port) = 0;
+    virtual void Stop(void) = 0;
+
+    virtual bool IsRunning(void) const = 0;
 
 protected:
     Server(void);

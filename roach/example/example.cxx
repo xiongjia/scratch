@@ -22,7 +22,6 @@ int main(int argc, char **argv)
     logger->RegisterHandler(boost::make_shared<ConsoleLogger>());
 
     auto serv = roach->CreateServ();
-    serv->Listen("0.0.0.0", 8999);
-    serv->Run();
+    serv->Run("0.0.0.0", 8999);
     return 0;
 }

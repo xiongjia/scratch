@@ -1,13 +1,22 @@
 /**
-*
-*/
+ *
+ */
 
 #include "uv.h"
 
 #include "roach.hxx"
 #include "roach_serv.hxx"
+#include "roach_misc.hxx"
 
 namespace roach {
+
+class ServerImpl;
+
+typedef struct _UVListener
+{
+    uv_tcp_t listener;
+    ServerImpl *srvImpl;
+} UVListener;
 
 class ServerImpl : public Server
 {
@@ -32,9 +41,12 @@ public:
         /* NOP */
     }
 
-    static void OnConnect(uv_stream_t* server_handle, int status)
+    static void OnConnect(uv_stream_t *srvHandle, int status)
     {
-
+        if (0 != status)
+        {
+            return;
+        }
     }
 
     virtual bool Run(const char *ip, const int port)
@@ -46,49 +58,42 @@ public:
         }
 
         struct sockaddr_in addr;
-        int result = uv_ip4_addr(ip, port, &addr);
-        if (0 != result)
+        int uvErr = uv_ip4_addr(ip, port, &addr);
+        if (0 != uvErr)
         {
             m_logger->Log(Logger::Err,
-                "Invalid IP or Port. (%s %d)", ip, port);
+                "Invalid IP or Port. (%s %d). Error: %s",
+                ip, port, uv_strerror(uvErr));
             return false;
         }
 
-        uv_tcp_t listener;
-        result = uv_tcp_init(m_uvLoop, &listener);
-        if (0 != result)
-        {
-            m_logger->Log(Logger::Err, "uv_tcp_init() error");
-            return false;
-        }
-
-        result = uv_tcp_bind(&listener,
+        UVTCPWrap listener(m_uvLoop);
+        uvErr = uv_tcp_bind(listener.GetTCP(),
             static_cast<const struct sockaddr*>(static_cast<void*>(&addr)), 0);
-        if (0 != result)
+        if (0 != uvErr)
         {
-            m_logger->Log(Logger::Err, "Cannot bind to %s %d", ip, port);
+            m_logger->Log(Logger::Err, "Cannot bind to %s %d: %s",
+                ip, port, uv_strerror(uvErr));
             return false;
         }
 
-        result = uv_listen((uv_stream_t*)&listener, LISTEN_BACKLOG, OnConnect);
-        if (0 != result)
+        uvErr = uv_listen(listener.GetStream(), LISTEN_BACKLOG, OnConnect);
+        if (0 != uvErr)
         {
-            uv_close(static_cast<uv_handle_t*>(static_cast<void*>(&listener)), NULL);
-            m_logger->Log(Logger::Err, "Cannot listen on %s %d", ip, port);
+            m_logger->Log(Logger::Err, "Cannot listen on %s %d: %s",
+                ip, port, uv_strerror(uvErr));
             return false;
         }
 
         m_isRunning = true;
-        result = uv_run(m_uvLoop, UV_RUN_DEFAULT);
-        if (0 != result)
+        uvErr = uv_run(m_uvLoop, UV_RUN_DEFAULT);
+        if (0 != uvErr)
         {
             m_isRunning = false;
-            uv_close(static_cast<uv_handle_t*>(static_cast<void*>(&listener)), NULL);
-            m_logger->Log(Logger::Err, "Cannot start UV Loop");
+            m_logger->Log(Logger::Err, "Cannot start UV Loop: %s",
+                uv_strerror(uvErr));
             return false;
         }
-
-        uv_close(static_cast<uv_handle_t*>(static_cast<void*>(&listener)), NULL);
         m_isRunning = false;
         m_logger->Log(Logger::Inf, "UV Loop stopped");
         return true;

@@ -67,7 +67,9 @@ add_library(roach STATIC
     "${PROJECT_SOURCE_DIR}/src/roach_log.cxx"
     "${PROJECT_SOURCE_DIR}/include/roach_log.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_serv.cxx"
-    "${PROJECT_SOURCE_DIR}/include/roach_serv.hxx")
+    "${PROJECT_SOURCE_DIR}/include/roach_serv.hxx"
+    "${PROJECT_SOURCE_DIR}/src/roach_misc.cxx"
+    "${PROJECT_SOURCE_DIR}/src/roach_misc.hxx")
 
 add_executable(roach-example
     "${PROJECT_SOURCE_DIR}/example/example.cxx")

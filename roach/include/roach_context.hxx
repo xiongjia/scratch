@@ -1,6 +1,6 @@
 /**
-*
-*/
+ *
+ */
 
 #ifndef _ROACH_CONTEXT_HXX_
 #define _ROACH_CONTEXT_HXX_ 1

@@ -90,4 +90,13 @@ void UVShutdownLoop(uv_loop_t *loop)
     uv_async_send(async);
 }
 
+std::string Util::StrFromBuf(const char *at, const size_t len)
+{
+    std::string ret;
+    ret.resize(len + 1);
+    memcpy(&ret[0], at, len);
+    ret[len] = '\0';
+    return ret;
+}
+
 } /* namespace roach */

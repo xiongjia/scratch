@@ -8,6 +8,7 @@
 #include "boost/utility.hpp"
 #include "boost/shared_ptr.hpp"
 #include "roach_context.hxx"
+#include "roach_serv_handler.hxx"
 
 namespace roach {
 
@@ -20,6 +21,8 @@ public:
     virtual void Stop(void) = 0;
 
     virtual bool IsRunning(void) const = 0;
+
+    virtual void SetHandler(ServHandler handler) = 0;
 
 protected:
     Server(void);

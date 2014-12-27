@@ -69,6 +69,8 @@ add_library(roach STATIC
     "${PROJECT_SOURCE_DIR}/include/roach_log.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_serv.cxx"
     "${PROJECT_SOURCE_DIR}/include/roach_serv.hxx"
+    "${PROJECT_SOURCE_DIR}/include/roach_serv_handler.hxx"
+    "${PROJECT_SOURCE_DIR}/src/roach_serv_handler.cxx"
     "${PROJECT_SOURCE_DIR}/src/roach_http_parser.cxx"
     "${PROJECT_SOURCE_DIR}/src/roach_http_parser.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_uvbufpool.cxx"

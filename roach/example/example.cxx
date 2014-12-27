@@ -38,6 +38,10 @@ public:
     void Run(void)
     {
         m_srv = m_roach->CreateServ();
+        m_srv->SetHandler([](boost::shared_ptr<roach::HttpRequest> req, boost::shared_ptr<roach::HttpResponse> rep) -> bool {
+            /*  TODO: write response back */
+            return false;
+        });
         m_srv->Run("0.0.0.0", 8999);
     }
 

@@ -3,8 +3,8 @@
  */
 
 #include <functional>
+#include "boost/make_shared.hpp"
 #include "uv.h"
-#include "http_parser.h"
 
 #include "roach.hxx"
 #include "roach_serv.hxx"
@@ -16,6 +16,25 @@ namespace roach {
 
 class Connection;
 class ShutdownReq;
+
+class HttpResponseImpl : public HttpResponse
+{
+private:
+    Connection *m_conn;
+
+public:
+    HttpResponseImpl(Connection *conn)
+        : HttpResponse()
+        , m_conn(conn)
+    {
+        /* NOP */
+    }
+
+    virtual void Write(const char *buf, const size_t len)
+    {
+
+    }
+};
 
 class ShutdownReq : boost::noncopyable
 {
@@ -75,9 +94,9 @@ public:
         /* NOP */
     }
 
-    bool Parse(char *buf, size_t len)
+    boost::shared_ptr<HTTPParser> GetParser(void)
     {
-        return m_parser->Parse(buf, len);
+        return m_parser;
     }
 
     static void Shutdown(Connection *conn, 
@@ -102,6 +121,7 @@ public:
 class ServerImpl : public Server
 {
 private:
+    ServHandler m_srvHandler;
     boost::shared_ptr<Logger> m_logger;
     boost::shared_ptr<Context> m_ctx;
     boost::shared_ptr<UVBufPool> m_uvBufPool;
@@ -127,11 +147,22 @@ public:
         return m_isRunning;
     }
 
+    virtual void SetHandler(ServHandler handler)
+    {
+        m_srvHandler = handler;
+    }
+
     void OnConnect(UVTCPWrap *listener, int status);
     void OnConnRead(Connection *conn, ssize_t nread, const uv_buf_t* buf);
 
     void OnAllocBuf(size_t suggestedSize, uv_buf_t *buf);
     void OnFreeBuf(const uv_buf_t *buf);
+
+    void OnHttpRequest(Connection *conn);
+
+    void OnServHandler(Connection *conn,
+                       boost::shared_ptr<HttpRequest> req,
+                       boost::shared_ptr<HttpResponse> rep);
 };
 
 Server::Server(void)
@@ -279,7 +310,19 @@ void ServerImpl::OnConnRead(Connection *conn,
     {
         /* parse HTTP request */
         m_logger->Log(Logger::Dbg, "Read %d bytes", nread);
-        conn->Parse(buf->base, nread);
+        boost::shared_ptr<HTTPParser> parser = conn->GetParser();
+        bool parse = parser->Parse(buf->base, nread);
+        if (!parse)
+        {
+            /* TODO: write a client/server error back */
+        }
+        else
+        {
+            if (parser->IsCompleted())
+            {
+                OnHttpRequest(conn);
+            }
+        }
     }
 
     /* free the buf */
@@ -294,6 +337,36 @@ void ServerImpl::OnAllocBuf(size_t suggestedSize, uv_buf_t *buf)
 void ServerImpl::OnFreeBuf(const uv_buf_t *buf)
 {
     m_uvBufPool->Free(buf);
+}
+
+void ServerImpl::OnHttpRequest(Connection *conn)
+{
+    boost::shared_ptr<HTTPParser> parser = conn->GetParser();
+    boost::shared_ptr<HttpRequest> req = HttpRequest::Create();
+    req->SetMethod(parser->GetMethod());
+    req->SetUrl(parser->GetUrl());
+    req->SetHeader(parser->GetHeader());
+
+    boost::shared_ptr<HttpResponse> rep = boost::make_shared<HttpResponseImpl>(conn);
+
+    OnServHandler(conn, req, rep);
+}
+
+void ServerImpl::OnServHandler(Connection *conn,
+                               boost::shared_ptr<HttpRequest> req,
+                               boost::shared_ptr<HttpResponse> rep)
+{
+    if (m_srvHandler)
+    {
+        m_logger->Log(Logger::Dbg, "Calling customer handler");
+        if (m_srvHandler(req, rep))
+        {
+            return;
+        }
+    }
+
+    m_logger->Log(Logger::Dbg, "Calling default handler");    
+    /* TODO default handler */
 }
 
 } /* namespace roach */

@@ -4,6 +4,7 @@
 
 #include <functional>
 #include "uv.h"
+#include "http_parser.h"
 
 #include "roach.hxx"
 #include "roach_serv.hxx"
@@ -14,49 +15,6 @@ namespace roach {
 
 class Connection;
 class ShutdownReq;
-
-class ShutdownLoop : boost::noncopyable
-{
-private:
-    typedef std::function<void(ShutdownLoop*)> AfterStop;
-
-private:
-    uv_async_t m_async;
-    uv_loop_t *m_loop;
-    AfterStop m_afterStop;
-
-public:
-    static void Shutdown(uv_loop_t *loop)
-    {
-        ShutdownLoop *shutdown = new ShutdownLoop(loop, [](ShutdownLoop *req) {
-            delete req;
-        });
-        uv_async_send(shutdown->GetAsyncReq());
-    }
-
-    void DoShutdown(void)
-    {
-        uv_stop(m_loop);
-        m_afterStop(this);
-    }
-
-    uv_async_t* GetAsyncReq(void)
-    {
-        return &m_async;
-    }
-
-private:
-    ShutdownLoop(uv_loop_t *loop, AfterStop afterStop)
-        : m_loop(loop)
-        , m_afterStop(afterStop)
-    {
-        m_async.data = this;
-        uv_async_init(m_loop, &m_async, [](uv_async_t *handle) {
-            ShutdownLoop *req = static_cast<ShutdownLoop*>(handle->data);
-            req->DoShutdown();
-        });
-    }
-};
 
 class ShutdownReq : boost::noncopyable
 {
@@ -105,11 +63,44 @@ public:
 
 class Connection : public UVTCPWrap
 {
+private:
+    http_parser_settings m_parserCfg;
+    http_parser m_paser;
+
 public:
     Connection(uv_loop_t *uvLoop, void *uvCtx = nullptr)
         : UVTCPWrap(uvLoop, uvCtx)
     {
-        /* NOP */
+        memset(&m_parserCfg, 0, sizeof(m_parserCfg));
+        m_parserCfg.on_message_begin = [](http_parser *parse)  -> int {
+                return 0; 
+            };
+        m_parserCfg.on_url = [](http_parser *parse, const char *at, size_t length) -> int {
+                return 0;
+            };
+        m_parserCfg.on_header_field = [](http_parser *parse, const char *at, size_t length) -> int {
+                return 0;
+            };
+        m_parserCfg.on_header_value = [](http_parser *parse, const char *at, size_t length) -> int {
+                return 0;
+            };
+        m_parserCfg.on_headers_complete = [](http_parser *parse)  -> int {
+                return 1;
+            };
+        m_parserCfg.on_body = [](http_parser *parse, const char *at, size_t length) -> int {
+                return 1;
+            };
+        m_parserCfg.on_message_complete = [](http_parser *parse)  -> int {
+                return 1;
+            };
+        m_paser.data = this;
+        http_parser_init(&m_paser, HTTP_REQUEST);
+    }
+
+    bool Parse(char *buf, size_t len)
+    {
+        size_t  parsed = http_parser_execute(&m_paser, &m_parserCfg, buf, len);
+        return parsed < len ? false : true;
     }
 
     static void Shutdown(Connection *conn, 
@@ -292,17 +283,13 @@ void ServerImpl::OnConnRead(Connection *conn,
         else
         {
             m_logger->LogNoFmt(Logger::Dbg, "Read UV_EOF");
-            uv_stop(GetUVLoop());
-            return;
         }
 
         /* shutdown the connection */
         m_logger->LogNoFmt(Logger::Dbg, "Closing connection");
         Connection::Shutdown(conn, [](Connection *conn, int /* status */) {
             delete conn;
-        });
-
-        
+        });        
     }
     else if (0 == nread)
     {
@@ -310,8 +297,9 @@ void ServerImpl::OnConnRead(Connection *conn,
     }
     else
     {
-        /* TODO parse HTTP request */
-        printf("on read ([%d : %d])\n", nread, buf->len);
+        /* parse HTTP request */
+        m_logger->Log(Logger::Dbg, "Read %d bytes", nread);
+        conn->Parse(buf->base, nread);
     }
 
     /* free the buf */

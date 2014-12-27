@@ -75,6 +75,26 @@ protected:
     UVAddr(void);
 };
 
+class ShutdownLoop : boost::noncopyable
+{
+private:
+    typedef std::function<void(ShutdownLoop*)> AfterStop;
+
+private:
+    uv_async_t m_async;
+    uv_loop_t *m_loop;
+    AfterStop m_afterStop;
+
+public:
+    static void Shutdown(uv_loop_t *loop);
+    
+    void DoShutdown(void);
+    uv_async_t* GetAsyncReq(void);
+
+private:
+    ShutdownLoop(uv_loop_t *loop, AfterStop afterStop);
+};
+
 } /* namespace roach */
 
 #endif /* !defined(_ROACH_MISC_HXX_) */

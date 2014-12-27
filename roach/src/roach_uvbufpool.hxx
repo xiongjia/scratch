@@ -16,7 +16,7 @@ namespace roach {
 class UVBufPool : boost::noncopyable
 {
 private:
-    static const size_t MAXCACHE = 1024 * 5;
+    static const size_t MAXCACHE = 1024 * 1024 * 5;
 
 public:
     static boost::shared_ptr<UVBufPool> Create(boost::shared_ptr<Context> ctx,

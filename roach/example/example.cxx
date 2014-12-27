@@ -50,10 +50,10 @@ public:
     }
 };
 
-boost::shared_ptr<Example> EXAMPLE;
-
 int main(int argc, char **argv)
 {
+    static boost::shared_ptr<Example> EXAMPLE;
+
     signal(SIGINT, [](int sig) {
         if (EXAMPLE)
         {

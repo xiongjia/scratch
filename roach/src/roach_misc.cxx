@@ -74,4 +74,35 @@ std::pair<int, boost::shared_ptr<UVAddr>> UVAddr::CreateIP4(const char* ip,
     return std::make_pair(uvErr, boost::make_shared<UVAddrImpl>(&addr));
 }
 
+void ShutdownLoop::Shutdown(uv_loop_t *loop)
+{
+    ShutdownLoop *shutdown = new ShutdownLoop(loop, [](ShutdownLoop *req) {
+        delete req;
+    });
+    uv_async_send(shutdown->GetAsyncReq());
+}
+
+void ShutdownLoop::DoShutdown(void)
+{
+    uv_stop(m_loop);
+    m_afterStop(this);
+}
+
+uv_async_t* ShutdownLoop::GetAsyncReq(void)
+{
+    return &m_async;
+}
+
+
+ShutdownLoop::ShutdownLoop(uv_loop_t *loop, AfterStop afterStop)
+    : m_loop(loop)
+    , m_afterStop(afterStop)
+{
+    m_async.data = this;
+    uv_async_init(m_loop, &m_async, [](uv_async_t *handle) {
+        ShutdownLoop *req = static_cast<ShutdownLoop*>(handle->data);
+        req->DoShutdown();
+    });
+}
+
 } /* namespace roach */

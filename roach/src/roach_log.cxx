@@ -1,5 +1,5 @@
 /**
- *
+ * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
 
 #include <stdarg.h>
@@ -21,12 +21,7 @@ private:
     std::vector<boost::shared_ptr<LoggerHandler>> m_handler;
 
 public:
-    LoggerImpl(void)
-        : Logger()
-        , m_level(LevelErr)
-    {
-        /* NOP */
-    }
+    LoggerImpl(void);
 
     bool IsIgnore(Mask mask)
     {
@@ -115,6 +110,13 @@ Logger::Logger(void)
 boost::shared_ptr<Logger> Logger::Create(void)
 {
     return boost::make_shared<LoggerImpl>();
+}
+
+LoggerImpl::LoggerImpl(void)
+    : Logger()
+    , m_level(LevelErr)
+{
+    /* NOP */
 }
 
 } /* namespace roach */

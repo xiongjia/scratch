@@ -1,5 +1,5 @@
 /**
- *
+ * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
 
 #ifndef _ROACH_MISC_HXX_
@@ -63,21 +63,17 @@ public:
     }
 };
 
-class UVBufPool : boost::noncopyable
+class UVAddr : boost::noncopyable
 {
-private:
-    static const unsigned int DEFAULT_MAXCACHE = 1024 * 5;
-
 public:
-    static boost::shared_ptr<UVBufPool> Create(const unsigned int maxCache = DEFAULT_MAXCACHE);
+    static std::pair<int, boost::shared_ptr<UVAddr>> CreateIP4(const char* ip, int port);
 
-    virtual void Alloc(size_t suggestedSize, uv_buf_t *buf) = 0;
-    virtual void Free(uv_buf_t *buf) = 0;
+    virtual const struct sockaddr*    GetSockAddr(void) const = 0;
+    virtual const struct sockaddr_in* GetSockAddrIn(void) const = 0;
 
 protected:
-    UVBufPool(void);
+    UVAddr(void);
 };
-
 
 } /* namespace roach */
 

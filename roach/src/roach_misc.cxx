@@ -1,5 +1,5 @@
 /**
- *
+ * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
 
 #include "boost/make_shared.hpp"
@@ -34,44 +34,44 @@ UVTCPWrap::~UVTCPWrap(void)
     uv_close(static_cast<uv_handle_t*>(static_cast<void*>(&m_tcpHandle)), NULL);
 }
 
-
-class UVBufPoolImpl : public UVBufPool
+class UVAddrImpl : public UVAddr
 {
 private:
-    const unsigned int m_maxCache;
+    struct sockaddr_in m_addr;
 
 public:
-    UVBufPoolImpl(const unsigned int maxCache)
-        : m_maxCache(maxCache)
+    UVAddrImpl(struct sockaddr_in *addr)
+        : UVAddr()
     {
-        /* NOP */
+        memcpy(&m_addr, addr, sizeof(sockaddr_in));
     }
 
-    virtual void Alloc(size_t suggestedSize, uv_buf_t *buf)
+    virtual const struct sockaddr* GetSockAddr(void) const
     {
-        buf->base = static_cast<char*>(malloc(suggestedSize));
-        buf->len = suggestedSize;
+        return static_cast<const struct sockaddr*>(static_cast<const void*>(&m_addr));
     }
 
-    virtual void Free(uv_buf_t *buf)
+    virtual const struct sockaddr_in* GetSockAddrIn(void) const
     {
-        if (NULL == buf || NULL == buf->base)
-        {
-            return;
-        }
-        /* TODO cache this buf */
-        free(buf->base);
+        return const_cast<const sockaddr_in*>(&m_addr);
     }
 };
 
-UVBufPool::UVBufPool(void)    
+UVAddr::UVAddr(void)
 {
     /* NOP */
 }
 
-boost::shared_ptr<UVBufPool> UVBufPool::Create(const unsigned int maxCache)
+std::pair<int, boost::shared_ptr<UVAddr>> UVAddr::CreateIP4(const char* ip,
+                                                            int port)
 {
-    return boost::make_shared<UVBufPoolImpl>(maxCache);
+    struct sockaddr_in addr;
+    int uvErr = uv_ip4_addr(ip, port, &addr);
+    if (0 != uvErr)
+    {
+        return std::make_pair(uvErr, boost::shared_ptr<UVAddr>(nullptr));
+    }
+    return std::make_pair(uvErr, boost::make_shared<UVAddrImpl>(&addr));
 }
 
 } /* namespace roach */

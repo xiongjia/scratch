@@ -1,6 +1,7 @@
 /**
- *
+ * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
+
 
 #ifndef _ROACH_LOG_HXX_
 #define _ROACH_LOG_HXX_ 1

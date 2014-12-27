@@ -1,5 +1,5 @@
 /**
- *
+ * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
 
 #include "roach_context.hxx"

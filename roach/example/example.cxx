@@ -1,9 +1,14 @@
 /**
- *
+ * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
 
-#include "roach.hxx"
+#include <stdio.h>
+#include <signal.h>
+
 #include "boost/make_shared.hpp"
+#include "uv.h"
+
+#include "roach.hxx"
 
 class ConsoleLogger : public roach::LoggerHandler
 {
@@ -14,14 +19,49 @@ public:
     }
 };
 
+class Example : boost::noncopyable
+{
+private:
+    boost::shared_ptr<roach::Roach>  m_roach;
+    boost::shared_ptr<roach::Logger> m_logger;
+    boost::shared_ptr<roach::Server> m_srv;
+
+public:
+    Example(void)
+        : m_roach(roach::Roach::Create())
+        , m_logger(m_roach->GetContext()->GetLogger())
+    {
+        m_logger->SetLevel(roach::Logger::LevelDbg);
+        m_logger->RegisterHandler(boost::make_shared<ConsoleLogger>());
+    }
+
+    void Run(void)
+    {
+        m_srv = m_roach->CreateServ();
+        m_srv->Run("0.0.0.0", 8999);
+    }
+
+    void Stop(void)
+    {
+        if (m_srv)
+        {
+            m_srv->Stop();
+        }
+    }
+};
+
+boost::shared_ptr<Example> EXAMPLE;
+
 int main(int argc, char **argv)
 {
-    auto roach = roach::Roach::Create();
-    auto logger = roach->GetContext()->GetLogger();
-    logger->SetLevel(roach::Logger::LevelDbg);
-    logger->RegisterHandler(boost::make_shared<ConsoleLogger>());
+    signal(SIGINT, [](int sig) {
+        if (EXAMPLE)
+        {
+            EXAMPLE->Stop();
+        }
+    });
 
-    auto serv = roach->CreateServ();
-    serv->Run("0.0.0.0", 8999);
+    EXAMPLE = boost::make_shared<Example>();
+    EXAMPLE->Run();
     return 0;
 }

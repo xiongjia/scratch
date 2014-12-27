@@ -1,4 +1,5 @@
 # CMake build script
+# Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
 cmake_minimum_required(VERSION 2.8)
 
 project(roach)
@@ -68,6 +69,8 @@ add_library(roach STATIC
     "${PROJECT_SOURCE_DIR}/include/roach_log.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_serv.cxx"
     "${PROJECT_SOURCE_DIR}/include/roach_serv.hxx"
+    "${PROJECT_SOURCE_DIR}/src/roach_uvbufpool.cxx"
+    "${PROJECT_SOURCE_DIR}/src/roach_uvbufpool.hxx"
     "${PROJECT_SOURCE_DIR}/src/roach_misc.cxx"
     "${PROJECT_SOURCE_DIR}/src/roach_misc.hxx")
 

@@ -10,6 +10,7 @@
 #include "roach_serv.hxx"
 #include "roach_uvbufpool.hxx"
 #include "roach_misc.hxx"
+#include "roach_http_parser.hxx"
 
 namespace roach {
 
@@ -64,43 +65,19 @@ public:
 class Connection : public UVTCPWrap
 {
 private:
-    http_parser_settings m_parserCfg;
-    http_parser m_paser;
+    boost::shared_ptr<HTTPParser> m_parser;
 
 public:
     Connection(uv_loop_t *uvLoop, void *uvCtx = nullptr)
         : UVTCPWrap(uvLoop, uvCtx)
+        , m_parser(HTTPParser::Create())
     {
-        memset(&m_parserCfg, 0, sizeof(m_parserCfg));
-        m_parserCfg.on_message_begin = [](http_parser *parse)  -> int {
-                return 0; 
-            };
-        m_parserCfg.on_url = [](http_parser *parse, const char *at, size_t length) -> int {
-                return 0;
-            };
-        m_parserCfg.on_header_field = [](http_parser *parse, const char *at, size_t length) -> int {
-                return 0;
-            };
-        m_parserCfg.on_header_value = [](http_parser *parse, const char *at, size_t length) -> int {
-                return 0;
-            };
-        m_parserCfg.on_headers_complete = [](http_parser *parse)  -> int {
-                return 1;
-            };
-        m_parserCfg.on_body = [](http_parser *parse, const char *at, size_t length) -> int {
-                return 1;
-            };
-        m_parserCfg.on_message_complete = [](http_parser *parse)  -> int {
-                return 1;
-            };
-        m_paser.data = this;
-        http_parser_init(&m_paser, HTTP_REQUEST);
+        /* NOP */
     }
 
     bool Parse(char *buf, size_t len)
     {
-        size_t  parsed = http_parser_execute(&m_paser, &m_parserCfg, buf, len);
-        return parsed < len ? false : true;
+        return m_parser->Parse(buf, len);
     }
 
     static void Shutdown(Connection *conn, 
@@ -110,12 +87,14 @@ public:
         uv_shutdown(shutdown->GetShutdownReq(), conn->GetStream(), 
             [](uv_shutdown_t *req, int status) {
                 ShutdownReq *shutdown = static_cast<ShutdownReq*>(req->data);
+                Connection *conn = shutdown->GetConn();
+                uv_loop_t *loop = conn->GetLoop();
                 ShutdownReq::AfterShutdown afterShutdown(shutdown->GetAfterShutdown());
                 if (afterShutdown)
                 {
-                    afterShutdown(shutdown->GetConn(), status);
+                    afterShutdown(conn, status);
                 }
-                delete shutdown;
+                UVAsyncDelete<ShutdownReq>(loop, shutdown);
             });
     }
 };
@@ -187,7 +166,8 @@ void ServerImpl::Stop(void)
         m_logger->Log(Logger::War, "Cannot stop serevr (It's not running)");
         return;
     }
-    ShutdownLoop::Shutdown(GetUVLoop());
+
+    UVShutdownLoop(GetUVLoop());
     m_logger->Log(Logger::Inf, "uv_stop() request has been sent");
 }
 
@@ -288,7 +268,7 @@ void ServerImpl::OnConnRead(Connection *conn,
         /* shutdown the connection */
         m_logger->LogNoFmt(Logger::Dbg, "Closing connection");
         Connection::Shutdown(conn, [](Connection *conn, int /* status */) {
-            delete conn;
+            UVAsyncDelete<Connection>(conn->GetLoop(), conn);
         });        
     }
     else if (0 == nread)

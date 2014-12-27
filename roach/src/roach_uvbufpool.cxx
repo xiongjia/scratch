@@ -61,9 +61,8 @@ boost::shared_ptr<UVBufPool> UVBufPool::Create(boost::shared_ptr<Context> ctx,
 
 void UVBufPoolImpl::DoAlloc(size_t suggestedSize, uv_buf_t *buf)
 {
-    auto cacheItem = std::find_if(m_cache.begin(), m_cache.end(), [=](uv_buf_t item) {
-            return item.len >= suggestedSize;
-        });
+    auto cacheItem = std::find_if(m_cache.begin(), m_cache.end(),
+        [=](uv_buf_t item) { return item.len >= suggestedSize; });
     if (cacheItem == m_cache.end())
     {
         /* create a new uv_buf_t */

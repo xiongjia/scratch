@@ -52,6 +52,7 @@ class UVTCPWrap : public UVStreamWrap
 {
 protected:
     uv_tcp_t  m_tcpHandle;
+    uv_loop_t *m_loop;
 
 public:
     UVTCPWrap(uv_loop_t *uvLoop, void *uvCtx = nullptr);
@@ -60,6 +61,11 @@ public:
     inline uv_tcp_t* GetTCP(void)
     {
         return &m_tcpHandle;
+    }
+
+    inline uv_loop_t* GetLoop(void)
+    {
+        return m_loop;
     }
 };
 
@@ -75,25 +81,20 @@ protected:
     UVAddr(void);
 };
 
-class ShutdownLoop : boost::noncopyable
+void UVShutdownLoop(uv_loop_t *loop);
+
+template<class _Clz>
+void UVAsyncDelete(uv_loop_t *loop, _Clz *ptr)
 {
-private:
-    typedef std::function<void(ShutdownLoop*)> AfterStop;
-
-private:
-    uv_async_t m_async;
-    uv_loop_t *m_loop;
-    AfterStop m_afterStop;
-
-public:
-    static void Shutdown(uv_loop_t *loop);
-    
-    void DoShutdown(void);
-    uv_async_t* GetAsyncReq(void);
-
-private:
-    ShutdownLoop(uv_loop_t *loop, AfterStop afterStop);
-};
+    uv_async_t *async = static_cast<uv_async_t*>(malloc(sizeof(uv_async_t)));
+    async->data = ptr;
+    uv_async_init(loop, async, [](uv_async_t *handle) {
+        _Clz *ptr = static_cast<_Clz*>(handle->data);
+        delete ptr;
+        free(handle);
+    });
+    uv_async_send(async);
+}
 
 } /* namespace roach */
 

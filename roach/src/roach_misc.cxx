@@ -22,6 +22,7 @@ UVStreamWrap::UVStreamWrap(uv_stream_t *stream, void *uvCtx)
 
 UVTCPWrap::UVTCPWrap(uv_loop_t *uvLoop, void *uvCtx)
     : UVStreamWrap(static_cast<uv_stream_t*>(static_cast<void*>(&m_tcpHandle)), uvCtx)
+    , m_loop(uvLoop)
 {
     /* Don't need handle the error for uv_tcp_init(). It'll never fail. 
      * (libuv v0.10 Linux&Windows) 
@@ -31,7 +32,10 @@ UVTCPWrap::UVTCPWrap(uv_loop_t *uvLoop, void *uvCtx)
 
 UVTCPWrap::~UVTCPWrap(void)
 {
-    uv_close(static_cast<uv_handle_t*>(static_cast<void*>(&m_tcpHandle)), NULL);
+    if (uv_is_active(GetHandle()))
+    {
+        uv_close(GetHandle(), NULL);
+    }
 }
 
 class UVAddrImpl : public UVAddr
@@ -74,35 +78,16 @@ std::pair<int, boost::shared_ptr<UVAddr>> UVAddr::CreateIP4(const char* ip,
     return std::make_pair(uvErr, boost::make_shared<UVAddrImpl>(&addr));
 }
 
-void ShutdownLoop::Shutdown(uv_loop_t *loop)
+void UVShutdownLoop(uv_loop_t *loop)
 {
-    ShutdownLoop *shutdown = new ShutdownLoop(loop, [](ShutdownLoop *req) {
-        delete req;
+    uv_async_t *async = static_cast<uv_async_t*>(malloc(sizeof(uv_async_t)));
+    async->data = loop;
+    uv_async_init(loop, async, [](uv_async_t *handle) {
+        uv_loop_t *stop = static_cast<uv_loop_t*>(handle->data);
+        uv_stop(stop);
+        free(handle);
     });
-    uv_async_send(shutdown->GetAsyncReq());
-}
-
-void ShutdownLoop::DoShutdown(void)
-{
-    uv_stop(m_loop);
-    m_afterStop(this);
-}
-
-uv_async_t* ShutdownLoop::GetAsyncReq(void)
-{
-    return &m_async;
-}
-
-
-ShutdownLoop::ShutdownLoop(uv_loop_t *loop, AfterStop afterStop)
-    : m_loop(loop)
-    , m_afterStop(afterStop)
-{
-    m_async.data = this;
-    uv_async_init(m_loop, &m_async, [](uv_async_t *handle) {
-        ShutdownLoop *req = static_cast<ShutdownLoop*>(handle->data);
-        req->DoShutdown();
-    });
+    uv_async_send(async);
 }
 
 } /* namespace roach */

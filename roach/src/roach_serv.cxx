@@ -3,7 +3,19 @@
  */
 
 #include <functional>
+#include <string>
+
 #include "boost/make_shared.hpp"
+#if defined(_MSC_VER)
+#   pragma warning (push)
+#   pragma warning (disable : 4819)
+#   include "boost/format.hpp"
+#   pragma warning (push)
+#   pragma warning (default : 4819)
+#else
+#   include "boost/format.hpp"
+#endif /* defined(_MSC_VER) */
+
 #include "uv.h"
 
 #include "roach.hxx"
@@ -16,25 +28,6 @@ namespace roach {
 
 class Connection;
 class ShutdownReq;
-
-class HttpResponseImpl : public HttpResponse
-{
-private:
-    Connection *m_conn;
-
-public:
-    HttpResponseImpl(Connection *conn)
-        : HttpResponse()
-        , m_conn(conn)
-    {
-        /* NOP */
-    }
-
-    virtual void Write(const char *buf, const size_t len)
-    {
-
-    }
-};
 
 class ShutdownReq : boost::noncopyable
 {
@@ -94,6 +87,11 @@ public:
         /* NOP */
     }
 
+    ~Connection(void)
+    {
+        printf("del conn\n");
+    }
+
     boost::shared_ptr<HTTPParser> GetParser(void)
     {
         return m_parser;
@@ -102,6 +100,15 @@ public:
     static void Shutdown(Connection *conn, 
                          ShutdownReq::AfterShutdown afterShutdown)
     {
+        if (!uv_is_active(conn->GetHandle()))
+        {
+            if (afterShutdown)
+            {
+                afterShutdown(conn, 0);
+            }
+            return;
+        }
+
         ShutdownReq *shutdown = new ShutdownReq(conn, afterShutdown);
         uv_shutdown(shutdown->GetShutdownReq(), conn->GetStream(), 
             [](uv_shutdown_t *req, int status) {
@@ -115,6 +122,104 @@ public:
                 }
                 UVAsyncDelete<ShutdownReq>(loop, shutdown);
             });
+    }
+};
+
+class UVSender : boost::noncopyable
+{
+private:
+    boost::shared_ptr<Logger> m_logger;
+    uv_write_t m_wr;
+    uv_buf_t m_buf;
+    Connection *m_conn;
+
+public:
+    UVSender(boost::shared_ptr<Logger> logger,
+             Connection *conn, const char *buf, size_t len)
+        : m_conn(conn)
+        , m_logger(logger)
+    {
+        m_wr.data = this;
+        m_buf.base = (char*)malloc(len);
+        if (NULL != m_buf.base)
+        {
+            memcpy(m_buf.base, buf, len);
+            m_buf.len = len;
+        }
+        else
+        {
+            m_buf.len = 0;
+        }
+    }
+
+    ~UVSender(void)
+    {
+        printf("del snd\n");
+        if (NULL != m_buf.base)
+        {
+            free(m_buf.base);
+        }
+    }
+
+    uv_write_t* GetWrite(void)
+    {
+        return &m_wr;
+    }
+
+    uv_buf_t* GetBuf(void)
+    {
+        return &m_buf;
+    }
+
+    Connection* GetConn(void)
+    {
+        return m_conn;
+    }
+
+    boost::shared_ptr<Logger> GetLogger(void)
+    {
+        return m_logger;
+    }
+};
+
+class HttpResponseImpl : public HttpResponse
+{
+private:
+    boost::shared_ptr<Logger> m_logger;
+    Connection *m_conn;
+
+public:
+    HttpResponseImpl(Connection *conn, boost::shared_ptr<Logger> logger)
+        : HttpResponse()
+        , m_conn(conn)
+        , m_logger(logger)
+    {
+        /* NOP */
+    }
+
+    virtual void WritePlainText(const unsigned short statusCode,
+        const char *status,
+        const char *content)
+    {
+        auto repFmt = boost::format("HTTP/1.1 %d %s\r\n"
+            "Content-Type: text/plain\r\n"
+            "Content-Length: %d\r\n"
+            "\r\n"
+            "%s");
+        std::string contentStr(content);
+        auto rep = boost::str(repFmt %
+            statusCode % status % contentStr.size() % contentStr);
+
+        UVSender *snd = new UVSender(m_logger, m_conn, &rep[0], rep.size());
+        uv_write(snd->GetWrite(), m_conn->GetStream(), snd->GetBuf(), 1, [](uv_write_t *req, int status) {
+            UVSender *snd = static_cast<UVSender*>(req->data);
+            Connection *conn = snd->GetConn();
+            boost::shared_ptr<Logger> logger = snd->GetLogger();
+            logger->Log(Logger::Dbg, "write response status %d", status);
+
+            uv_close(conn->GetHandle(), NULL);
+            UVAsyncDelete<UVSender>(conn->GetLoop(), snd);
+        });
     }
 };
 
@@ -346,9 +451,7 @@ void ServerImpl::OnHttpRequest(Connection *conn)
     req->SetMethod(parser->GetMethod());
     req->SetUrl(parser->GetUrl());
     req->SetHeader(parser->GetHeader());
-
-    boost::shared_ptr<HttpResponse> rep = boost::make_shared<HttpResponseImpl>(conn);
-
+    boost::shared_ptr<HttpResponse> rep = boost::make_shared<HttpResponseImpl>(conn, m_logger);
     OnServHandler(conn, req, rep);
 }
 
@@ -365,7 +468,7 @@ void ServerImpl::OnServHandler(Connection *conn,
         }
     }
 
-    m_logger->Log(Logger::Dbg, "Calling default handler");    
+    m_logger->Log(Logger::Dbg, "Calling default handler");
     /* TODO default handler */
 }
 

@@ -5,7 +5,18 @@
 #include <stdio.h>
 #include <signal.h>
 
+#include <string>
 #include "boost/make_shared.hpp"
+#if defined(_MSC_VER)
+#   pragma warning (push)
+#   pragma warning (disable : 4819)
+#   include "boost/format.hpp"
+#   pragma warning (push)
+#   pragma warning (default : 4819)
+#else 
+#   include "boost/format.hpp"
+#endif /* defined(_MSC_VER) */
+
 #include "uv.h"
 
 #include "roach.hxx"
@@ -38,9 +49,16 @@ public:
     void Run(void)
     {
         m_srv = m_roach->CreateServ();
-        m_srv->SetHandler([](boost::shared_ptr<roach::HttpRequest> req, boost::shared_ptr<roach::HttpResponse> rep) -> bool {
-            /*  TODO: write response back */
-            return false;
+        m_srv->SetHandler([](boost::shared_ptr<roach::HttpRequest> req,
+                             boost::shared_ptr<roach::HttpResponse> rep)
+                             -> bool {
+            /* the response content */
+            auto fmt = boost::format("Method = %s; Url = %s");
+            auto content = boost::str(fmt % req->GetMethod() % req->GetUrl());
+
+            /* write the 200 response to client */
+            rep->WritePlainText(200, "OK", content.c_str());
+            return true;
         });
         m_srv->Run("0.0.0.0", 8999);
     }

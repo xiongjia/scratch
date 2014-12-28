@@ -38,13 +38,16 @@ protected:
 class HttpResponse : boost::noncopyable
 {
 public:
-    virtual void Write(const char *buf, const size_t len) = 0;
+    virtual void WritePlainText(const unsigned short statusCode,
+                                const char *status,
+                                const char *content) = 0;
 
 protected:
     HttpResponse(void);
 };
 
-typedef std::function<bool(boost::shared_ptr<HttpRequest>, boost::shared_ptr<HttpResponse>)> ServHandler;
+typedef std::function<bool(boost::shared_ptr<HttpRequest>,
+                           boost::shared_ptr<HttpResponse>)> ServHandler;
 
 
 } /* namespace roach */

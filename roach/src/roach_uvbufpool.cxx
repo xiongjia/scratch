@@ -6,6 +6,7 @@
 #include "boost/make_shared.hpp"
 #include "boost/thread/thread.hpp"
 #include "boost/thread/mutex.hpp"
+#include "boost/foreach.hpp"
 
 #include "roach_uvbufpool.hxx"
 
@@ -33,6 +34,19 @@ public:
         , m_cachedSz(0)
     {
         /* NOP */
+    }
+
+    ~UVBufPoolImpl(void)
+    {
+        BOOST_FOREACH(uv_buf_t item, m_cache)
+        {
+            if (item.base != NULL)
+            {
+                free(item.base);
+                item.base = NULL;
+                item.len = 0;
+            }
+        }
     }
 
     virtual void Alloc(size_t suggestedSize, uv_buf_t *buf)

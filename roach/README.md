@@ -1,3 +1,17 @@
+# roach
+
+A simple HTTP Server C++ library ( libuv + http-parser + Boost + CMake )
+
+## Dependencies
+* libuv (v0.10) - https://github.com/libuv/libuv/tree/v0.10
+* http-parser (v0.10) - https://github.com/joyent/http-parser/tree/v0.10
+* Boost - http://www.boost.org/
+* CMake - http://www.cmake.org/
+
+## Example
+A simple HTTP server Example - roach/example/example.cxx
+
+```cpp
 /**
  * Roach - A simple HTTP Server. (libuv & http-parser & boost & C++11 & CMake)
  */
@@ -84,3 +98,5 @@ int main(int argc, char **argv)
     EXAMPLE->Run();
     return 0;
 }
+```
+

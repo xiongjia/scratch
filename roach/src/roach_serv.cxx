@@ -87,11 +87,6 @@ public:
         /* NOP */
     }
 
-    ~Connection(void)
-    {
-        printf("del conn\n");
-    }
-
     boost::shared_ptr<HTTPParser> GetParser(void)
     {
         return m_parser;
@@ -154,7 +149,6 @@ public:
 
     ~UVSender(void)
     {
-        printf("del snd\n");
         if (NULL != m_buf.base)
         {
             free(m_buf.base);
@@ -209,16 +203,15 @@ public:
         std::string contentStr(content);
         auto rep = boost::str(repFmt %
             statusCode % status % contentStr.size() % contentStr);
-
         UVSender *snd = new UVSender(m_logger, m_conn, &rep[0], rep.size());
-        uv_write(snd->GetWrite(), m_conn->GetStream(), snd->GetBuf(), 1, [](uv_write_t *req, int status) {
+        uv_write(snd->GetWrite(), m_conn->GetStream(), snd->GetBuf(), 1, 
+                [](uv_write_t *req, int status) {
             UVSender *snd = static_cast<UVSender*>(req->data);
             Connection *conn = snd->GetConn();
             boost::shared_ptr<Logger> logger = snd->GetLogger();
             logger->Log(Logger::Dbg, "write response status %d", status);
-
             uv_close(conn->GetHandle(), NULL);
-            UVAsyncDelete<UVSender>(conn->GetLoop(), snd);
+            delete snd;
         });
     }
 };
@@ -326,6 +319,8 @@ bool ServerImpl::Run(const char *ip, const int port)
     auto uvAddr = uvAddrCreator.second;
 
     UVTCPWrap listener(GetUVLoop(), this);
+    uv_tcp_nodelay(listener.GetTCP(), 1);
+    uv_tcp_keepalive(listener.GetTCP(), 1, 60);
     int uvErr = uv_tcp_bind(listener.GetTCP(), uvAddr->GetSockAddr(), 0);
     if (0 != uvErr)
     {
@@ -419,7 +414,12 @@ void ServerImpl::OnConnRead(Connection *conn,
         bool parse = parser->Parse(buf->base, nread);
         if (!parse)
         {
-            /* TODO: write a client/server error back */
+            /* TODO: write an error status back */
+            m_logger->LogNoFmt(Logger::Err,
+                "Invalid HTTP request Closing connection");
+            Connection::Shutdown(conn, [](Connection *conn, int /* status */) {
+                UVAsyncDelete<Connection>(conn->GetLoop(), conn);
+            });
         }
         else
         {
@@ -429,7 +429,6 @@ void ServerImpl::OnConnRead(Connection *conn,
             }
         }
     }
-
     /* free the buf */
     OnFreeBuf(buf);
 }
@@ -468,8 +467,9 @@ void ServerImpl::OnServHandler(Connection *conn,
         }
     }
 
+    /* default handler */
     m_logger->Log(Logger::Dbg, "Calling default handler");
-    /* TODO default handler */
+    rep->WritePlainText(404, "Not Found", "404 - Not Found");
 }
 
 } /* namespace roach */

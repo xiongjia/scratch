@@ -55,7 +55,6 @@ public:
             /* the response content */
             auto fmt = boost::format("Method = %s; Url = %s");
             auto content = boost::str(fmt % req->GetMethod() % req->GetUrl());
-
             /* write the 200 response to client */
             rep->WritePlainText(200, "OK", content.c_str());
             return true;

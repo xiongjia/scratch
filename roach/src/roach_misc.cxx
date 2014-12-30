@@ -71,11 +71,9 @@ std::pair<int, boost::shared_ptr<UVAddr>> UVAddr::CreateIP4(const char* ip,
 {
     struct sockaddr_in addr;
     int uvErr = uv_ip4_addr(ip, port, &addr);
-    if (0 != uvErr)
-    {
-        return std::make_pair(uvErr, boost::shared_ptr<UVAddr>(nullptr));
-    }
-    return std::make_pair(uvErr, boost::make_shared<UVAddrImpl>(&addr));
+    return (0 != uvErr) ?
+        std::make_pair(uvErr, boost::shared_ptr<UVAddr>(nullptr)) :
+        std::make_pair(0, boost::make_shared<UVAddrImpl>(&addr));
 }
 
 void UVShutdownLoop(uv_loop_t *loop)
@@ -88,15 +86,6 @@ void UVShutdownLoop(uv_loop_t *loop)
         free(handle);
     });
     uv_async_send(async);
-}
-
-std::string Util::StrFromBuf(const char *at, const size_t len)
-{
-    std::string ret;
-    ret.resize(len + 1);
-    memcpy(&ret[0], at, len);
-    ret[len] = '\0';
-    return ret;
 }
 
 } /* namespace roach */

@@ -97,20 +97,6 @@ void UVAsyncDelete(uv_loop_t *loop, _Clz *ptr)
     uv_async_send(async);
 }
 
-
-class Util
-{
-public:
-    static std::string StrFromBuf(const char *at, const size_t len);
-
-private:
-    Util(void)
-    {
-        /* NOP */
-    }
-};
-
-
 } /* namespace roach */
 
 #endif /* !defined(_ROACH_MISC_HXX_) */

@@ -47,9 +47,13 @@ public:
     void Run(void)
     {
         m_srv = m_roach->CreateServ();
-        m_srv->SetHandler([](boost::shared_ptr<roach::HttpRequest> req,
+        m_srv->SetHandler([=](boost::shared_ptr<roach::HttpRequest> req,
                              boost::shared_ptr<roach::HttpResponse> rep)
                              -> bool {
+            m_logger->Log(roach::Logger::Dbg,
+                "New Request: Method = %s, Url = %s",
+                req->GetMethod(), req->GetUrl());
+
             /* the response content */
             auto fmt = boost::format("Method = %s; Url = %s\r\n");
             auto content = boost::str(fmt % req->GetMethod() % req->GetUrl());

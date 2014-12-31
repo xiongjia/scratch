@@ -235,7 +235,6 @@ private:
 
 public:
     ServerImpl(boost::shared_ptr<Context> ctx);
-    ~ServerImpl(void);
 
     virtual bool Run(const char *ip, const int port);
     virtual void Stop(void);
@@ -281,11 +280,6 @@ ServerImpl::ServerImpl(boost::shared_ptr<Context> ctx)
     , m_isRunning(false)
 {
     uv_loop_init(&m_uvLoop);
-}
-
-ServerImpl::~ServerImpl(void)
-{
-    uv_loop_close(&m_uvLoop);
 }
 
 void ServerImpl::Stop(void)

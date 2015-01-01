@@ -70,10 +70,14 @@ public:
     }
 };
 
+class UVAddr;
+typedef boost::shared_ptr<UVAddr> UVAddrPtr;
+
 class UVAddr : boost::noncopyable
 {
 public:
-    static std::pair<int, boost::shared_ptr<UVAddr>> CreateIP4(const char* ip, int port);
+    
+    static std::pair<int, UVAddrPtr> CreateIP4(const char* ip, int port);
 
     virtual const struct sockaddr*    GetSockAddr(void) const = 0;
     virtual const struct sockaddr_in* GetSockAddrIn(void) const = 0;

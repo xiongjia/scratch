@@ -66,25 +66,33 @@ UVAddr::UVAddr(void)
     /* NOP */
 }
 
-std::pair<int, boost::shared_ptr<UVAddr>> UVAddr::CreateIP4(const char* ip,
-                                                            int port)
+std::pair<int, UVAddrPtr> UVAddr::CreateIP4(const char* ip, int port)
 {
     struct sockaddr_in addr;
     int uvErr = uv_ip4_addr(ip, port, &addr);
-    return (0 != uvErr) ?
-        std::make_pair(uvErr, boost::shared_ptr<UVAddr>(nullptr)) :
-        std::make_pair(0, boost::make_shared<UVAddrImpl>(&addr));
+    if (0 != uvErr)
+    {
+        boost::shared_ptr<UVAddr> empty;
+        return std::make_pair(uvErr, empty);
+    }
+    else
+    {
+        return std::make_pair(0, boost::make_shared<UVAddrImpl>(&addr));
+    }
+}
+
+static void OnUVShutdownLoop(uv_async_t* handle)
+{
+    uv_loop_t *stop = static_cast<uv_loop_t*>(handle->data);
+    uv_stop(stop);
+    free(handle);
 }
 
 void UVShutdownLoop(uv_loop_t *loop)
 {
     uv_async_t *async = static_cast<uv_async_t*>(malloc(sizeof(uv_async_t)));
     async->data = loop;
-    uv_async_init(loop, async, [](uv_async_t *handle) {
-        uv_loop_t *stop = static_cast<uv_loop_t*>(handle->data);
-        uv_stop(stop);
-        free(handle);
-    });
+    uv_async_init(loop, async, OnUVShutdownLoop);
     uv_async_send(async);
 }
 

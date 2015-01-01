@@ -25,6 +25,13 @@ private:
     http_method m_method;
 
 public:
+    static int OnMsgBeginFunc(http_parser *parse)
+    {
+        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
+        self->OnMsgBegin(parse);
+        return 0;
+    }
+
     void OnMsgBegin(http_parser * /* parse */)
     {
         m_msgCompleted = false;
@@ -34,15 +41,36 @@ public:
         m_hdr->clear();
     }
 
+    static int OnUrlFunc(http_parser *parse, const char *at, size_t len)
+    {
+        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
+        self->OnUrl(parse, at, len);
+        return 0;
+    }
+
     void OnUrl(http_parser * /* parse */, const char *at, size_t len)
     {
         m_url = std::string(at, len);
+    }
+
+    static int OnHdrFieldFunc(http_parser *parse, const char *at, size_t len)
+    {
+        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
+        self->OnHdrField(parse, at, len);
+        return 0;
     }
 
     void OnHdrField(http_parser * /* parse */, const char *at, size_t len)
     {
         m_lastHdrField = std::string(at, len);
     }
+
+    static int OnHdrValueFunc(http_parser *parse, const char *at, size_t len)
+    {
+        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
+        self->OnHdrValue(parse, at, len);
+        return 0;
+    };
 
     void OnHdrValue(http_parser * /* parse */, const char *at, size_t len)
     {
@@ -54,9 +82,28 @@ public:
         (*m_hdr)[m_lastHdrField] = hdrVal;
     }
 
+    static int OnHdrCompleteFunc(http_parser *parse)
+    {
+        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
+        self->OnHdrComplete(parse);
+        return 0;
+    }
+
     void OnHdrComplete(http_parser * /* parse */)
     {
         m_hdrCompleted = true;
+    }
+
+    static int OnBodyFunc(http_parser *parse, const char *at, size_t len)
+    {
+        return 0;
+    }
+
+    static int OnMsgCompleteFunc(http_parser *parse)
+    {
+        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
+        self->OnMsgComplete(parse);
+        return 1;
     }
 
     void OnMsgComplete(http_parser *parse)
@@ -113,44 +160,13 @@ HTTPParserImpl::HTTPParserImpl(void)
     , m_hdr(boost::make_shared<HttpHeader>())
 {
     memset(&m_setting, 0, sizeof(m_setting));
-    m_setting.on_message_begin = [](http_parser *parse) -> int {
-        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
-        self->OnMsgBegin(parse);
-        return 0;
-    };
-    m_setting.on_url = [](http_parser *parse,
-                          const char *at, size_t len) -> int {
-        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
-        self->OnUrl(parse, at, len);
-        return 0;
-    };
-    m_setting.on_header_field = [](http_parser *parse,
-                                   const char *at, size_t len) -> int {
-        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
-        self->OnHdrField(parse, at, len);
-        return 0;
-    };
-    m_setting.on_header_value = [](http_parser *parse,
-                                   const char *at, size_t len) -> int {
-        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
-        self->OnHdrValue(parse, at, len);
-        return 0;
-    };
-    m_setting.on_headers_complete = [](http_parser *parse) -> int {
-        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
-        self->OnHdrComplete(parse);
-        return 0;
-    };
-    m_setting.on_body = [](http_parser *parse,
-                           const char *at, size_t len) -> int {
-        /* TODO: on_body recive the data of post request */
-        return 0;
-    };
-    m_setting.on_message_complete = [](http_parser *parse) -> int {
-        HTTPParserImpl *self = static_cast<HTTPParserImpl*>(parse->data);
-        self->OnMsgComplete(parse);
-        return 1;
-    };
+    m_setting.on_message_begin = HTTPParserImpl::OnMsgBeginFunc;
+    m_setting.on_url = HTTPParserImpl::OnUrlFunc;
+    m_setting.on_header_field = HTTPParserImpl::OnHdrFieldFunc;
+    m_setting.on_header_value = HTTPParserImpl::OnHdrValueFunc;
+    m_setting.on_headers_complete = HTTPParserImpl::OnHdrCompleteFunc;
+    m_setting.on_body = HTTPParserImpl::OnBodyFunc;
+    m_setting.on_message_complete = HTTPParserImpl::OnMsgCompleteFunc;
 
     m_paser.data = this;
     http_parser_init(&m_paser, HTTP_REQUEST);

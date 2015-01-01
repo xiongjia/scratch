@@ -13,7 +13,7 @@
 #   include "boost/format.hpp"
 #   pragma warning (push)
 #   pragma warning (default : 4819)
-#else 
+#else
 #   include "boost/format.hpp"
 #endif /* defined(_MSC_VER) */
 

@@ -131,8 +131,8 @@ private:
 public:
     UVSender(boost::shared_ptr<Logger> logger,
              Connection *conn, const char *buf, size_t len)
-        : m_conn(conn)
-        , m_logger(logger)
+        : m_logger(logger)
+        , m_conn(conn)
     {
         m_wr.data = this;
         m_buf.base = (char*)malloc(len);
@@ -185,8 +185,8 @@ private:
 public:
     HttpResponseImpl(Connection *conn, boost::shared_ptr<Logger> logger)
         : HttpResponse()
-        , m_conn(conn)
         , m_logger(logger)
+        , m_conn(conn)
     {
         /* NOP */
     }
@@ -225,7 +225,6 @@ private:
     boost::shared_ptr<UVBufPool> m_uvBufPool;
 
     uv_loop_t m_uvLoop;
-    uv_tcp_t  m_listener;
     volatile bool m_isRunning;
 
     uv_loop_t* GetUVLoop(void)
@@ -274,8 +273,8 @@ boost::shared_ptr<Server> Server::Create(boost::shared_ptr<Context> ctx)
 
 ServerImpl::ServerImpl(boost::shared_ptr<Context> ctx)
     : Server()
-    , m_ctx(ctx)
     , m_logger(ctx->GetLogger())
+    , m_ctx(ctx)
     , m_uvBufPool(UVBufPool::Create(m_ctx))
     , m_isRunning(false)
 {

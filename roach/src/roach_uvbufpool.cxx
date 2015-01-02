@@ -28,9 +28,9 @@ private:
 
 public:
     UVBufPoolImpl(boost::shared_ptr<Context> ctx, const unsigned int maxCache)
-        : m_maxCache(maxCache)
-        , m_context(ctx)
+        : m_context(ctx)
         , m_logger(m_context->GetLogger())
+        , m_maxCache(maxCache)
         , m_cachedSz(0)
     {
         /* NOP */

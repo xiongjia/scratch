@@ -19,6 +19,11 @@ if (MSVC)
     set(CMAKE_CXX_STANDARD_LIBRARIES "ws2_32.lib advapi32.lib psapi.lib iphlpapi.lib")
 endif()
 
+if (APPLE)
+    # Enable C++ 11 on OS X
+    add_definitions(-std=c++11 -stdlib=libc++)
+endif()
+
 # enable boost static flag
 unset(Boost_LIBRARIES)
 set(Boost_USE_STATIC ON)

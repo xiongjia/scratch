@@ -154,10 +154,10 @@ HTTPParser::HTTPParser(void)
 
 HTTPParserImpl::HTTPParserImpl(void)
     : HTTPParser()
-    , m_hdrCompleted(false)
     , m_msgCompleted(false)
-    , m_method(HTTP_GET)
+    , m_hdrCompleted(false)
     , m_hdr(boost::make_shared<HttpHeader>())
+    , m_method(HTTP_GET)
 {
     memset(&m_setting, 0, sizeof(m_setting));
     m_setting.on_message_begin = HTTPParserImpl::OnMsgBeginFunc;

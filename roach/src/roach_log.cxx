@@ -53,11 +53,19 @@ public:
         {
             return;
         }
+#if defined(_MSC_VER)
         size_t needed = _vsnprintf_c(NULL, 0, fmt, args);
         std::string msg;
         msg.resize(needed + 1);
         _vsnprintf_c(&msg[0], msg.size(), fmt, args);
         LogNoFmt(mask, msg.c_str());
+#else
+        size_t needed = vsnprintf(NULL, 0, fmt, args);
+        std::string msg;
+        msg.resize(needed + 1);
+        vsnprintf(&msg[0], msg.size(), fmt, args);
+        LogNoFmt(mask, msg.c_str());
+#endif /**/
     }
 
     virtual void Log(Mask mask, const char *fmt, ...)

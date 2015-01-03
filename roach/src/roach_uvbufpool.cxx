@@ -89,7 +89,7 @@ void UVBufPoolImpl::DoAlloc(size_t suggestedSize, uv_buf_t *buf)
         }
         else
         {
-            m_logger->Log(Logger::Dbg, "Create new uv_buf(%d)", suggestedSize);
+            m_logger->Log(Logger::Dbg, "Create new uv_buf(%u)", suggestedSize);
             buf->base = base;
             buf->len = suggestedSize;
         }
@@ -102,7 +102,7 @@ void UVBufPoolImpl::DoAlloc(size_t suggestedSize, uv_buf_t *buf)
         m_cachedSz = (m_cachedSz >= buf->len) ? (m_cachedSz - buf->len) : 0;
         m_cache.erase(cacheItem);
         m_logger->Log(Logger::Dbg,
-            "Reuse buffer: Suggested(%d), BufLen(%d), cachedSz(%d)",
+            "Reuse buffer: Suggested(%u), BufLen(%u), cachedSz(%u)",
             suggestedSize, buf->len, m_cachedSz);
     }
 }
@@ -115,16 +115,16 @@ void UVBufPoolImpl::DoFree(const uv_buf_t *buf)
         return;
     }
 
-    m_logger->Log(Logger::Dbg, "Freeing uv_buf(%d)", buf->len);
+    m_logger->Log(Logger::Dbg, "Freeing uv_buf(%u)", buf->len);
     if ((buf->len + m_cachedSz) >= m_maxCache)
     {
-        m_logger->Log(Logger::Dbg, "m_cachedSz(%d) + bufLen(%d) > m_maxCache",
+        m_logger->Log(Logger::Dbg, "m_cachedSz(%u) + bufLen(%u) > m_maxCache",
             m_cachedSz, buf->len);
         free(buf->base);
         return;
     }
 
-    m_logger->Log(Logger::Dbg, "Adding uv_buf(%d) to cache", buf->len);
+    m_logger->Log(Logger::Dbg, "Adding uv_buf(%u) to cache", buf->len);
     uv_buf_t cacheItem = uv_buf_init(buf->base, buf->len);
     m_cache.push_back(cacheItem);
     m_cachedSz += buf->len;

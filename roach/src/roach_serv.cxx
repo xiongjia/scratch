@@ -195,9 +195,9 @@ public:
         const char *status,
         const char *content)
     {
-        auto repFmt = boost::format("HTTP/1.1 %d %s\r\n"
+        auto repFmt = boost::format("HTTP/1.1 %u %s\r\n"
             "Content-Type: text/plain\r\n"
-            "Content-Length: %d\r\n"
+            "Content-Length: %u\r\n"
             "\r\n"
             "%s");
         std::string contentStr(content);
@@ -209,7 +209,7 @@ public:
             UVSender *snd = static_cast<UVSender*>(req->data);
             Connection *conn = snd->GetConn();
             boost::shared_ptr<Logger> logger = snd->GetLogger();
-            logger->Log(Logger::Dbg, "write response status %d", status);
+            logger->Log(Logger::Dbg, "write response status %u", status);
             uv_close(conn->GetHandle(), NULL);
             delete snd;
         });
@@ -382,7 +382,7 @@ void ServerImpl::OnConnRead(Connection *conn,
     {
         if (UV_EOF != nread)
         {
-            m_logger->Log(Logger::Err, "Read error: nread = %d", nread);
+            m_logger->Log(Logger::Err, "Read error: nread = %u", nread);
         }
         else
         {
@@ -402,7 +402,7 @@ void ServerImpl::OnConnRead(Connection *conn,
     else
     {
         /* parse HTTP request */
-        m_logger->Log(Logger::Dbg, "Read %d bytes", nread);
+        m_logger->Log(Logger::Dbg, "Read %u bytes", nread);
         boost::shared_ptr<HTTPParser> parser = conn->GetParser();
         bool parse = parser->Parse(buf->base, nread);
         if (!parse)

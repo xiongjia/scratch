@@ -12,6 +12,8 @@ $RECYLE.BIN/
 *.swp
 tags
 .tern-port
+.tmp
+.sass-cache
 
 # java git ignore
 *.class
@@ -30,4 +32,10 @@ jwebsocket/build
 
 # CMake projects
 roach/build
+
+# node.js projects
+node_modules
+bower_components
+
+zealot/dist
 

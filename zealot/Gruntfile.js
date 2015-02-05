@@ -71,12 +71,7 @@ module.exports = function (grunt) {
           }
         }
       },
-      dist: {
-        options: {
-          base: '<%= config.dist %>',
-          livereload: false
-        }
-      }
+      dist: { options: { base: '<%= config.dist %>', livereload: false } }
     },
     clean: {
       dist: {

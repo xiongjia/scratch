@@ -15,6 +15,7 @@
 		E89252081ADA773400168CA3 /* MainView.m in Sources */ = {isa = PBXBuildFile; fileRef = E89252071ADA773400168CA3 /* MainView.m */; };
 		E892520E1ADA92F200168CA3 /* HTTPServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E892520C1ADA92F200168CA3 /* HTTPServerViewController.m */; };
 		E892520F1ADA92F200168CA3 /* HTTPServerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E892520D1ADA92F200168CA3 /* HTTPServerViewController.xib */; };
+		E89252161ADAB30600168CA3 /* AbathurLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E89252151ADAB30600168CA3 /* AbathurLogger.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,8 @@
 		E892520B1ADA92F200168CA3 /* HTTPServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServerViewController.h; sourceTree = "<group>"; };
 		E892520C1ADA92F200168CA3 /* HTTPServerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPServerViewController.m; sourceTree = "<group>"; };
 		E892520D1ADA92F200168CA3 /* HTTPServerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HTTPServerViewController.xib; sourceTree = "<group>"; };
+		E89252141ADAB30600168CA3 /* AbathurLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbathurLogger.h; path = abathur/AbathurLogger.h; sourceTree = "<group>"; };
+		E89252151ADAB30600168CA3 /* AbathurLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AbathurLogger.m; path = abathur/AbathurLogger.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				E83D58911ADA72B400C7BDF4 /* Main */,
+				E89252101ADAB2A200168CA3 /* Misc */,
 				E89252091ADA91AC00168CA3 /* Samples */,
 				E83D58661ADA55E400C7BDF4 /* Supporting Files */,
 			);
@@ -167,6 +171,16 @@
 				E892520D1ADA92F200168CA3 /* HTTPServerViewController.xib */,
 			);
 			name = "HTTP Server";
+			sourceTree = "<group>";
+		};
+		E89252101ADAB2A200168CA3 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				E89252141ADAB30600168CA3 /* AbathurLogger.h */,
+				E89252151ADAB30600168CA3 /* AbathurLogger.m */,
+			);
+			name = Misc;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,6 +319,7 @@
 			files = (
 				E83D586C1ADA55E400C7BDF4 /* AppDelegate.m in Sources */,
 				E83D58691ADA55E400C7BDF4 /* main.m in Sources */,
+				E89252161ADAB30600168CA3 /* AbathurLogger.m in Sources */,
 				E89252081ADA773400168CA3 /* MainView.m in Sources */,
 				E892520E1ADA92F200168CA3 /* HTTPServerViewController.m in Sources */,
 			);

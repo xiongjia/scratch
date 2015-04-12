@@ -1,6 +1,7 @@
 /* MainView.m - Abathur */
 
 #import "MainView.h"
+#import "AbathurLogger.h"
 
 @interface MainView ()
 @property (nonatomic, strong) NSArray *sampleItems;
@@ -19,12 +20,16 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    ABLOG(ABLOG_DBG|ABLOG_INF, @"Main view did load");
+
+    /* All samples */
     self.sampleItems = @[
                          @{ KEY_TITLE: @"HTTP Server",
                             KEY_DESC: @"A simple HTTP sample Server",
                             KEY_CLASS: @"HTTPServerViewController",
                             },
                          ];
+
 }
 
 - (void)didReceiveMemoryWarning {

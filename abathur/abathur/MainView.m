@@ -7,6 +7,7 @@
 @end
 
 #pragma mark - The constant values
+
 static NSString *const KEY_TITLE = @"Title";
 static NSString *const KEY_DESC  = @"Desc";
 static NSString *const KEY_CLASS = @"Class";
@@ -15,6 +16,7 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
 @implementation MainView
 
 #pragma mark - General functions
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.sampleItems = @[
@@ -29,13 +31,15 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Table view data source
+#pragma mark - Table view data
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView
+ numberOfRowsInSection:(NSInteger)section {
     return [self.sampleItems count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: SAMPLE_CELL];
     NSDictionary *sampleInfo = self.sampleItems[indexPath.row];
     cell.textLabel.text = sampleInfo[KEY_TITLE];
@@ -43,7 +47,8 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView
+    didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *sampleInfo = self.sampleItems[indexPath.row];
     Class sampleClass = NSClassFromString(sampleInfo[KEY_CLASS]);
     if (sampleClass) {

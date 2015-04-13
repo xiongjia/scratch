@@ -33,4 +33,9 @@ static const AbathurLogFlag ABLOG_DBG = 1 << 3;
     srcLine: (int)srcLine
      format: (NSString *)format, ...;
 
+- (void)logMessage: (AbathurLogFlag)flag
+           srcFile: (const char *)srcFile
+           srcLine: (int)srcLine
+           message: (NSString*)message;
+
 @end

@@ -20,7 +20,7 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    ABLOG(ABLOG_DBG|ABLOG_INF, @"Main view did load");
+    ABLOG(ABLOG_DBG, @"Main view did load");
 
     /* All samples */
     self.sampleItems = @[
@@ -45,6 +45,7 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    ABLOG(ABLOG_DBG, @"Creating cell[%d]", indexPath.row);
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: SAMPLE_CELL];
     NSDictionary *sampleInfo = self.sampleItems[indexPath.row];
     cell.textLabel.text = sampleInfo[KEY_TITLE];
@@ -55,6 +56,7 @@ static NSString *const SAMPLE_CELL = @"SampleCell";
 - (void)tableView:(UITableView *)tableView
     didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *sampleInfo = self.sampleItems[indexPath.row];
+    ABLOG(ABLOG_DBG, @"Creating sample class = %@", sampleInfo[KEY_CLASS]);
     Class sampleClass = NSClassFromString(sampleInfo[KEY_CLASS]);
     if (sampleClass) {
         id instance = [[sampleClass alloc] init];

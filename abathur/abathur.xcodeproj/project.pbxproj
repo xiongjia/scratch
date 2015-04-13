@@ -11,6 +11,7 @@
 		E83D58691ADA55E400C7BDF4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E83D58681ADA55E400C7BDF4 /* main.m */; };
 		E83D586C1ADA55E400C7BDF4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E83D586B1ADA55E400C7BDF4 /* AppDelegate.m */; };
 		E83D58831ADA55E400C7BDF4 /* abathurTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E83D58821ADA55E400C7BDF4 /* abathurTests.m */; };
+		E88901331ADC0EFD00F9954C /* HTTPServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E88901321ADC0EFD00F9954C /* HTTPServer.m */; };
 		E89252051ADA76D400168CA3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E89252031ADA76D400168CA3 /* Main.storyboard */; };
 		E89252081ADA773400168CA3 /* MainView.m in Sources */ = {isa = PBXBuildFile; fileRef = E89252071ADA773400168CA3 /* MainView.m */; };
 		E892520E1ADA92F200168CA3 /* HTTPServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E892520C1ADA92F200168CA3 /* HTTPServerViewController.m */; };
@@ -40,6 +41,8 @@
 		E83D587C1ADA55E400C7BDF4 /* abathurTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = abathurTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E83D58811ADA55E400C7BDF4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E83D58821ADA55E400C7BDF4 /* abathurTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = abathurTests.m; sourceTree = "<group>"; };
+		E88901311ADC0EFD00F9954C /* HTTPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServer.h; sourceTree = "<group>"; };
+		E88901321ADC0EFD00F9954C /* HTTPServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPServer.m; sourceTree = "<group>"; };
 		E89252041ADA76D400168CA3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E89252061ADA773400168CA3 /* MainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainView.h; sourceTree = "<group>"; };
 		E89252071ADA773400168CA3 /* MainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainView.m; sourceTree = "<group>"; };
@@ -166,6 +169,8 @@
 		E892520A1ADA91BE00168CA3 /* HTTP Server */ = {
 			isa = PBXGroup;
 			children = (
+				E88901311ADC0EFD00F9954C /* HTTPServer.h */,
+				E88901321ADC0EFD00F9954C /* HTTPServer.m */,
 				E892520B1ADA92F200168CA3 /* HTTPServerViewController.h */,
 				E892520C1ADA92F200168CA3 /* HTTPServerViewController.m */,
 				E892520D1ADA92F200168CA3 /* HTTPServerViewController.xib */,
@@ -317,6 +322,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E88901331ADC0EFD00F9954C /* HTTPServer.m in Sources */,
 				E83D586C1ADA55E400C7BDF4 /* AppDelegate.m in Sources */,
 				E83D58691ADA55E400C7BDF4 /* main.m in Sources */,
 				E89252161ADAB30600168CA3 /* AbathurLogger.m in Sources */,

@@ -32,6 +32,7 @@ jwebsocket/build
 
 # CMake projects
 roach/build
+anubarak/build
 
 # node.js projects
 node_modules

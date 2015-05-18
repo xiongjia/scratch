@@ -29,7 +29,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED COMPONENTS
-    program_options)
+    program_options thread)
 
 # include directories
 include_directories("${LUA_INCLUDE_DIR}"
@@ -38,14 +38,18 @@ include_directories("${LUA_INCLUDE_DIR}"
 
 set(dbg_libs
     "${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG}"
+    "${Boost_THREAD_LIBRARY_DEBUG}"
     "${LUA_LIBRARY_DEBUG}")
 
 set(opt_libs
     "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}"
+    "${Boost_THREAD_LIBRARY_RELEASE}"
     "${LUA_LIBRARY_RELEASE}")
 
 add_library(libanubarak STATIC
     "${PROJECT_SOURCE_DIR}/src/main/ab_types.h"
+    "${PROJECT_SOURCE_DIR}/src/main/ab_logger.h"
+    "${PROJECT_SOURCE_DIR}/src/main/ab_logger.cxx"
     "${PROJECT_SOURCE_DIR}/src/main/ab_misc.h"
     "${PROJECT_SOURCE_DIR}/src/main/ab_misc.cxx"
     "${PROJECT_SOURCE_DIR}/src/main/anubarak.cxx"

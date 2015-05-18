@@ -2,7 +2,7 @@
  *
  */
 
-int test(void)
-{
-    return 0;
-}
+#include <stdio.h>
+#include "anubarak.h"
+
+void Test() { }

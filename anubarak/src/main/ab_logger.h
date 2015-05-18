@@ -34,6 +34,9 @@ public:
     virtual void SetLogLevel(Level level) = 0;
     virtual const Level GetLogLevel(void) const = 0;
 
+    virtual void RegisterHandler(boost::shared_ptr<LoggerHandler> handler) = 0;
+
+public:
     virtual void Log(const char *src, const int srcLine,
                      LoggerMask mask, const char *fmt, ...) = 0;
 
@@ -49,7 +52,7 @@ _ANUBARAK_END
 #define AB_LOG_NOFMT(_mask, _log) \
     ab::Logger::instance()->LogNoFmt(__FILE__, __LINE__, _mask, _log);
 
-#if defined(WIN32)
+#if defined(_MSC_VER)
 #   define AB_LOG(_mask, _log, ...) \
         ab::Logger::instance()->Log(__FILE__, __LINE__, _mask, _log, __VA_ARGS__);
 #else

@@ -29,7 +29,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED COMPONENTS
-    program_options thread)
+    program_options thread system date_time chrono filesystem)
 
 # include directories
 include_directories("${LUA_INCLUDE_DIR}"
@@ -39,11 +39,19 @@ include_directories("${LUA_INCLUDE_DIR}"
 set(dbg_libs
     "${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG}"
     "${Boost_THREAD_LIBRARY_DEBUG}"
+    "${Boost_SYSTEM_LIBRARY_DEBUG}"
+    "${Boost_DATE_TIME_LIBRARY_DEBUG}"
+    "${Boost_CHRONO_LIBRARY_DEBUG}"
+    "${Boost_FILESYSTEM_LIBRARY_DEBUG}"
     "${LUA_LIBRARY_DEBUG}")
 
 set(opt_libs
     "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}"
     "${Boost_THREAD_LIBRARY_RELEASE}"
+    "${Boost_SYSTEM_LIBRARY_RELEASE}"
+    "${Boost_DATE_TIME_LIBRARY_RELEASE}"
+    "${Boost_CHRONO_LIBRARY_RELEASE}"
+    "${Boost_FILESYSTEM_LIBRARY_RELEASE}"
     "${LUA_LIBRARY_RELEASE}")
 
 add_library(libanubarak STATIC

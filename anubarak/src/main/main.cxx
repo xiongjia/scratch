@@ -5,6 +5,7 @@
 
 #include <boost/make_shared.hpp>
 #include <boost/program_options.hpp>
+namespace po = boost::program_options;
 
 #include "anubarak.h"
 #include "ab_logger.h"
@@ -27,22 +28,20 @@ public:
 int main(int argc, char **argv)
 {
     /* check program options */
-    boost::program_options::options_description mainOptDesc("Anubarak");
+    po::options_description mainOptDesc("Anubarak");
     mainOptDesc.add_options()
         ("luaFile,l",
-            boost::program_options::value<std::string>()->default_value("core/anubarak.lua"),
-            "The testing LUA script filename.")
+            po::value<std::string>()->default_value("core/anubarak.lua"),
+            "The test LUA script filename.")
         ("help,h", "Print help messages");
 
-    boost::program_options::variables_map varMap;
+    po::variables_map varMap;
     try
     {
-        boost::program_options::store(
-            boost::program_options::parse_command_line(argc,
-                argv, mainOptDesc), varMap);
-        boost::program_options::notify(varMap);
+        po::store(po::parse_command_line(argc, argv, mainOptDesc), varMap);
+        po::notify(varMap);
     }
-    catch (boost::program_options::error &optErr)
+    catch (po::error &optErr)
     {
         /* Invalid options */
         std::cerr << "ERROR: " << optErr.what() << std::endl << std::endl;

@@ -1,7 +1,10 @@
 /**
  */
 
+#include <iostream>
+
 #include <boost/make_shared.hpp>
+#include <boost/program_options.hpp>
 
 #include "anubarak.h"
 #include "ab_logger.h"
@@ -14,20 +17,59 @@ public:
                        ab::LoggerMask mask,
                        const char *log)
     {
-        fprintf(stdout, "[%s:%d] [0x%x] %s\n", src, srcLine, mask, log);
+        /* [<src>:<srcLine>] [0x<mask>]  <log> */
+        std::cout << "[" << src << ":" << std::oct << srcLine << "] "
+                  << "[0x" << std::hex << mask << "] "
+                  << (log == NULL ? "" : log) << std::endl;
     }
 };
 
-
 int main(int argc, char **argv)
 {
-    /* init logger */
-    boost::shared_ptr<ab::Logger> logger = ab::Logger::instance();
+    /* check program options */
+    boost::program_options::options_description mainOptDesc("Anubarak");
+    mainOptDesc.add_options()
+        ("luaFile,l",
+            boost::program_options::value<std::string>()->default_value("core/anubarak.lua"),
+            "The testing LUA script filename.")
+        ("help,h", "Print help messages");
+
+    boost::program_options::variables_map varMap;
+    try
+    {
+        boost::program_options::store(
+            boost::program_options::parse_command_line(argc,
+                argv, mainOptDesc), varMap);
+        boost::program_options::notify(varMap);
+    }
+    catch (boost::program_options::error &optErr)
+    {
+        /* Invalid options */
+        std::cerr << "ERROR: " << optErr.what() << std::endl << std::endl;
+        std::cout << mainOptDesc << std::endl;
+        return 0;
+    }
+
+    if (varMap.count("help"))
+    {
+        /* print usage */
+        std::cout << mainOptDesc << std::endl;
+        return 0;
+    }
+
+    /* initialize logger */
+    auto logger = ab::Logger::instance();
     logger->RegisterHandler(boost::make_shared<ConsoleLogger>());
     logger->SetLogLevel(ab::Logger::Level::All);
 
+
     /* create Anubarak */
-    boost::shared_ptr<ab::Anubarak> anubarak = ab::Anubarak::Create();
-    AB_LOG(ab::LoggerMask::Dbg, "Creating Anubarak");
+    AB_LOG(AB_LOG_DBG, "Creating Anubarak");
+    auto anubarak = ab::Anubarak::Create();
+
+    const std::string &testLuaFile = varMap["luaFile"].as<std::string>();
+    AB_LOG(AB_LOG_DBG, "The testing lua file %s", testLuaFile.c_str());
+    anubarak->Run(testLuaFile.c_str());
+
     return 0;
 }

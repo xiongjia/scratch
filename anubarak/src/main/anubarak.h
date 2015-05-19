@@ -16,6 +16,8 @@ class Anubarak : boost::noncopyable
 public:
     static boost::shared_ptr<Anubarak> Create(void);
 
+    virtual void Run(const char *testLuaFile) = 0;
+
 protected:
     Anubarak(void);
 };

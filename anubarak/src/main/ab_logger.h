@@ -49,15 +49,20 @@ protected:
 
 _ANUBARAK_END
 
+#define AB_LOG_ERR  (ab::LoggerMask::Err)
+#define AB_LOG_WAR  (ab::LoggerMask::War)
+#define AB_LOG_INF  (ab::LoggerMask::Inf)
+#define AB_LOG_DBG  (ab::LoggerMask::Dbg)
+
 #define AB_LOG_NOFMT(_mask, _log) \
-    ab::Logger::instance()->LogNoFmt(__FILE__, __LINE__, _mask, _log);
+    ab::Logger::instance()->LogNoFmt(__FILE__, __LINE__, _mask, _log)
 
 #if defined(_MSC_VER)
 #   define AB_LOG(_mask, _log, ...) \
-        ab::Logger::instance()->Log(__FILE__, __LINE__, _mask, _log, __VA_ARGS__);
+        ab::Logger::instance()->Log(__FILE__, __LINE__, _mask, _log, __VA_ARGS__)
 #else
 #   define AB_LOG(_mask, _log, ...) \
-        ab::Logger::instance()->Log(__FILE__, __LINE__, _mask, _log, ##__VA_ARGS__);
+        ab::Logger::instance()->Log(__FILE__, __LINE__, _mask, _log, ##__VA_ARGS__)
 #endif /* defined(WIN32) */
 
 #endif /* !defined(_AB_LOGGER_H_) */

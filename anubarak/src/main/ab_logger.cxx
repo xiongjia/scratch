@@ -82,8 +82,8 @@ private:
             return;
         }
 
-        boost::filesystem::path srcPath{ src };
-        std::string srcFilename = srcPath.filename().string();
+        boost::filesystem::path srcPath(src);
+        const std::string &srcFilename = srcPath.filename().string();
         BOOST_FOREACH(auto handler, m_handler)
         {
             handler->OnLog(srcFilename.c_str(), srcLine, mask, log);

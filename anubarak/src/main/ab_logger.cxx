@@ -69,8 +69,8 @@ public:
     {
         WriteLog(src, srcLine, mask, log);
     }
-private:
 
+private:
     void WriteLog(const char *src,
                   const int srcLine,
                   LoggerMask mask,
@@ -82,11 +82,21 @@ private:
             return;
         }
 
-        boost::filesystem::path srcPath(src);
-        const std::string &srcFilename = srcPath.filename().string();
-        BOOST_FOREACH(auto handler, m_handler)
+        if (NULL != src)
         {
-            handler->OnLog(srcFilename.c_str(), srcLine, mask, log);
+            boost::filesystem::path srcPath(src);
+            const std::string &srcFilename = srcPath.filename().string();
+            BOOST_FOREACH(auto handler, m_handler)
+            {
+                handler->OnLog(srcFilename.c_str(), srcLine, mask, log);
+            }
+        }
+        else
+        {
+            BOOST_FOREACH(auto handler, m_handler)
+            {
+                handler->OnLog("", 0, mask, log);
+            }
         }
     }
 

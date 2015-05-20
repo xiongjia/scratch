@@ -69,6 +69,5 @@ int main(int argc, char **argv)
     const std::string &testLuaFile = varMap["luaFile"].as<std::string>();
     AB_LOG(AB_LOG_DBG, "The testing lua file %s", testLuaFile.c_str());
     anubarak->Run(testLuaFile.c_str());
-
     return 0;
 }

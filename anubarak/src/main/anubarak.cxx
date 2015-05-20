@@ -4,6 +4,7 @@
 
 #include <boost/make_shared.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
 
 extern "C"
 {
@@ -15,23 +16,47 @@ extern "C"
 #include "anubarak.h"
 #include "ab_logger.h"
 
+#include "ab_mod_logger.h"
+
 _ANUBARAK_BEGIN
 
 class AnubarakImpl : public Anubarak
 {
 private:
     lua_State *m_lua;
+    std::vector<boost::shared_ptr<Module>> m_modules;
+
+private:
+    static int LuaPanic(lua_State *lua)
+    {
+        /* lua panic */
+        if (LUA_TSTRING == lua_type(lua, -1))
+        {
+            AB_LOG(AB_LOG_ERR, "A Lua error has occured: %s",
+                lua_tostring(lua, -1));
+        }
+        else
+        {
+            AB_LOG(AB_LOG_ERR, "A Lua error has occured: %p",
+                lua_topointer(lua, -1));
+        }
+        return 0;
+    }
 
 public:
     AnubarakImpl(void)
         : Anubarak()
         , m_lua(NULL)
     {
-        /* TODO
-         * 1. update lua panic
-         * 2. load built-in LUA modules
-         */
         m_lua = luaL_newstate();
+        lua_atpanic(m_lua, AnubarakImpl::LuaPanic);
+
+        /* load build-in modules */
+        m_modules.push_back(boost::make_shared<ModLogger>());
+        BOOST_FOREACH(auto mod, m_modules)
+        {
+            mod->Register(m_lua);
+        }
         luaL_openlibs(m_lua);
     }
 
@@ -50,7 +75,7 @@ public:
         AB_LOG(AB_LOG_DBG, "Test Lua file: %s", srcPath.string().c_str());
         int error = luaL_loadfile(m_lua, srcPath.string().c_str()) ||
                     lua_pcall(m_lua, 0, 0, 0);
-        AB_LOG(AB_LOG_DBG, "Result: %d", error);
+        AB_LOG(AB_LOG_INF, "Result: %d", error);
     }
 };
 

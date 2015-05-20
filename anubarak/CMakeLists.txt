@@ -31,7 +31,7 @@ find_package(Boost REQUIRED COMPONENTS
     program_options thread system date_time chrono filesystem program_options)
 
 # finding SDL2
-find_path(SDL2_INCLUDE_DIR SDL2/sdl.h)
+find_path(SDL2_INCLUDE_DIR sdl.h)
 find_library(SDL2_LIBRARY_DEBUG NAMES SDL2)
 find_library(SDL2_LIBRARY_RELEASE NAMES SDL2)
 find_library(SDL2_MAIN_LIBRARY_DEBUG NAMES SDL2main)

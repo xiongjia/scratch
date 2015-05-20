@@ -10,8 +10,7 @@ namespace
 {
     int ABLLogger(lua_State *lua, ab::LoggerMask mask)
     {
-        size_t logStrLen;
-        const char *logStr = luaL_optlstring(lua, 1, NULL, &logStrLen);
+        const char *logStr = luaL_optlstring(lua, 1, NULL, NULL);
         if (NULL != logStr)
         {
             ab::Logger::instance()->LogNoFmt(NULL, 0, mask, logStr);

@@ -12,7 +12,6 @@ if(MSVC)
         # update to the static version of the run time library
         string(REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
     endforeach()
-
     set(CMAKE_C_STANDARD_LIBRARIES "")
     set(CMAKE_CXX_STANDARD_LIBRARIES "")
 endif()
@@ -31,8 +30,16 @@ set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED COMPONENTS
     program_options thread system date_time chrono filesystem program_options)
 
+# finding SDL2
+find_path(SDL2_INCLUDE_DIR SDL2/sdl.h)
+find_library(SDL2_LIBRARY_DEBUG NAMES SDL2)
+find_library(SDL2_LIBRARY_RELEASE NAMES SDL2)
+find_library(SDL2_MAIN_LIBRARY_DEBUG NAMES SDL2main)
+find_library(SDL2_MAIN_LIBRARY_RELEASE NAMES SDL2main)
+
 # include directories
 include_directories("${LUA_INCLUDE_DIR}"
+    "${SDL2_INCLUDE_DIR}"
     "${Boost_INCLUDE_DIRS}"
     "${PROJECT_SOURCE_DIR}/src/main")
 
@@ -44,6 +51,8 @@ set(dbg_libs
     "${Boost_CHRONO_LIBRARY_DEBUG}"
     "${Boost_FILESYSTEM_LIBRARY_DEBUG}"
     "${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG}"
+    "${SDL2_LIBRARY_DEBUG}"
+    "${SDL2_MAIN_LIBRARY_DEBUG}"
     "${LUA_LIBRARY_DEBUG}")
 
 set(opt_libs
@@ -54,6 +63,8 @@ set(opt_libs
     "${Boost_CHRONO_LIBRARY_RELEASE}"
     "${Boost_FILESYSTEM_LIBRARY_RELEASE}"
     "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}"
+    "${SDL2_LIBRARY_RELEASE}"
+    "${SDL2_MAIN_LIBRARY_RELEASE}"
     "${LUA_LIBRARY_RELEASE}")
 
 add_library(libanubarak STATIC

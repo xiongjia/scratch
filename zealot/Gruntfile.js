@@ -3,20 +3,21 @@
 module.exports = function (grunt) {
   var config;
 
+  /* load grunt plugins */
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
-  /* Configurable paths */
-  config = {
-    app: 'app',
-    dist: 'dist'
-  };
+  /* configuration */
+  config = { app: 'app', dist: 'dist' };
 
   /* Define the configuration for all the tasks */
   grunt.initConfig({
     config: config,
     watch: {
-      bower: { files: ['bower.json'], tasks: ['bowerInstall'] },
+      bower: {
+        files: ['bower.json'],
+        tasks: ['bowerInstall']
+      },
       js: {
         files: ['<%= config.app %>/scripts/{,*/}*.js'],
         tasks: ['jshint'],

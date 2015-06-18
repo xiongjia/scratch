@@ -28,5 +28,9 @@
   },
   "engines": {
     "node": ">=0.10.0"
+  },
+  "scripts": {
+    "build": "npm update && grunt",
+    "test": "grunt"
   }
 }

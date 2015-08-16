@@ -7,4 +7,4 @@ This "scratch" repository is saving my test codes  (e.g. The project template; T
 * **jscratch** : A simple gradle template for a Java application.
 * **jwebsocket** : A sample Echo Server & Client for [Java WebSocket](https://github.com/TooTallNate/Java-WebSocket)
 * **roach** : A simple HTTP Server library ( libuv + http-parser + Boost + CMake )
-* *zeratul* : A simple socks proxy (Boost ASIO)
+* **zeratul** : A simple socks proxy (Boost ASIO)

@@ -9,4 +9,5 @@ A simple socks proxy. (Boost ASIO)
 * Don't support Author methods
 * Don't support IPv6 and domain names
 * Don't support bind and UDP
+* Only support socks version 5 (rfc1928)
 

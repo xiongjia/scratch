@@ -1,5 +1,5 @@
 # Zeratul 
-A simple socks proxy. (Boost ASIO Example)
+A simple socks proxy. (Boost ASIO)
 
 ## Dependencies
 * Boost - http://www.boost.org/

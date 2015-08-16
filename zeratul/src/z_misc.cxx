@@ -1,5 +1,5 @@
 /**
- * Zeratul - A simple socks proxy. (Boost ASIO Example)
+ * Zeratul - A simple socks proxy. (Boost ASIO)
  */
 
 #include "boost/make_shared.hpp"

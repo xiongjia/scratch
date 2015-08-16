@@ -1,5 +1,5 @@
 # CMake build script
-# Zeratul - A simple socks proxy. (Boost ASIO Example)
+# Zeratul - A simple socks proxy. (Boost ASIO)
 cmake_minimum_required(VERSION 2.8)
 
 project(zeratul)

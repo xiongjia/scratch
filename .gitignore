@@ -34,6 +34,7 @@ jwebsocket/build
 roach/build
 anubarak/build
 zeratul/build
+gazlowe/build
 
 # node.js projects
 node_modules

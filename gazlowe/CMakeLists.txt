@@ -31,15 +31,24 @@ set(Boost_USE_STATIC ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost REQUIRED COMPONENTS
+    unit_test_framework system thread date_time chrono)
 
 include_directories("${PROJECT_SOURCE_DIR}"
     "${Boost_INCLUDE_DIRS}")
 
 set(gazlowe_boost_dbg_libs
+    "${Boost_SYSTEM_LIBRARY_DEBUG}"
+    "${Boost_DATE_TIME_LIBRARY_DEBUG}"
+    "${Boost_CHRONO_LIBRARY_DEBUG}"
+    "${Boost_THREAD_LIBRARY_DEBUG}"
     "${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG}")
 
 set(gazlowe_boost_opt_libs 
+    "${Boost_SYSTEM_LIBRARY_RELEASE}"
+    "${Boost_DATE_TIME_LIBRARY_RELEASE}"
+    "${Boost_CHRONO_LIBRARY_RELEASE}"
+    "${Boost_THREAD_LIBRARY_RELEASE}"
     "${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE}")
 
 add_executable(gazlowe

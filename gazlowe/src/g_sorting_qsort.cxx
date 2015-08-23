@@ -7,7 +7,6 @@
 #include <functional>
 #include <string>
 
-#define BOOST_TEST_MODULE Sorting
 #include "boost/test/unit_test.hpp"
 #include "boost/array.hpp"
 #include "boost/foreach.hpp"
@@ -15,7 +14,6 @@
 /* Quicksort: https://en.wikipedia.org/wiki/Quicksort */
 namespace gazlowe 
 {
-
     template<class T, std::size_t N, class C>
     void quick_sort_part(boost::array<T, N> &data, 
                          std::size_t begin, std::size_t end, C cmp)
@@ -47,6 +45,7 @@ namespace gazlowe
     }
 }
 
+BOOST_AUTO_TEST_SUITE(sorting)
 BOOST_AUTO_TEST_CASE(sorting_qsort)
 {
     /* Testing datum */
@@ -65,6 +64,7 @@ BOOST_AUTO_TEST_CASE(sorting_qsort)
     BOOST_CHECK_EQUAL_COLLECTIONS(dataNums1.begin(), dataNums1.end(),
                                   dataNums2.begin(), dataNums2.end());
 
+    /* sorting the strings */
     BOOST_TEST_MESSAGE("Sorting string array");
     boost::array<std::string, dataSz> dataStr1(dataStr);
     gazlowe::quick_sort(dataStr1, std::less<std::string>());
@@ -73,4 +73,4 @@ BOOST_AUTO_TEST_CASE(sorting_qsort)
     BOOST_CHECK_EQUAL_COLLECTIONS(dataStr1.begin(), dataStr1.end(),
                                   dataStr2.begin(), dataStr2.end());
 }
-
+BOOST_AUTO_TEST_SUITE_END()

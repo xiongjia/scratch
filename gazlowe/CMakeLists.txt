@@ -43,7 +43,9 @@ set(gazlowe_boost_opt_libs
     "${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE}")
 
 add_executable(gazlowe
-    "${PROJECT_SOURCE_DIR}/src/g_sorting_qsort.cxx")
+    "${PROJECT_SOURCE_DIR}/src/main.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_sorting_qsort.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode.cxx")
 
 target_link_libraries(gazlowe
     debug "${gazlowe_boost_dbg_libs}"

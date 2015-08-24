@@ -50,9 +50,9 @@ BOOST_AUTO_TEST_CASE(sorting_qsort)
 {
     /* Testing datum */
     const std::size_t dataSz = 7;
-    boost::array<int, dataSz> dataNum = { 2, 5, 3, 4, 8, 10, 2 };
+    boost::array<int, dataSz> dataNum = { {2, 5, 3, 4, 8, 10, 2} };
     boost::array<std::string, dataSz> dataStr = {
-        "2", "1", "5", "3", "4", "5", "3"
+        {"2", "1", "5", "3", "4", "5", "3"}
     };
 
     /* sorting the numbers */

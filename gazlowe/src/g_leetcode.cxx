@@ -10,6 +10,25 @@
 
 namespace gazlowe
 {
+    /* TreeNode for sevral tree problems */
+    typedef struct _TreeNode  TreeNode;
+    struct _TreeNode
+    {
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+
+        /* creating a new node on the mem pool */
+        static TreeNode* alloc_node(boost::pool<> &mpool, int val)
+        {
+            TreeNode *node = reinterpret_cast<TreeNode*>(mpool.malloc());
+            node->val = val;
+            node->left = nullptr;
+            node->right = nullptr;
+            return node;
+        }
+    };
+
     /* Single Number:
      * https://leetcode.com/problems/single-number/
      *
@@ -42,13 +61,6 @@ namespace gazlowe
     class MaxDepthBTree
     {
     public:
-        typedef struct _TreeNode
-        {
-            int val;
-            struct _TreeNode *left;
-            struct _TreeNode *right;
-        } TreeNode;
-
         static int maxDepth(TreeNode *root)
         {
             if (nullptr == root)
@@ -57,14 +69,32 @@ namespace gazlowe
             }
             return 1 + std::max(maxDepth(root->left), maxDepth(root->right));
         }
+    };
 
-        static TreeNode* alloc_node(boost::pool<> &mpool, int val)
+    /* Invert a binary tree:
+     * https://leetcode.com/problems/invert-binary-tree/
+     *
+     *      4
+     *    /   \
+     *   2     7
+     *  / \   / \
+     * 1   3 6   9
+     *
+     * to
+     *
+     *       4
+     *     /   \
+     *    7     2
+     *   / \   / \
+     *  9   6 3   1
+     */
+    class InvertBTree
+    {
+    public:
+        static TreeNode *invertTree(TreeNode *root)
         {
-            TreeNode *node = reinterpret_cast<TreeNode*>(mpool.malloc());
-            node->val = val;
-            node->left = nullptr;
-            node->right = nullptr;
-            return node;
+            /* TODO */
+            return nullptr;
         }
     };
 }
@@ -92,24 +122,43 @@ BOOST_AUTO_TEST_CASE(max_depth_btree)
      *          /
      *         7
      */
-    boost::pool<> mpool(sizeof(gazlowe::MaxDepthBTree::TreeNode));    
-    auto root = gazlowe::MaxDepthBTree::alloc_node(mpool, 0);
-    auto node = gazlowe::MaxDepthBTree::alloc_node(mpool, 1);
+    boost::pool<> mpool(sizeof(gazlowe::TreeNode));
+    auto root = gazlowe::TreeNode::alloc_node(mpool, 0);
+    auto node = gazlowe::TreeNode::alloc_node(mpool, 1);
     root->left = node;
-    node = gazlowe::MaxDepthBTree::alloc_node(mpool, 2);
+    node = gazlowe::TreeNode::alloc_node(mpool, 2);
     root->right = node;
-    node = gazlowe::MaxDepthBTree::alloc_node(mpool, 3);
+    node = gazlowe::TreeNode::alloc_node(mpool, 3);
     root->right->left = node;
-    node = gazlowe::MaxDepthBTree::alloc_node(mpool, 4);
+    node = gazlowe::TreeNode::alloc_node(mpool, 4);
     root->right->right = node;
-    node = gazlowe::MaxDepthBTree::alloc_node(mpool, 5);
+    node = gazlowe::TreeNode::alloc_node(mpool, 5);
     root->right->left->left = node;
-    node = gazlowe::MaxDepthBTree::alloc_node(mpool, 6);
+    node = gazlowe::TreeNode::alloc_node(mpool, 6);
     root->right->left->right = node;
-    node = gazlowe::MaxDepthBTree::alloc_node(mpool, 7);
+    node = gazlowe::TreeNode::alloc_node(mpool, 7);
     root->right->left->left->left = node;
     int depth = gazlowe::MaxDepthBTree::maxDepth(root);
     BOOST_CHECK(depth == 5);
+}
+
+BOOST_AUTO_TEST_CASE(invert_btree)
+{
+    /* Testing data:
+     *      4
+     *    /   \
+     *   2     7
+     *  / \   / \
+     * 1   3 6   9
+     *
+     * to
+     *
+     *       4
+     *     /   \
+     *    7     2
+     *   / \   / \
+     *  9   6 3   1
+     */
 }
 BOOST_AUTO_TEST_SUITE_END()
 

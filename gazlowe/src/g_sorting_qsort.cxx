@@ -9,7 +9,6 @@
 
 #include "boost/test/unit_test.hpp"
 #include "boost/array.hpp"
-#include "boost/foreach.hpp"
 
 /* Quicksort: https://en.wikipedia.org/wiki/Quicksort */
 namespace gazlowe 

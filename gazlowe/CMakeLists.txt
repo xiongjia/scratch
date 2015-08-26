@@ -53,6 +53,8 @@ set(gazlowe_boost_opt_libs
 
 add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/main.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_misc.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_misc.hxx"
     "${PROJECT_SOURCE_DIR}/src/g_sorting_qsort.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode.cxx")
 

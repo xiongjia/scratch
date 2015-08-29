@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 
+#include "boost/algorithm/string.hpp"
 #include "boost/make_shared.hpp"
 #include "boost/pool/pool.hpp"
 #include "boost/test/unit_test.hpp"
@@ -40,19 +41,30 @@ namespace gazlowe
             DumpEntry(root, data);
         }
 
+        virtual void Dump(TreeNode *root, std::string &data)
+        {
+            std::stringstream content;
+            Dump(root, content);
+            data = boost::algorithm::trim_copy(content.str());
+        }
+
         virtual TreeNode* Load(std::istream &data)
         {
-            std::for_each(std::istream_iterator<std::string>(data),
-                          std::istream_iterator<std::string>(), 
-                          [](std::string const &item) 
-            {
-                /* TODO Create the node again */
-            });
-            return nullptr;
+            std::istream_iterator<std::string> itr(data);
+            std::istream_iterator<std::string> eos;
+            TreeNode *root = NULL;
+            LoadEntry(&root, itr, eos);
+            return root;
+        }
+
+        virtual TreeNode* Load(const char *data)
+        {
+            std::stringstream content(data == NULL ? "" : data);
+            return Load(content);
         }
 
     private:
-        virtual void DumpEntry(TreeNode *node, std::ostream &data)
+        void DumpEntry(TreeNode *node, std::ostream &data)
         {
             if (nullptr == node)
             {
@@ -62,6 +74,27 @@ namespace gazlowe
             data << " " << node->val << " ";
             DumpEntry(node->left, data);
             DumpEntry(node->right, data);
+        }
+        
+        void LoadEntry(TreeNode **node,
+                       std::istream_iterator<std::string> &itr,
+                       std::istream_iterator<std::string> &eos)
+        {
+            if (itr == eos)
+            {
+                return;
+            }
+
+            if (itr->compare("#") == 0)
+            {
+                itr++;
+                return;
+            }
+
+            *node = AllocNode(std::atoi(itr->c_str()));
+            itr++;
+            LoadEntry(&(*node)->left, itr, eos);
+            LoadEntry(&(*node)->right, itr, eos);
         }
     };
 
@@ -88,6 +121,9 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
      *    3   4    5   #
      *   / \ / \  / \
      *  #  # # # #   #
+     *
+     * The dump result:
+     * [0  1  3  #  #  4  #  #  2  5  #  #  #]
      */
     auto root = tree->AllocNode(0);
     auto node = tree->AllocNode(1);
@@ -103,8 +139,14 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
 
     std::stringstream data;
     tree->Dump(root, data);
+    BOOST_REQUIRE_EQUAL(boost::algorithm::trim_copy(data.str()),
+                        "0  1  3  #  #  4  #  #  2  5  #  #  #");
 
-    std::stringstream content(data.str());
-    root = tree->Load(content);
+    root = tree->Load(boost::algorithm::trim_copy(data.str()).c_str());
+    data.str(std::string());
+    tree->Dump(root, data);
+    std::string d = boost::algorithm::trim_copy(data.str());
+    BOOST_REQUIRE_EQUAL(boost::algorithm::trim_copy(data.str()),
+        "0  1  3  #  #  4  #  #  2  5  #  #  #");
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -35,7 +35,10 @@ namespace gazlowe
         virtual TreeNode *AllocNode(int val) = 0;
 
         virtual void Dump(TreeNode *root, std::ostream &data) = 0;
+        virtual void Dump(TreeNode *root, std::string &data) = 0;
+
         virtual TreeNode* Load(std::istream &data) = 0;
+        virtual TreeNode* Load(const char *data) = 0;
     };
 }
 

@@ -5,30 +5,12 @@
 #include <algorithm>
 #include <vector>
 
+#include "g_misc.hxx"
 #include "boost/test/unit_test.hpp"
 #include "boost/pool/pool.hpp"
 
 namespace gazlowe
 {
-    /* TreeNode for sevral tree problems */
-    typedef struct _TreeNode  TreeNode;
-    struct _TreeNode
-    {
-        int val;
-        TreeNode *left;
-        TreeNode *right;
-
-        /* creating a new node on the mem pool */
-        static TreeNode* alloc_node(boost::pool<> &mpool, int val)
-        {
-            TreeNode *node = reinterpret_cast<TreeNode*>(mpool.malloc());
-            node->val = val;
-            node->left = nullptr;
-            node->right = nullptr;
-            return node;
-        }
-    };
-
     /* Single Number:
      * https://leetcode.com/problems/single-number/
      *
@@ -121,23 +103,11 @@ BOOST_AUTO_TEST_CASE(max_depth_btree)
      *           5   6
      *          /
      *         7
+     * The tree dump string:
+     * [0 1 # # 2 3 5 7 # # # 6 # # 4 # #]
      */
-    boost::pool<> mpool(sizeof(gazlowe::TreeNode));
-    auto root = gazlowe::TreeNode::alloc_node(mpool, 0);
-    auto node = gazlowe::TreeNode::alloc_node(mpool, 1);
-    root->left = node;
-    node = gazlowe::TreeNode::alloc_node(mpool, 2);
-    root->right = node;
-    node = gazlowe::TreeNode::alloc_node(mpool, 3);
-    root->right->left = node;
-    node = gazlowe::TreeNode::alloc_node(mpool, 4);
-    root->right->right = node;
-    node = gazlowe::TreeNode::alloc_node(mpool, 5);
-    root->right->left->left = node;
-    node = gazlowe::TreeNode::alloc_node(mpool, 6);
-    root->right->left->right = node;
-    node = gazlowe::TreeNode::alloc_node(mpool, 7);
-    root->right->left->left->left = node;
+    auto tree = gazlowe::TreeNodes::Create();
+    auto root = tree->Load("0 1 # # 2 3 5 7 # # # 6 # # 4 # #");
     int depth = gazlowe::MaxDepthBTree::maxDepth(root);
     BOOST_CHECK(depth == 5);
 }

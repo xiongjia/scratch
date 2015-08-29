@@ -68,10 +68,10 @@ namespace gazlowe
         {
             if (nullptr == node)
             {
-                data << " # ";
+                data << "# ";
                 return;
             }
-            data << " " << node->val << " ";
+            data << node->val << " ";
             DumpEntry(node->left, data);
             DumpEntry(node->right, data);
         }
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
      *  #  # # # #   #
      *
      * The dump result:
-     * [0  1  3  #  #  4  #  #  2  5  #  #  #]
+     * [0 1 3 # # 4 # # 2 5 # # #]
      */
     auto root = tree->AllocNode(0);
     auto node = tree->AllocNode(1);
@@ -137,16 +137,15 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
     node = tree->AllocNode(5);
     root->right->left = node;
 
-    std::stringstream data;
+    std::string data;
     tree->Dump(root, data);
-    BOOST_REQUIRE_EQUAL(boost::algorithm::trim_copy(data.str()),
-                        "0  1  3  #  #  4  #  #  2  5  #  #  #");
+    BOOST_REQUIRE_EQUAL(data,
+                        "0 1 3 # # 4 # # 2 5 # # #");
 
-    root = tree->Load(boost::algorithm::trim_copy(data.str()).c_str());
-    data.str(std::string());
+    root = tree->Load(data.c_str());
+    data = "";
     tree->Dump(root, data);
-    std::string d = boost::algorithm::trim_copy(data.str());
-    BOOST_REQUIRE_EQUAL(boost::algorithm::trim_copy(data.str()),
-        "0  1  3  #  #  4  #  #  2  5  #  #  #");
+    BOOST_REQUIRE_EQUAL(data,
+                        "0 1 3 # # 4 # # 2 5 # # #");
 }
 BOOST_AUTO_TEST_SUITE_END()

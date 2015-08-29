@@ -75,8 +75,14 @@ namespace gazlowe
     public:
         static TreeNode *invertTree(TreeNode *root)
         {
-            /* TODO */
-            return nullptr;
+            if (nullptr == root)
+            {
+                return root;
+            }
+            TreeNode *tmp = root->left;
+            root->left = invertTree(root->right);
+            root->right = invertTree(tmp);
+            return root;
         }
     };
 }
@@ -88,7 +94,7 @@ BOOST_AUTO_TEST_CASE(single_number)
     BOOST_TEST_MESSAGE("Leetcode - Single Number");
     std::vector<int> testData = { 1, 1, 2, 2, 3, 3, 5 };
     int ret = gazlowe::single_number(testData);
-    BOOST_CHECK(ret == 5);
+    BOOST_REQUIRE_EQUAL(ret, 5);
 }
 
 BOOST_AUTO_TEST_CASE(max_depth_btree)
@@ -103,13 +109,13 @@ BOOST_AUTO_TEST_CASE(max_depth_btree)
      *           5   6
      *          /
      *         7
-     * The tree dump string:
      * [0 1 # # 2 3 5 7 # # # 6 # # 4 # #]
      */
+    BOOST_TEST_MESSAGE("Leetcode - Maximum Depth of Binary Tree");
     auto tree = gazlowe::TreeNodes::Create();
     auto root = tree->Load("0 1 # # 2 3 5 7 # # # 6 # # 4 # #");
     int depth = gazlowe::MaxDepthBTree::maxDepth(root);
-    BOOST_CHECK(depth == 5);
+    BOOST_REQUIRE_EQUAL(depth, 5);
 }
 
 BOOST_AUTO_TEST_CASE(invert_btree)
@@ -120,6 +126,7 @@ BOOST_AUTO_TEST_CASE(invert_btree)
      *   2     7
      *  / \   / \
      * 1   3 6   9
+     * [4 2 1 # # 3 # # 7 6 # # 9 # #]
      *
      * to
      *
@@ -128,7 +135,14 @@ BOOST_AUTO_TEST_CASE(invert_btree)
      *    7     2
      *   / \   / \
      *  9   6 3   1
+     * [4 7 9 # # 6 # # 2 3 # # 1 # #]
      */
+    BOOST_TEST_MESSAGE("Leetcode - Maximum Depth of Binary Tree");
+    auto tree = gazlowe::TreeNodes::Create();
+    auto rootSrc = tree->Load("4 2 1 # # 3 # # 7 6 # # 9 # #");
+    auto rootRet = gazlowe::InvertBTree::invertTree(rootSrc);
+    std::string results;
+    tree->Dump(rootRet, results);
+    BOOST_REQUIRE_EQUAL(results, "4 7 9 # # 6 # # 2 3 # # 1 # #");
 }
 BOOST_AUTO_TEST_SUITE_END()
-

@@ -10,6 +10,7 @@
 #include "boost/make_shared.hpp"
 #include "boost/pool/pool.hpp"
 #include "boost/test/unit_test.hpp"
+#include "boost/foreach.hpp"
 #include "g_misc.hxx"
 
 namespace gazlowe
@@ -107,6 +108,80 @@ namespace gazlowe
     {
         return boost::make_shared<TreeNodesImpl>();
     }
+
+    class ListNodesImpl : public ListNodes
+    {
+    private:
+        boost::pool<> m_mpool;
+
+    public:
+        ListNodesImpl(void)
+            : ListNodes()
+            , m_mpool(sizeof(ListNode))
+        {
+            /* NOP */
+        }
+
+        virtual ListNode *AllocNode(int val)
+        {
+            ListNode *node = reinterpret_cast<ListNode*>(m_mpool.malloc());
+            node->val = val;
+            node->next = NULL;
+            return node;
+        }
+
+        virtual ListNode* Search(ListNode *list, int val)
+        {
+            for (ListNode *itr = list;;)
+            {
+                if (itr->val == val)
+                {
+                    return itr;
+                }
+                itr = itr->next;
+                if (itr == list)
+                {
+                    break;
+                }
+            }
+            return nullptr;
+        }
+
+        virtual void Dump(ListNode *list, std::string &result)
+        {
+            std::stringstream content;
+            bool first = true;
+            for (ListNode *itr = list;;)
+            {
+                if (first)
+                {
+                    content << itr->val;
+                    first = false;
+                }
+                else
+                {
+                    content << " " << itr->val;
+                }
+
+                itr = itr->next;
+                if (itr == list)
+                {
+                    break;
+                }
+            }
+            result = content.str();
+        }
+    };
+
+    ListNodes::ListNodes(void)
+    {
+        /* NOP */
+    }
+
+    boost::shared_ptr<ListNodes> ListNodes::Create(void)
+    {
+        return boost::make_shared<ListNodesImpl>();
+    }
 }
 
 BOOST_AUTO_TEST_SUITE(misc)
@@ -147,5 +222,15 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
     tree->Dump(root, data);
     BOOST_REQUIRE_EQUAL(data,
                         "0 1 3 # # 4 # # 2 5 # # #");
+}
+
+BOOST_AUTO_TEST_CASE(list_nodes)
+{
+    auto listNodes = gazlowe::ListNodes::Create();
+    auto list = gazlowe::ListNodes::Load(listNodes,
+        boost::array<int, 5>({ { 1, 2, 3, 4, 5 } }));
+    std::string data;
+    listNodes->Dump(list, data);
+    BOOST_REQUIRE_EQUAL(data, "1 2 3 4 5");
 }
 BOOST_AUTO_TEST_SUITE_END()

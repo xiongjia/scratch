@@ -171,12 +171,12 @@ BOOST_AUTO_TEST_CASE(invert_btree)
 
 BOOST_AUTO_TEST_CASE(del_node_in_a_linked_list)
 {
-    auto listNodes = gazlowe::ListNodes::Create();
-    auto list = gazlowe::ListNodes::Load(listNodes,
+    auto linkedList = gazlowe::LinkedList::Create();
+    auto list = gazlowe::LinkedList::Load(linkedList,
         boost::array<int, 4>({{1, 2, 3, 4 }}));
-    gazlowe::DelNodeLinkList::deleteNode(listNodes->Search(list, 3));
+    gazlowe::DelNodeLinkList::deleteNode(linkedList->Search(list, 3));
     std::string result;
-    listNodes->Dump(list, result);
+    linkedList->Dump(list, result);
     BOOST_REQUIRE_EQUAL(result, "1 2 4");
 }
 BOOST_AUTO_TEST_SUITE_END()

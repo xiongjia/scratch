@@ -109,14 +109,14 @@ namespace gazlowe
         return boost::make_shared<TreeNodesImpl>();
     }
 
-    class ListNodesImpl : public ListNodes
+    class LinkedListImpl : public LinkedList
     {
     private:
         boost::pool<> m_mpool;
 
     public:
-        ListNodesImpl(void)
-            : ListNodes()
+        LinkedListImpl(void)
+            : LinkedList()
             , m_mpool(sizeof(ListNode))
         {
             /* NOP */
@@ -173,14 +173,14 @@ namespace gazlowe
         }
     };
 
-    ListNodes::ListNodes(void)
+    LinkedList::LinkedList(void)
     {
         /* NOP */
     }
 
-    boost::shared_ptr<ListNodes> ListNodes::Create(void)
+    boost::shared_ptr<LinkedList> LinkedList::Create(void)
     {
-        return boost::make_shared<ListNodesImpl>();
+        return boost::make_shared<LinkedListImpl>();
     }
 }
 
@@ -226,11 +226,12 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
 
 BOOST_AUTO_TEST_CASE(list_nodes)
 {
-    auto listNodes = gazlowe::ListNodes::Create();
-    auto list = gazlowe::ListNodes::Load(listNodes,
+    auto linkedList = gazlowe::LinkedList::Create();
+    auto list = gazlowe::LinkedList::Load(linkedList,
         boost::array<int, 5>({ { 1, 2, 3, 4, 5 } }));
+
     std::string data;
-    listNodes->Dump(list, data);
+    linkedList->Dump(list, data);
     BOOST_REQUIRE_EQUAL(data, "1 2 3 4 5");
 }
 BOOST_AUTO_TEST_SUITE_END()

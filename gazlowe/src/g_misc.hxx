@@ -51,13 +51,13 @@ namespace gazlowe
         ListNode *next;
     };
 
-    /* List nodes manager */
-    class ListNodes : boost::noncopyable
+    /* Linked list manager */
+    class LinkedList : boost::noncopyable
     {
     public:
-        ListNodes(void);
+        LinkedList(void);
 
-        static boost::shared_ptr<ListNodes> Create(void);
+        static boost::shared_ptr<LinkedList> Create(void);
     public:
         virtual ListNode *AllocNode(int val) = 0;
 
@@ -65,7 +65,7 @@ namespace gazlowe
         virtual ListNode* Search(ListNode *list, int val) = 0;
 
         template<std::size_t N>
-        static ListNode* Load(boost::shared_ptr<ListNodes> nodes,
+        static ListNode* Load(boost::shared_ptr<LinkedList> nodes,
                               const boost::array<int, N> &data)
         {
             ListNode *root = nullptr;

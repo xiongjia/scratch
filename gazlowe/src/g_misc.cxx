@@ -200,6 +200,7 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
      * The dump result:
      * [0 1 3 # # 4 # # 2 5 # # #]
      */
+    const char *treeDesc = "0 1 3 # # 4 # # 2 5 # # #";
     auto root = tree->AllocNode(0);
     auto node = tree->AllocNode(1);
     root->left = node;
@@ -214,14 +215,12 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
 
     std::string data;
     tree->Dump(root, data);
-    BOOST_REQUIRE_EQUAL(data,
-                        "0 1 3 # # 4 # # 2 5 # # #");
+    BOOST_REQUIRE_EQUAL(data, treeDesc);
 
     root = tree->Load(data.c_str());
     data = "";
     tree->Dump(root, data);
-    BOOST_REQUIRE_EQUAL(data,
-                        "0 1 3 # # 4 # # 2 5 # # #");
+    BOOST_REQUIRE_EQUAL(data, treeDesc);
 }
 
 BOOST_AUTO_TEST_CASE(list_nodes)

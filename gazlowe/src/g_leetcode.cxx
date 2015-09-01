@@ -88,6 +88,7 @@ namespace gazlowe
 
     /* Delete Node in a Linked List
      * https://leetcode.com/problems/delete-node-in-a-linked-list/ 
+     *
      *  Write a function to delete a node (except the tail) in a singly
      *  linked list, given only access to that node.
      *
@@ -110,6 +111,8 @@ namespace gazlowe
     };
 
     /* Add Digits  
+     * https://leetcode.com/problems/add-digits/
+     *
      * Given a non-negative integer num, repeatedly add all its 
      * digits until the result has only one digit.
      * For example:
@@ -140,6 +143,36 @@ namespace gazlowe
                 num = tmp;
             }
             return num;
+        }
+    };
+
+    /* Same Tree
+     * https://leetcode.com/problems/same-tree/
+     *
+     * Given two binary trees, write a function to check 
+     * if they are equal or not. Two binary trees are considered equal 
+     * if they are structurally identical and the nodes have the same value. 
+     */
+    class SameTree
+    {
+    public:
+        static bool isSameTree(TreeNode *p, TreeNode *q)
+        {
+            if (nullptr == p && nullptr == q)
+            {
+                return true;
+            }
+
+            if (nullptr != p && nullptr != q)
+            {
+                return p->val == q->val &&
+                    isSameTree(p->left, q->left) &&
+                    isSameTree(p->right, q->right);
+            }
+            else
+            {
+                return false;
+            }
         }
     };
 }
@@ -205,6 +238,7 @@ BOOST_AUTO_TEST_CASE(invert_btree)
 
 BOOST_AUTO_TEST_CASE(del_node_in_a_linked_list)
 {
+    BOOST_TEST_MESSAGE("Leetcode - Delete Node in a linked list");
     auto linkedList = gazlowe::LinkedList::Create();
     auto list = gazlowe::LinkedList::Load(linkedList,
         boost::array<int, 4>({{1, 2, 3, 4 }}));
@@ -216,6 +250,7 @@ BOOST_AUTO_TEST_CASE(del_node_in_a_linked_list)
 
 BOOST_AUTO_TEST_CASE(add_digits)
 {
+    BOOST_TEST_MESSAGE("Leetcode - Add Digits");
     int result = gazlowe::AddDigits::addDigits(38);
     int resultEnhance = gazlowe::AddDigits::addDigitsEnhance(38);
     BOOST_REQUIRE_EQUAL(result, 2);
@@ -230,5 +265,27 @@ BOOST_AUTO_TEST_CASE(add_digits)
     resultEnhance = gazlowe::AddDigits::addDigitsEnhance(138);
     BOOST_REQUIRE_EQUAL(result, 3);
     BOOST_REQUIRE_EQUAL(result, resultEnhance);
+}
+
+BOOST_AUTO_TEST_CASE(same_tree)
+{
+    BOOST_TEST_MESSAGE("Leetcode - Same Tree");
+    const char *tree1 = "4 2 1 # # 3 # # 7 6 # # 9 # #";
+    const char *tree2 = "4 2 1 # # 3 # # 7 6 # # 7 # #";
+    auto tree = gazlowe::TreeNodes::Create();
+
+    bool result = gazlowe::SameTree::isSameTree(tree->Load(tree1),
+        tree->Load(tree2));
+    BOOST_REQUIRE_EQUAL(result, false);
+
+    result = gazlowe::SameTree::isSameTree(tree->Load(tree1),
+        tree->Load(tree1));
+    BOOST_REQUIRE_EQUAL(result, true);
+
+    result = gazlowe::SameTree::isSameTree(nullptr, nullptr);
+    BOOST_REQUIRE_EQUAL(result, true);
+
+    result = gazlowe::SameTree::isSameTree(tree->Load(tree1), nullptr);
+    BOOST_REQUIRE_EQUAL(result, false);
 }
 BOOST_AUTO_TEST_SUITE_END()

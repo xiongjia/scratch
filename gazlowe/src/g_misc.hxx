@@ -84,10 +84,6 @@ namespace gazlowe
                     cur = node;
                 }
             }
-            if (nullptr != cur)
-            {
-                cur->next = root;
-            }
             return root;
         }
     };

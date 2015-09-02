@@ -132,16 +132,11 @@ namespace gazlowe
 
         virtual ListNode* Search(ListNode *list, int val)
         {
-            for (ListNode *itr = list;;)
+            for (ListNode *itr = list; nullptr != itr; itr = itr->next)
             {
                 if (itr->val == val)
                 {
                     return itr;
-                }
-                itr = itr->next;
-                if (itr == list)
-                {
-                    break;
                 }
             }
             return nullptr;
@@ -151,7 +146,7 @@ namespace gazlowe
         {
             std::stringstream content;
             bool first = true;
-            for (ListNode *itr = list;;)
+            for (ListNode *itr = list; nullptr != itr; itr = itr->next)
             {
                 if (first)
                 {
@@ -161,12 +156,6 @@ namespace gazlowe
                 else
                 {
                     content << " " << itr->val;
-                }
-
-                itr = itr->next;
-                if (itr == list)
-                {
-                    break;
                 }
             }
             result = content.str();

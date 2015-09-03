@@ -56,7 +56,14 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_misc.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_misc.hxx"
     "${PROJECT_SOURCE_DIR}/src/g_sorting_qsort.cxx"
-    "${PROJECT_SOURCE_DIR}/src/g_leetcode.cxx")
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_single_number.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_max_depth_btree.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_invert_btree.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_del_node_in_a_linked_list.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_add_digits.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_same_tree.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_linked_list_cycle.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
 target_link_libraries(gazlowe
     debug "${gazlowe_boost_dbg_libs}"

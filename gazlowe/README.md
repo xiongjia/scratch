@@ -11,8 +11,14 @@ It's my algorithm tests.
 
 ## The list of the tests
 
-- sorting_qsort : The QuickSort testing ( g_sorting_qsort.cxx )
-- some leetcode problems : ( g_leetcode.cxx )
-  - single_number: Single Number
-  - max_depth_btree: Maximum Depth of Binary Tree
+- sorting_qsort : The QuickSort testing ( `g_sorting_qsort.cxx` )
+- some leetcode problems : ( g_leetcode_{???}.cxx )
+  - `g_leetcode_single_number.cxx` - Single Number
+  - `g_leetcode_max_depth_btree.cxx` - Maximum Depth of Binary Tree
+  - `g_leetcode_invert_btree.cxx` - Invert a binary tree
+  - `g_leetcode_del_node_in_a_linked_list.cxx` - Delete Node in a Linked List
+  - `g_leetcode_add_digits.cxx` - Add Digits
+  - `g_leetcode_same_tree.cxx` - Same Tree
+  - `g_leetcode_linked_list_cycle.cxx` - Linked List Cycle
+  - `g_leetcode_contains_duplicate.cxx` - Contains Duplicate
 

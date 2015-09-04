@@ -3,6 +3,7 @@
  */
 
 #include <algorithm>
+#include <stack>
 #include "boost/test/unit_test.hpp"
 #include "g_misc.hxx"
 

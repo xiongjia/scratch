@@ -2,6 +2,8 @@
  * gazlowe - My algorithm tests
  */
 
+#include <stack>
+#include <utility>
 #include "boost/test/unit_test.hpp"
 #include "g_misc.hxx"
 
@@ -35,6 +37,40 @@ namespace gazlowe
                 return false;
             }
         }
+
+        static bool isSameTreeLoop(TreeNode *p, TreeNode *q)
+        {
+            if (nullptr == p && nullptr == q)
+            {
+                return true;
+            }
+
+            std::stack<std::pair<TreeNode*, TreeNode*>> data;
+            data.push(std::make_pair(p, q));
+            while (!data.empty())
+            {
+                auto top = data.top();
+                data.pop();
+                if (nullptr == top.first && nullptr == top.second)
+                {
+                    continue;
+                }
+
+                if (!(nullptr != top.first && nullptr != top.second))
+                {
+                    return false;
+                }
+
+                if (top.first->val != top.second->val)
+                {
+                    return false;
+                }
+
+                data.push(std::make_pair(top.first->left, top.second->left));
+                data.push(std::make_pair(top.first->right, top.second->right));
+            }
+            return true;
+        }
     };
 }
 
@@ -49,15 +85,25 @@ BOOST_AUTO_TEST_CASE(same_tree)
     bool result = gazlowe::SameTree::isSameTree(tree->Load(tree1),
         tree->Load(tree2));
     BOOST_REQUIRE_EQUAL(result, false);
+    result = gazlowe::SameTree::isSameTreeLoop(tree->Load(tree1),
+        tree->Load(tree2));
+    BOOST_REQUIRE_EQUAL(result, false);
 
     result = gazlowe::SameTree::isSameTree(tree->Load(tree1),
+        tree->Load(tree1));
+    BOOST_REQUIRE_EQUAL(result, true);
+    result = gazlowe::SameTree::isSameTreeLoop(tree->Load(tree1),
         tree->Load(tree1));
     BOOST_REQUIRE_EQUAL(result, true);
 
     result = gazlowe::SameTree::isSameTree(nullptr, nullptr);
     BOOST_REQUIRE_EQUAL(result, true);
+    result = gazlowe::SameTree::isSameTreeLoop(nullptr, nullptr);
+    BOOST_REQUIRE_EQUAL(result, true);
 
     result = gazlowe::SameTree::isSameTree(tree->Load(tree1), nullptr);
+    BOOST_REQUIRE_EQUAL(result, false);
+    result = gazlowe::SameTree::isSameTreeLoop(tree->Load(tree1), nullptr);
     BOOST_REQUIRE_EQUAL(result, false);
 }
 BOOST_AUTO_TEST_SUITE_END()

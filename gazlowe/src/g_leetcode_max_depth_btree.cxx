@@ -3,6 +3,7 @@
  */
 
 #include <algorithm>
+#include <utility>
 #include <stack>
 #include "boost/test/unit_test.hpp"
 #include "g_misc.hxx"
@@ -23,6 +24,33 @@ namespace gazlowe
         {
             return (nullptr == root) ?
                 0 : 1 + std::max(maxDepth(root->left), maxDepth(root->right));
+        }
+
+        static int maxDepthLoop(TreeNode *root)
+        {
+            if (nullptr == root)
+            {
+                return 0;
+            }
+
+            int depth = 0;
+            std::stack<std::pair<TreeNode*, int>> data;
+            data.push(std::make_pair(root, 1));
+            while (!data.empty())
+            {
+                auto top = data.top();
+                data.pop();
+                if (nullptr == top.first)
+                {
+                    continue;
+                }
+
+                depth = std::max(depth, top.second);
+                data.push(std::make_pair(top.first->left, top.second + 1));
+                data.push(std::make_pair(top.first->right, top.second + 1));
+            }
+
+            return depth;
         }
     };
 }
@@ -48,8 +76,12 @@ BOOST_AUTO_TEST_CASE(max_depth_btree)
 
     int depth = gazlowe::MaxDepthBTree::maxDepth(root);
     BOOST_REQUIRE_EQUAL(depth, 5);
+    depth = gazlowe::MaxDepthBTree::maxDepthLoop(root);
+    BOOST_REQUIRE_EQUAL(depth, 5);
 
     depth = gazlowe::MaxDepthBTree::maxDepth(nullptr);
+    BOOST_REQUIRE_EQUAL(depth, 0);
+    depth = gazlowe::MaxDepthBTree::maxDepthLoop(nullptr);
     BOOST_REQUIRE_EQUAL(depth, 0);
 }
 BOOST_AUTO_TEST_SUITE_END()

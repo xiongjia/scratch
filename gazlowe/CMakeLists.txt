@@ -63,6 +63,7 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_add_digits.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_same_tree.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_linked_list_cycle.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_majority_element.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
 target_link_libraries(gazlowe

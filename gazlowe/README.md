@@ -21,4 +21,5 @@ It's my algorithm tests.
   - `g_leetcode_same_tree.cxx` - Same Tree
   - `g_leetcode_linked_list_cycle.cxx` - Linked List Cycle
   - `g_leetcode_contains_duplicate.cxx` - Contains Duplicate I ~ III
+  - `g_leetcode_majority_element.cxx` - Majority Element I ~ II
 

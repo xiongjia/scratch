@@ -2,51 +2,97 @@
  * gazlowe - My algorithm tests
  */
 
-#include <cstdlib>
-#include <algorithm>
 #include <functional>
+#include <algorithm>
 #include <string>
-
+#include <stack>
+#include <utility>
 #include "boost/test/unit_test.hpp"
 #include "boost/array.hpp"
 
-/* Quicksort: https://en.wikipedia.org/wiki/Quicksort */
 namespace gazlowe 
 {
-    template<class T, std::size_t N, class C>
-    void quick_sort_part(boost::array<T, N> &data, 
-                         std::size_t begin, std::size_t end, C cmp)
+    /* Quicksort: https://en.wikipedia.org/wiki/Quicksort */
+
+    class QSort
     {
-        std::size_t len = end - begin;
-        if (len <= 1)
+    private:
+        template<class T, std::size_t N, class C>
+        static void SortPart(boost::array<T, N> &data,
+            std::size_t begin, std::size_t end, C cmp)
         {
-            return;
+            std::size_t len = end - begin;
+            if (len <= 1)
+            {
+                return;
+            }
+
+            std::swap(data[begin], data[begin + (std::rand() % len)]);
+            std::size_t last = 0;
+            for (std::size_t i = begin + 1; i < (begin + len); ++i)
+            {
+                if (cmp(data[i], data[begin]))
+                {
+                    std::swap(data[i], data[(++last) + begin]);
+                }
+            }
+            std::swap(data[begin], data[last + begin]);
+            SortPart(data, begin, begin + last, cmp);
+            SortPart(data, begin + last + 1, end, cmp);
         }
 
-        std::swap(data[begin], data[begin + (std::rand() % len)]);
-        std::size_t last = 0;
-        for (std::size_t i = begin + 1; i < (begin + len); ++i)
+    public:
+        template<class T, std::size_t N, class C>
+        static void Sort(boost::array<T, N> &data, C cmp)
         {
-            if (cmp(data[i], data[begin]))
+            SortPart(data, 0, data.size(), cmp);
+        }
+    };
+
+    class QSortLoop
+    {
+    public:
+        template<class T, std::size_t N, class C>
+        static void Sort(boost::array<T, N> &data, C cmp)
+        {
+            std::stack<std::pair<std::size_t, std::size_t>> ranges;
+            ranges.push(std::make_pair(0, data.size()));
+            while (!ranges.empty())
             {
-                std::swap(data[i], data[(++last) + begin]);
+                auto top = ranges.top();
+                ranges.pop();
+
+                std::size_t begin = top.first;
+                std::size_t end = top.second;
+                std::size_t len = end - begin;
+                if (len <= 1)
+                {
+                    continue;
+                }
+
+                std::swap(data[begin], data[begin + (std::rand() % len)]);
+                std::size_t last = 0;
+                for (std::size_t i = begin + 1; i < (begin + len); ++i)
+                {
+                    if (cmp(data[i], data[begin]))
+                    {
+                        std::swap(data[i], data[(++last) + begin]);
+                    }
+                }
+                std::swap(data[begin], data[last + begin]);
+
+                ranges.push(std::make_pair(begin, begin + last));
+                ranges.push(std::make_pair(begin + last + 1, end));
             }
         }
-        std::swap(data[begin], data[last + begin]);
-        quick_sort_part(data, begin, begin + last, cmp);
-        quick_sort_part(data, begin + last + 1, end, cmp);
-    }
-
-    template<class T, std::size_t N, class C>
-    void quick_sort(boost::array<T, N> &data, C cmp)
-    {
-        quick_sort_part(data, 0, data.size(), cmp);
-    }
+    };
 }
 
 BOOST_AUTO_TEST_SUITE(sorting)
 BOOST_AUTO_TEST_CASE(sorting_qsort)
 {
+    BOOST_TEST_MESSAGE("Sorting - qsort");
+
     /* Testing datum */
     const std::size_t dataSz = 7;
     boost::array<int, dataSz> dataNum = { {2, 5, 3, 4, 8, 10, 2} };
@@ -55,21 +101,27 @@ BOOST_AUTO_TEST_CASE(sorting_qsort)
     };
 
     /* sorting the numbers */
-    BOOST_TEST_MESSAGE("Sorting numbers array");
     boost::array<int, dataSz> dataNums1(dataNum);
-    gazlowe::quick_sort(dataNums1, std::greater<int>());
+    gazlowe::QSort::Sort(dataNums1, std::greater<int>());
     boost::array<int, dataSz> dataNums2(dataNum);
-    std::sort(dataNums2.begin(), dataNums2.end(), std::greater<int>());
+    gazlowe::QSortLoop::Sort(dataNums2, std::greater<int>());
+    boost::array<int, dataSz> dataNums3(dataNum);
+    std::sort(dataNums3.begin(), dataNums3.end(), std::greater<int>());
     BOOST_CHECK_EQUAL_COLLECTIONS(dataNums1.begin(), dataNums1.end(),
-                                  dataNums2.begin(), dataNums2.end());
+                                  dataNums3.begin(), dataNums3.end());
+    BOOST_CHECK_EQUAL_COLLECTIONS(dataNums2.begin(), dataNums2.end(),
+                                  dataNums3.begin(), dataNums3.end());
 
     /* sorting the strings */
-    BOOST_TEST_MESSAGE("Sorting string array");
     boost::array<std::string, dataSz> dataStr1(dataStr);
-    gazlowe::quick_sort(dataStr1, std::less<std::string>());
+    gazlowe::QSort::Sort(dataStr1, std::less<std::string>());
     boost::array<std::string, dataSz> dataStr2(dataStr);
-    std::sort(dataStr2.begin(), dataStr2.end(), std::less<std::string>());
+    gazlowe::QSortLoop::Sort(dataStr2, std::less<std::string>());
+    boost::array<std::string, dataSz> dataStr3(dataStr);
+    std::sort(dataStr3.begin(), dataStr3.end(), std::less<std::string>());
     BOOST_CHECK_EQUAL_COLLECTIONS(dataStr1.begin(), dataStr1.end(),
-                                  dataStr2.begin(), dataStr2.end());
+                                  dataStr3.begin(), dataStr3.end());
+    BOOST_CHECK_EQUAL_COLLECTIONS(dataStr2.begin(), dataStr2.end(),
+                                  dataStr3.begin(), dataStr3.end());
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -78,7 +78,7 @@ namespace gazlowe
     class ContainsDuplicate3
     {
     public:
-        static bool containsNearbyAlmostDuplicate(std::vector<int>& nums,
+        static bool containsNearbyAlmostDuplicate(std::vector<int> &nums,
                                                   int k, int t)
         {
             if (k <= 0)

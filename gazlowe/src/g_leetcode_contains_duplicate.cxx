@@ -36,13 +36,13 @@ namespace gazlowe
     };
 
     /* Contains Duplicate II
-     * https://leetcode.com/problems/contains-duplicate-ii/ 
-     * 
+     * https://leetcode.com/problems/contains-duplicate-ii/
+     *
      * Given an array of integers and an integer k, find out whether
      * there are two distinct indices i and j in the array such that
-     * nums[i] = nums[j] and the difference between i and j is at most k. 
+     * nums[i] = nums[j] and the difference between i and j is at most k.
      */
-    class ContainsDuplicate2 
+    class ContainsDuplicate2
     {
     public:
         static bool containsNearbyDuplicate(std::vector<int> &nums, int k)
@@ -73,7 +73,7 @@ namespace gazlowe
      *
      * Given an array of integers, find out whether there are two distinct
      * indices i and j in the array such that the difference between nums[i]
-     * and nums[j] is at most t and the difference between i and j is at most k. 
+     * and nums[j] is at most t and the difference between i and j is at most k.
      */
     class ContainsDuplicate3
     {
@@ -112,55 +112,57 @@ BOOST_AUTO_TEST_CASE(contains_duplicate)
 {
     BOOST_TEST_MESSAGE("Leetcode - Contains Duplicate");
 
-    bool result = gazlowe::ContainsDuplicate::containsDuplicate(
-        std::vector<int>({ { 1, 2, 3, 4, 5 } }));
-    BOOST_REQUIRE_EQUAL(result, false);
+    auto data = std::vector<int>({ 1, 2, 3, 4, 5 });
+    bool ret = gazlowe::ContainsDuplicate::containsDuplicate(data);
+    BOOST_REQUIRE_EQUAL(ret, false);
 
-    result = gazlowe::ContainsDuplicate::containsDuplicate(
-        std::vector<int>({ { 1, 2, 3, 4, 1 } }));
-    BOOST_REQUIRE_EQUAL(result, true);
+    data = std::vector<int>({ 1, 2, 3, 4, 1 });
+    ret = gazlowe::ContainsDuplicate::containsDuplicate(data);
+    BOOST_REQUIRE_EQUAL(ret, true);
 
-    result = gazlowe::ContainsDuplicate::containsDuplicate(
-        std::vector<int>({}));
-    BOOST_REQUIRE_EQUAL(result, false);
+    data = std::vector<int>({});
+    ret = gazlowe::ContainsDuplicate::containsDuplicate(data);
+    BOOST_REQUIRE_EQUAL(ret, false);
 }
 
 BOOST_AUTO_TEST_CASE(contains_duplicate2)
 {
     BOOST_TEST_MESSAGE("Leetcode - Contains Duplicate II");
 
-    bool result = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(
-        std::vector<int>({ { 1, 2, 3, 4, 5 } }), 2);
-    BOOST_REQUIRE_EQUAL(result, false);
+    auto data = std::vector<int>({ 1, 2, 3, 4, 5 });
+    bool ret = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(data, 2);
+    BOOST_REQUIRE_EQUAL(ret, false);
 
-    result = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(
-        std::vector<int>({ { 1, 2, 1, 4, 5 } }), 2);
-    BOOST_REQUIRE_EQUAL(result, true);
+    data = std::vector<int>({ 1, 2, 1, 4, 5 });
+    ret = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(data, 2);
+    BOOST_REQUIRE_EQUAL(ret, true);
 
-    result = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(
-        std::vector<int>({ { 1, 2, 1, 4, 5 } }), 1);
-    BOOST_REQUIRE_EQUAL(result, false);
+    data = std::vector<int>({ 1, 2, 1, 4, 5 });
+    ret = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(data, 1);
+    BOOST_REQUIRE_EQUAL(ret, false);
 
-    result = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(
-        std::vector<int>({ { 1, 2, 1, 4, 5 } }), 0);
-    BOOST_REQUIRE_EQUAL(result, false);
+    data = std::vector<int>({ 1, 2, 1, 4, 5 });
+    ret = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(data, 0);
+    BOOST_REQUIRE_EQUAL(ret, false);
 
-    result = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(
-        std::vector<int>({}), 1);
-    BOOST_REQUIRE_EQUAL(result, false);
+    data = std::vector<int>({});
+    ret = gazlowe::ContainsDuplicate2::containsNearbyDuplicate(data, 1);
+    BOOST_REQUIRE_EQUAL(ret, false);
 }
 
 BOOST_AUTO_TEST_CASE(contains_duplicate3)
 {
     BOOST_TEST_MESSAGE("Leetcode - Contains Duplicate III");
 
-    bool result = gazlowe::ContainsDuplicate3::containsNearbyAlmostDuplicate(
-        std::vector<int>({ { 1, 2, 3, 4, 5 } }), 2, 3);
-    BOOST_REQUIRE_EQUAL(result, true);
+    auto data = std::vector<int>({ 1, 2, 3, 4, 5 });
+    bool ret = gazlowe::ContainsDuplicate3::
+        containsNearbyAlmostDuplicate(data, 2, 3);
+    BOOST_REQUIRE_EQUAL(ret, true);
 
-    result = gazlowe::ContainsDuplicate3::containsNearbyAlmostDuplicate(
-        std::vector<int>({ { 1, 5, 9, 13, 17 } }), 2, 3);
-    BOOST_REQUIRE_EQUAL(result, false);
+    data = std::vector<int>({ 1, 5, 9, 13, 17 });
+    ret = gazlowe::ContainsDuplicate3::
+        containsNearbyAlmostDuplicate(data, 2, 3);
+    BOOST_REQUIRE_EQUAL(ret, false);
 }
 BOOST_AUTO_TEST_SUITE_END()
 

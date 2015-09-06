@@ -19,16 +19,18 @@ namespace gazlowe
     public:
         static bool hasCycle(ListNode *head)
         {
-            if (nullptr == head)
+            if (nullptr == head ||
+                nullptr == head->next ||
+                nullptr == head->next->next)
             {
                 return false;
             }
-            ListNode *fast = head;
-            ListNode *slow = head;
+
+            ListNode *fast = head->next;
+            ListNode *slow = head->next;
             for (;;)
             {
                 slow = slow->next;
-
                 if (fast->next == nullptr)
                 {
                     return false;
@@ -45,6 +47,57 @@ namespace gazlowe
             }
         }
     };
+
+    /* Linked List Cycle II
+     * https://leetcode.com/problems/linked-list-cycle-ii/
+     *
+     * Given a linked list, return the node where the cycle begins.
+     * If there is no cycle, return null. 
+     *
+     * Note: Do not modify the linked list.
+     * Follow up: Can you solve it without using extra space? 
+     */
+    class LinkedListCycle2
+    {
+    public:
+        static ListNode* detectCycle(ListNode *head)
+        {
+            if (nullptr == head || nullptr == head->next)
+            {
+                return false;
+            }
+            ListNode *fast = head;
+            ListNode *slow = head;
+            for (;;)
+            {
+                slow = slow->next;
+                if (fast->next == nullptr)
+                {
+                    return nullptr;
+                }
+                fast = fast->next->next;
+                if (nullptr == slow || nullptr == fast)
+                {
+                    return nullptr;
+                }
+                if (fast == slow)
+                {
+                    break;
+                }
+            }
+            if (nullptr == slow || nullptr == fast)
+            {
+                return nullptr;
+            }
+            slow = head;
+            while (slow != fast)
+            {
+                slow = slow->next;
+                fast = fast->next;
+            }
+            return slow;
+        }
+    };
 }
 
 BOOST_AUTO_TEST_SUITE(leetcode)
@@ -57,9 +110,19 @@ BOOST_AUTO_TEST_CASE(linked_list_cycle)
         boost::array<int, 4>({ { 1, 2, 3, 4 } }));
     bool result = gazlowe::LinkedListCycle::hasCycle(list);
     BOOST_REQUIRE_EQUAL(result, false);
+    auto detect = gazlowe::LinkedListCycle2::detectCycle(list);
+    BOOST_REQUIRE(detect == nullptr);
 
     result = gazlowe::LinkedListCycle::hasCycle(nullptr);
     BOOST_REQUIRE_EQUAL(result, false);
+    detect = gazlowe::LinkedListCycle2::detectCycle(nullptr);
+    BOOST_REQUIRE(detect == nullptr);
+
+    result = gazlowe::LinkedListCycle::hasCycle(linkedList->AllocNode(1));
+    BOOST_REQUIRE_EQUAL(result, false);
+    detect = gazlowe::LinkedListCycle2::detectCycle(linkedList->AllocNode(1));
+    BOOST_REQUIRE(detect == nullptr);
+
 
     /*   [1] -> [2] -> [3] -> [4] -> [5]
      *           ^                    |
@@ -77,5 +140,8 @@ BOOST_AUTO_TEST_CASE(linked_list_cycle)
     listNode->next = invalidList->next;
     result = gazlowe::LinkedListCycle::hasCycle(invalidList);
     BOOST_REQUIRE_EQUAL(result, true);
+    detect = gazlowe::LinkedListCycle2::detectCycle(invalidList);
+    BOOST_REQUIRE(detect != nullptr);
+    BOOST_REQUIRE_EQUAL(detect->val, 2);
 }
 BOOST_AUTO_TEST_SUITE_END()

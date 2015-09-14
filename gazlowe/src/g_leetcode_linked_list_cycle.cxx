@@ -64,7 +64,7 @@ namespace gazlowe
         {
             if (nullptr == head || nullptr == head->next)
             {
-                return false;
+                return nullptr;
             }
             ListNode *fast = head;
             ListNode *slow = head;

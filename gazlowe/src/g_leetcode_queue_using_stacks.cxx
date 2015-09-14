@@ -3,9 +3,9 @@
  */
 
 #include <stack>
-
 #include "boost/shared_ptr.hpp"
 #include "boost/make_shared.hpp"
+#include "boost/utility.hpp"
 #include "boost/test/unit_test.hpp"
 
 namespace gazlowe
@@ -29,7 +29,7 @@ namespace gazlowe
      *   - You may assume that all operations are valid (for example, no
      *     pop or peek operations will be called on an empty queue).
      */
-    class QueueUsingStacks
+    class QueueUsingStacks : boost::noncopyable
     {
     public:
         static boost::shared_ptr<QueueUsingStacks> Create(void)

@@ -65,6 +65,7 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_linked_list_cycle.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_majority_element.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_queue_using_stacks.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_stack_using_queues.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
 target_link_libraries(gazlowe

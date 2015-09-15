@@ -40,7 +40,7 @@ namespace gazlowe
             return root;
         }
 
-        static TreeNode *invertTreeLoop(TreeNode *root)
+        static TreeNode *invertTreeItr(TreeNode *root)
         {
             if (nullptr == root)
             {
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(invert_btree)
     tree->Dump(rootRet, results);
     BOOST_REQUIRE_EQUAL(results, destTree);
 
-    rootRet = gazlowe::InvertBTree::invertTreeLoop(tree->Load(srcTree));
+    rootRet = gazlowe::InvertBTree::invertTreeItr(tree->Load(srcTree));
     results = "";
     tree->Dump(rootRet, results);
     BOOST_REQUIRE_EQUAL(results, destTree);

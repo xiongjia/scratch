@@ -26,7 +26,7 @@ namespace gazlowe
                 0 : 1 + std::max(maxDepth(root->left), maxDepth(root->right));
         }
 
-        static int maxDepthLoop(TreeNode *root)
+        static int maxDepthItr(TreeNode *root)
         {
             if (nullptr == root)
             {
@@ -76,12 +76,12 @@ BOOST_AUTO_TEST_CASE(max_depth_btree)
 
     int depth = gazlowe::MaxDepthBTree::maxDepth(root);
     BOOST_REQUIRE_EQUAL(depth, 5);
-    depth = gazlowe::MaxDepthBTree::maxDepthLoop(root);
+    depth = gazlowe::MaxDepthBTree::maxDepthItr(root);
     BOOST_REQUIRE_EQUAL(depth, 5);
 
     depth = gazlowe::MaxDepthBTree::maxDepth(nullptr);
     BOOST_REQUIRE_EQUAL(depth, 0);
-    depth = gazlowe::MaxDepthBTree::maxDepthLoop(nullptr);
+    depth = gazlowe::MaxDepthBTree::maxDepthItr(nullptr);
     BOOST_REQUIRE_EQUAL(depth, 0);
 }
 BOOST_AUTO_TEST_SUITE_END()

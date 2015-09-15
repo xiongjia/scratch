@@ -49,7 +49,7 @@ namespace gazlowe
         }
     };
 
-    class QSortLoop
+    class QSortIter
     {
     public:
         template<class T, std::size_t N, class C>
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(sorting_qsort)
     boost::array<int, dataSz> dataNums1(dataNum);
     gazlowe::QSort::Sort(dataNums1, std::greater<int>());
     boost::array<int, dataSz> dataNums2(dataNum);
-    gazlowe::QSortLoop::Sort(dataNums2, std::greater<int>());
+    gazlowe::QSortIter::Sort(dataNums2, std::greater<int>());
     boost::array<int, dataSz> dataNums3(dataNum);
     std::sort(dataNums3.begin(), dataNums3.end(), std::greater<int>());
     BOOST_CHECK_EQUAL_COLLECTIONS(dataNums1.begin(), dataNums1.end(),
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(sorting_qsort)
     boost::array<std::string, dataSz> dataStr1(dataStr);
     gazlowe::QSort::Sort(dataStr1, std::less<std::string>());
     boost::array<std::string, dataSz> dataStr2(dataStr);
-    gazlowe::QSortLoop::Sort(dataStr2, std::less<std::string>());
+    gazlowe::QSortIter::Sort(dataStr2, std::less<std::string>());
     boost::array<std::string, dataSz> dataStr3(dataStr);
     std::sort(dataStr3.begin(), dataStr3.end(), std::less<std::string>());
     BOOST_CHECK_EQUAL_COLLECTIONS(dataStr1.begin(), dataStr1.end(),

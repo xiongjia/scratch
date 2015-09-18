@@ -27,4 +27,5 @@ It's my algorithm tests.
   - `g_leetcode_reverse_linked_list.cxx` - Reverse Linked List
   - `g_leetcode_merge_two_sorted_lists.cxx` - Merge Two Sorted Lists
   - `g_leetcode_valid_anagram.cxx` - Valid Anagram
+  - `g_leetcode_min_stack.cxx` - Min Stack
 

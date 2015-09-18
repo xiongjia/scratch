@@ -69,6 +69,7 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_reverse_linked_list.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_merge_two_sorted_lists.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_valid_anagram.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_min_stack.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
 target_link_libraries(gazlowe

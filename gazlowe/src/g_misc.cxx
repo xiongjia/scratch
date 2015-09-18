@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(tree_nodes)
 {
     auto tree = gazlowe::TreeNodes::Create();
     /* Testing tree
-     *          0
+     *        __0___
      *       /      \
      *      1        2
      *     / \      / \

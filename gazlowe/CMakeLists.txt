@@ -7,7 +7,7 @@ project(gazlowe)
 
 if (MSVC)
     # Enable the static libraries on Windows
-    foreach (flag_var 
+    foreach (flag_var
         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO
         CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
@@ -15,7 +15,7 @@ if (MSVC)
         # update to the static version of the run time library
         string(REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
     endforeach()
- 
+
     set(CMAKE_C_STANDARD_LIBRARIES "")
     set(CMAKE_CXX_STANDARD_LIBRARIES "")
 endif()
@@ -44,7 +44,7 @@ set(gazlowe_boost_dbg_libs
     "${Boost_THREAD_LIBRARY_DEBUG}"
     "${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG}")
 
-set(gazlowe_boost_opt_libs 
+set(gazlowe_boost_opt_libs
     "${Boost_SYSTEM_LIBRARY_RELEASE}"
     "${Boost_DATE_TIME_LIBRARY_RELEASE}"
     "${Boost_CHRONO_LIBRARY_RELEASE}"
@@ -67,6 +67,7 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_queue_using_stacks.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_stack_using_queues.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_reverse_linked_list.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_merge_two_sorted_lists.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
 target_link_libraries(gazlowe

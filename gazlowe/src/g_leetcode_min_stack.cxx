@@ -6,6 +6,7 @@
 #include <utility>
 #include "boost/shared_ptr.hpp"
 #include "boost/make_shared.hpp"
+#include "boost/utility.hpp"
 #include "boost/test/unit_test.hpp"
 
 namespace gazlowe
@@ -20,7 +21,7 @@ namespace gazlowe
      *   - top() -- Get the top element. 
      *   - getMin() -- Retrieve the minimum element in the stack.
      */
-    class MinStack
+    class MinStack : boost::noncopyable
     {
     private:
         std::stack<std::pair<int, int>> m_data;

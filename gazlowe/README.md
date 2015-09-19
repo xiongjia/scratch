@@ -30,4 +30,5 @@ It's my algorithm tests.
   - `g_leetcode_min_stack.cxx` - Min Stack
   - `g_leetcode_remove_element.cxx` - Remove Element
   - `g_leetcode_rm_dup_from_sorted_list.cxx` - Remove Duplicates from Sorted List
+  - `g_leetcode_mv_zeroes.cxx` - Move Zeroes
 

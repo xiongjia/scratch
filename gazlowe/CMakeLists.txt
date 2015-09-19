@@ -73,6 +73,7 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_remove_element.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_rm_dup_from_sorted_list.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_mv_zeroes.cxx"
+    "${PROJECT_SOURCE_DIR}/src/g_leetcode_implement_strstr.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
 target_link_libraries(gazlowe

@@ -58,6 +58,6 @@ BOOST_AUTO_TEST_CASE(implement_strstr)
     BOOST_REQUIRE_EQUAL(ret, -1);
     ret = gazlowe::ImplementStrstr::strStr(std::string("a"),
                                            std::string("a"));
-    BOOST_REQUIRE_EQUAL(ret, -1);
+    BOOST_REQUIRE_EQUAL(ret, 0);
 }
 BOOST_AUTO_TEST_SUITE_END()

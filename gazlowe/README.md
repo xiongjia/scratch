@@ -33,4 +33,5 @@ It's my algorithm tests.
   - `g_leetcode_mv_zeroes.cxx` - Move Zeroes
   - `g_leetcode_implement_strstr.cxx` - Implement strStr()
   - `g_leetcode_find_min_in_rotated_sorted_array.cxx` - Find Minimum in Rotated Sorted Array
+  - `g_leetcode_sort_list.cxx` - Sort List
 

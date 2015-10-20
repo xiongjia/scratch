@@ -22,13 +22,14 @@ tags
 .settings
 .gradle
 
-jscratch/.gitignore
 jscratch/bin
 jscratch/build
 jmeter-example-sampler/bin
 jmeter-example-sampler/build
 jwebsocket/bin
 jwebsocket/build
+kharazim/bin
+kharazim/build
 
 # CMake projects
 roach/build

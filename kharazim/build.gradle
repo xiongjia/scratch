@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+mainClassName = 'xiongjia.kharazim.Kharazim'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    /* test compile dependencies */
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    baseName = 'kharazim'
+    version =  '0.0.1'
+    manifest.mainAttributes('Main-Class' : 'xiongjia.kharazim.Kharazim')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+

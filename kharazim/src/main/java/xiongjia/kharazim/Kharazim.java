@@ -1,10 +1,12 @@
 package xiongjia.kharazim;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public class Kharazim {
-    private final static Logger log = Logger.getLogger(Kharazim.class.getName());
+    private final static Log log = LogFactory.getLog(Kharazim.class);
+
 
     public final static int DEFAULT_PORT = 8080;
 
@@ -30,7 +32,6 @@ public class Kharazim {
     }
 
     public static void main(String[] args) {
-        log.setLevel(Level.ALL);
         log.info("Kharazim started");
         Kharazim kharazim = new Kharazim();
         kharazim.run();

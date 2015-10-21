@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class Daemon extends Thread {
-    private final static Logger log = Logger.getLogger(Daemon.class.getName());
+    private final static Log log = LogFactory.getLog(Daemon.class);
     private final int daemonPort;
     private final ServerSocket mainSocket;
     private volatile boolean running = false;
@@ -38,7 +40,7 @@ public class Daemon extends Thread {
                 }
             }
         } catch (Exception e) {
-            log.warning("HTTP(S) Test Script Recorder stopped");
+            log.warn("HTTP(S) Test Script Recorder stopped");
         }
     }
 

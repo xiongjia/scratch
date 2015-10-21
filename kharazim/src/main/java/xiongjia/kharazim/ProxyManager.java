@@ -1,10 +1,12 @@
 package xiongjia.kharazim;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ProxyManager {
-    private final static Logger log = Logger.getLogger(ProxyManager.class.getName());
+    private final static Log log = LogFactory.getLog(ProxyManager.class);
     private Daemon daemon;
 
     ProxyManager(int port) throws IOException {

@@ -19,12 +19,20 @@ public class Kharazim {
         this.servPort = servPort;
     }
 
+    public void run() {
+        try {
+            ProxyManager proxyMgr = new ProxyManager(servPort);
+            proxyMgr.startProxy();
+        }
+        catch (Exception e) {
+            log.info("io err");
+        }
+    }
 
     public static void main(String[] args) {
         log.setLevel(Level.ALL);
         log.info("Kharazim started");
-
-        ProxyManager proxyMgr = new ProxyManager();
-        proxyMgr.startProxy();
+        Kharazim kharazim = new Kharazim();
+        kharazim.run();
     }
 }

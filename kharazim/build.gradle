@@ -3,6 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'application'
 
+projectName = 'kharazim'
 mainClassName = 'xiongjia.kharazim.Kharazim'
 
 repositories {
@@ -16,9 +17,9 @@ dependencies {
 }
 
 jar {
-    baseName = 'kharazim'
+    baseName = projectName
     version =  '0.0.1'
-    manifest.mainAttributes('Main-Class' : 'xiongjia.kharazim.Kharazim')
+    manifest.mainAttributes('Main-Class' : mainClassName)
 }
 
 task wrapper(type: Wrapper) {

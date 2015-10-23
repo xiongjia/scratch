@@ -1,39 +1,26 @@
 package xiongjia.kharazim;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 public class Kharazim {
-    private final static Log log = LogFactory.getLog(Kharazim.class);
+    private final static Log log = LoggingManager.getLoggerForClass();
 
+    public void start(String[] args) {
+        log.debug("Starting...");
 
-    public final static int DEFAULT_PORT = 8080;
-
-    private int servPort = DEFAULT_PORT;
-
-
-    public int getServPort() {
-        return servPort;
-    }
-
-    public void setServPort(int servPort) {
-        this.servPort = servPort;
-    }
-
-    public void run() {
+    	/* TODO read the port and other settings from args */
         try {
-            ProxyManager proxyMgr = new ProxyManager(servPort);
+            ProxyManager proxyMgr = new ProxyManager.Builder()
+                .port(8080)
+                .build();
             proxyMgr.startProxy();
         }
-        catch (Exception e) {
-            log.info("io err");
+        catch (Exception ex) {
+        	log.fatal("proxy server error: ", ex);
         }
     }
 
     public static void main(String[] args) {
-        log.info("Kharazim started");
-        Kharazim kharazim = new Kharazim();
-        kharazim.run();
+        (new Kharazim()).start(args);
     }
 }

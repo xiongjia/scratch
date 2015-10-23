@@ -3,8 +3,6 @@ apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'application'
 
-projectName    = 'kharazim'
-projectVersion = '0.0.1'
 mainClassName  = 'xiongjia.kharazim.Kharazim'
 
 repositories {
@@ -19,8 +17,8 @@ dependencies {
 }
 
 jar {
-    baseName = projectName
-    version =  projectVersion
+    baseName = 'kharazim'
+    version =  '0.0.1'
     manifest.mainAttributes('Main-Class' : mainClassName)
 }
 

@@ -23,8 +23,7 @@ public class Daemon extends Thread {
 
     @Override
     public void run() {
-        log.info("Proxy server started");
-
+        log.debug("starting proxy");
         running = true;
         try {
             while (running) {
@@ -32,15 +31,17 @@ public class Daemon extends Thread {
                     Socket clientSocket = mainSocket.accept();
                     if (running) {
                         log.info("new connection");
+                        Proxy proxy = new Proxy(clientSocket);
+                        proxy.start();
                     }
-
                 }
-                catch (InterruptedIOException e) {
+                catch (InterruptedIOException err) {
                     continue;
                 }
             }
-        } catch (Exception e) {
-            log.warn("HTTP(S) Test Script Recorder stopped");
+        }
+        catch (Exception ex) {
+            log.warn("proxy server error", ex);
         }
     }
 

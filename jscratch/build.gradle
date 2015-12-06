@@ -5,6 +5,13 @@ apply plugin: 'application'
 
 mainClassName = 'scratch.Scratch'
 
+eclipse {
+    classpath {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
 repositories {
     mavenLocal()
     mavenCentral()

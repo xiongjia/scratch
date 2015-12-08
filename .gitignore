@@ -67,3 +67,7 @@ DerivedData
 Pods/
 Podfile.lock
 
+# Scala sbt projects
+scala-scratch/project
+scala-scratch/target
+

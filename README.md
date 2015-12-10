@@ -9,4 +9,6 @@ This "scratch" repository is saving my test codes  (e.g. The project template; T
 * **roach** : A simple HTTP Server library ( libuv + http-parser + Boost + CMake )
 * **zeratul** : A simple socks proxy (Boost ASIO)
 * **gazlowe** : My algorithm tests
+* **scala-scratch** : My Scala test code
+* **kharazim** : My Java Netty test code
 

@@ -21,6 +21,7 @@ tags
 .project
 .settings
 .gradle
+.cache-main
 
 jscratch/.gitignore
 jscratch/bin
@@ -68,6 +69,7 @@ Pods/
 Podfile.lock
 
 # Scala sbt projects
-scala-scratch/project
 scala-scratch/target
+scala-scratch/project/target
+scala-scratch/project/project
 

@@ -41,6 +41,7 @@ roach/build
 anubarak/build
 zeratul/build
 gazlowe/build
+chen/build
 
 # node.js projects
 node_modules

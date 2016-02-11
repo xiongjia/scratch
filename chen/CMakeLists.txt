@@ -61,8 +61,13 @@ add_library(libchen STATIC
     "${PROJECT_SOURCE_DIR}/src/chen_types.hxx"
     "${PROJECT_SOURCE_DIR}/src/chen_misc.hxx"
     "${PROJECT_SOURCE_DIR}/src/chen_misc.cxx"
+    "${PROJECT_SOURCE_DIR}/src/chen_logger.hxx"
+    "${PROJECT_SOURCE_DIR}/src/chen_logger.cxx"
     "${PROJECT_SOURCE_DIR}/src/chen_log.hxx"
     "${PROJECT_SOURCE_DIR}/src/chen_log.cxx"
+    "${PROJECT_SOURCE_DIR}/src/chen_log_handler.hxx"
+    "${PROJECT_SOURCE_DIR}/src/chen_log_console.hxx"
+    "${PROJECT_SOURCE_DIR}/src/chen_log_console.cxx"
     "${PROJECT_SOURCE_DIR}/src/chen.hxx")
 
 add_executable(chen

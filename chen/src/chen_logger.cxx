@@ -35,7 +35,7 @@ public:
         return m_logLevel;
     }
 
-    virtual bool is_ignore(Log::Flags flags)
+    virtual bool is_ignore(int flags)
     {
         switch (m_logLevel)
         {
@@ -57,18 +57,18 @@ public:
 
     virtual void log(const char *src,
                      size_t srcLine,
-                     Log::Flags flags,
+                     int flags,
                      const char *fmt, ...);
 
     virtual void log_nofmt(const char *src,
                            size_t srcLine,
-                           Log::Flags flags,
+                           int flags,
                            const char *log);
 
 private:
     void log_vfmt(const char *src,
                   size_t srcLine,
-                  Log::Flags flags,
+                  int flags,
                   const char *fmt,
                   va_list args);
 };
@@ -87,7 +87,7 @@ void LoggerImpl::reg_handler(boost::shared_ptr<LoggerHandler> handler)
 
 void LoggerImpl::log_nofmt(const char *src,
                            size_t srcLine,
-                           Log::Flags flags,
+                           int flags,
                            const char *log)
 {
     if (is_ignore(flags) || nullptr == log)
@@ -95,7 +95,8 @@ void LoggerImpl::log_nofmt(const char *src,
         return;
     }
 
-    Log logItem(src, srcLine, flags, log);
+    Log logItem(src, srcLine,
+                static_cast<chen::Log::Flags>(flags), log);
     boost::mutex::scoped_lock lock(m_mutex);
     BOOST_FOREACH(auto handler, m_handler)
     {
@@ -105,7 +106,7 @@ void LoggerImpl::log_nofmt(const char *src,
 
 void LoggerImpl::log(const char *src,
                      size_t srcLine,
-                     Log::Flags flags,
+                     int flags,
                      const char *fmt, ...)
 {
     if (is_ignore(flags) || nullptr == fmt)
@@ -120,7 +121,7 @@ void LoggerImpl::log(const char *src,
 
 void LoggerImpl::log_vfmt(const char *src,
                           size_t srcLine,
-                          Log::Flags flags,
+                          int flags,
                           const char *fmt,
                           va_list args)
 {

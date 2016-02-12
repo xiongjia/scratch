@@ -18,10 +18,11 @@ class Log : boost::noncopyable
 {
 public:
     typedef enum {
-        Err = (1 << 0),
-        War = (1 << 1),
-        Inf = (1 << 2),
-        Dbg = (1 << 3)
+        None = 0,
+        Err  = (1 << 0),
+        War  = (1 << 1),
+        Inf  = (1 << 2),
+        Dbg  = (1 << 3)
     } Flags;
 
 private:

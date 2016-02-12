@@ -9,9 +9,9 @@
 
 _CHEN_BEGIN_
 
-boost::shared_ptr<LoggerHandler> LogConsole::create(void)
+boost::shared_ptr<LoggerHandler> LogConsole::create(const std::ostream &output)
 {
-    return boost::make_shared<LogConsole>();
+    return boost::make_shared<LogConsole>(output);
 }
 
 void LogConsole::append(const chen::Log &log)

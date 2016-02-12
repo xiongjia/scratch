@@ -32,15 +32,15 @@ public:
 
     virtual void log(const char *src,
                      size_t srcLine,
-                     Log::Flags flags,
+                     int flags,
                      const char *fmt, ...) = 0;
 
     virtual void log_nofmt(const char *src,
                            size_t srcLine,
-                           Log::Flags flags,
+                           int flags,
                            const char *log) = 0;
 
-    virtual bool is_ignore(Log::Flags flags) = 0;
+    virtual bool is_ignore(int flags) = 0;
 
 protected:
     Logger(void)

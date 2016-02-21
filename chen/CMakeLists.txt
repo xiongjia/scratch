@@ -74,8 +74,8 @@ add_library(libchen STATIC
     "${PROJECT_SOURCE_DIR}/src/chen.hxx")
 
 add_executable(chentest
-    "${PROJECT_SOURCE_DIR}/src/chen_test_log.cxx"
-    "${PROJECT_SOURCE_DIR}/src/chen_test.cxx")
+    "${PROJECT_SOURCE_DIR}/test/chen_test_log.cxx"
+    "${PROJECT_SOURCE_DIR}/test/chen_test.cxx")
 
 add_executable(chen
     "${PROJECT_SOURCE_DIR}/src/main.cxx")

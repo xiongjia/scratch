@@ -7,4 +7,3 @@
 
 
 #endif /* !defined(_CHEN_MISC_HXX_) */
-    

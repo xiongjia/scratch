@@ -5,10 +5,9 @@
 #ifndef _CHEN_LOG_HXX_
 #define _CHEN_LOG_HXX_ 1
 
+#include <stdarg.h>
+#include "boost/shared_ptr.hpp"
 #include "boost/utility.hpp"
-#include "boost/filesystem.hpp"
-#include <thread>
-#include <ctime>
 
 #include "chen_types.hxx"
 
@@ -18,58 +17,32 @@ class Log : boost::noncopyable
 {
 public:
     typedef enum {
-        None = 0,
-        Err  = (1 << 0),
-        War  = (1 << 1),
-        Inf  = (1 << 2),
-        Dbg  = (1 << 3)
+        none = 0,
+        err  = (1 << 0),
+        war  = (1 << 1),
+        inf  = (1 << 2),
+        dbg  = (1 << 3)
     } Flags;
 
-private:
-    boost::filesystem::path  m_src;
-    std::string              m_srcFilename;
-    const size_t             m_srcLine;
-    Flags                    m_flags;
-    const char              *m_log;
-    std::time_t              m_tm;
-    std::thread::id          m_threadId;
+public:
+    static boost::shared_ptr<Log> get_instance(void);
 
 public:
-    Log(const char *src,
-        size_t srcLine,
-        Flags flags,
-        const char *log);
+    virtual bool is_skip(Flags flags) = 0;
 
-    const char *get_src(void) const
-    {
-        return m_srcFilename.c_str();
-    }
+    virtual void write_nofmt(const char *src, const size_t srcLine,
+                             Flags flags, const char *log) = 0;
 
-    const size_t get_src_line(void) const
-    {
-        return m_srcLine;
-    }
+    virtual void write_vfmt(const char *src, const size_t srcLine,
+                            Flags flags, const char *fmt, va_list args) = 0;
 
-    const Flags get_flags(void) const
-    {
-        return m_flags;
-    }
+    virtual void write(const char *src, const size_t srcLine,
+                       Flags flags, const char *fmt, ...) = 0;
 
-    const char *get_log(void) const
-    {
-        return m_log;
-    }
-
-    const std::time_t get_tm(void) const
-    {
-        return m_tm;
-    }
-
-    const std::thread::id& get_thread_id(void) const
-    {
-        return m_threadId;
-    }
+protected:
+    Log(void);
 };
 
 _CHEN_END_
+
 #endif /* !defined(_CHEN_LOG_HXX_) */

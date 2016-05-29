@@ -21,20 +21,25 @@ BOOST_AUTO_TEST_CASE(log)
     std::string lastLog;
     chen::Log::Flags lastFlags;
     boost::thread::id lastThreadId;
-    log->set_handler([&](const chen::LogItem &logItem) {
+    boost::posix_time::ptime lastLogTM;
+    log->set_handler([&](const chen::LogItem &logItem)
+    {
         lastLog = logItem.get_log();
         lastFlags = logItem.get_flags();
         lastThreadId = logItem.get_threadid();
+        lastLogTM = logItem.get_tm();
     });
 
+    auto now = boost::posix_time::microsec_clock::universal_time();
     log->set_level(chen::Log::LEVEL_ERR);
     const char *logFmt = "Test Log %d, %s";
     CHEN_LOG(CHEN_LOG_ERR, logFmt, 1, "string");
     BOOST_REQUIRE(lastFlags == chen::Log::FErr &&
-                  lastThreadId == curThreadId);
+                  lastThreadId == curThreadId &&
+                  now <= lastLogTM);
     boost::format fmt(logFmt);
-    const std::string name = boost::str(fmt % 1 % "string");
-    BOOST_REQUIRE_EQUAL(name, lastLog);
+    const std::string logMsg = boost::str(fmt % 1 % "string");
+    BOOST_REQUIRE_EQUAL(logMsg, lastLog);
 
     lastLog.clear();
     log->set_level(chen::Log::LEVEL_ERR);

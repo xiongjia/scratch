@@ -63,6 +63,8 @@ add_library(libchen STATIC
   "${PROJECT_SOURCE_DIR}/src/chen_misc.cxx"
   "${PROJECT_SOURCE_DIR}/src/chen_log.hxx"
   "${PROJECT_SOURCE_DIR}/src/chen_log.cxx"
+  "${PROJECT_SOURCE_DIR}/src/chen_serv.hxx"
+  "${PROJECT_SOURCE_DIR}/src/chen_serv.cxx"
   "${PROJECT_SOURCE_DIR}/src/chen.hxx")
 
 add_executable(chentest
@@ -77,8 +79,12 @@ file(GLOB SOURCES_GROUP_CORE
   "src/chen.hxx"
   "src/chen_types.hxx")
 
+file(GLOB SOURCES_GROUP_SERV
+  "src/chen_serv.*")
+
 source_group("misc" FILES ${SOURCES_GROUP_MISC})
 source_group("core" FILES ${SOURCES_GROUP_CORE})
+source_group("serv" FILES ${SOURCES_GROUP_SERV})
 
 add_executable(chen
   "${PROJECT_SOURCE_DIR}/src/main.cxx")

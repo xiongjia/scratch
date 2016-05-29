@@ -10,6 +10,7 @@
 #include "boost/utility.hpp"
 #include "boost/function.hpp"
 #include "boost/thread.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include "chen_types.hxx"
 
 _CHEN_BEGIN_
@@ -66,18 +67,19 @@ protected:
 class LogItem : boost::noncopyable
 {
 private:
-    const char             *m_src;
-    const size_t            m_srcLine;
-    const Log::Flags        m_flags;
-    const char             *m_log;
-    const boost::thread::id m_threadId;
-
+    const char                     *m_src;
+    const size_t                    m_srcLine;
+    const Log::Flags                m_flags;
+    const char                     *m_log;
+    const boost::thread::id         m_threadId;
+    const boost::posix_time::ptime  m_tm;
 public:
     const char *get_src(void) const { return m_src; }
     const size_t get_srcline(void) const { return m_srcLine; }
     const Log::Flags get_flags(void) const { return m_flags; }
     const char *get_log(void) const { return m_log; }
     const boost::thread::id &get_threadid(void) const { return m_threadId; }
+    const boost::posix_time::ptime &get_tm(void) const { return m_tm; }
 
 public:
     LogItem(const char *src, const size_t srcLine, 
@@ -87,6 +89,7 @@ public:
         , m_log(log)
         , m_flags(flags)
         , m_threadId(boost::this_thread::get_id())
+        , m_tm(boost::posix_time::microsec_clock::universal_time())
     {
         /* NOP */
     }

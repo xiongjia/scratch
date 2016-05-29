@@ -4,7 +4,6 @@
 
 #include "boost/thread/mutex.hpp"
 #include "boost/make_shared.hpp"
-#include "boost/utility/enable_if.hpp"
 #include "chen_log.hxx"
 
 _CHEN_BEGIN_
@@ -40,11 +39,7 @@ public:
         {
             return;
         }
-        LogItem logItem;
-        logItem.src = src;
-        logItem.srcLine = srcLine;
-        logItem.log = log;
-        logItem.flags = flags;
+        LogItem logItem(src, srcLine, flags, log);
         m_handler(logItem);
     }
 

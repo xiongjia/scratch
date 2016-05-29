@@ -9,10 +9,12 @@
 #include "boost/shared_ptr.hpp"
 #include "boost/utility.hpp"
 #include "boost/function.hpp"
-
+#include "boost/thread.hpp"
 #include "chen_types.hxx"
 
 _CHEN_BEGIN_
+
+class LogItem;
 
 class Log : boost::noncopyable
 {
@@ -35,13 +37,6 @@ public:
         LEVEL_ALL  = 100
     } Level;
 
-    typedef struct
-    {
-        const char *src;
-        size_t      srcLine;
-        Flags       flags;
-        const char *log;
-    } LogItem;
     typedef boost::function<void(const LogItem &)> Logger;
 
 public:
@@ -66,6 +61,35 @@ public:
     virtual const Logger& get_handler(void) const = 0;
 protected:
     Log(void);
+};
+
+class LogItem : boost::noncopyable
+{
+private:
+    const char             *m_src;
+    const size_t            m_srcLine;
+    const Log::Flags        m_flags;
+    const char             *m_log;
+    const boost::thread::id m_threadId;
+
+public:
+    const char *get_src(void) const { return m_src; }
+    const size_t get_srcline(void) const { return m_srcLine; }
+    const Log::Flags get_flags(void) const { return m_flags; }
+    const char *get_log(void) const { return m_log; }
+    const boost::thread::id &get_threadid(void) const { return m_threadId; }
+
+public:
+    LogItem(const char *src, const size_t srcLine, 
+             const Log::Flags flags, const char *log)
+        : m_src(src)
+        , m_srcLine(srcLine)
+        , m_log(log)
+        , m_flags(flags)
+        , m_threadId(boost::this_thread::get_id())
+    {
+        /* NOP */
+    }
 };
 
 _CHEN_END_

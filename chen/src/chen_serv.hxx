@@ -5,8 +5,23 @@
 #ifndef _CHEN_SERV_HXX_
 #define _CHEN_SERV_HXX_ 1
 
+#include "boost/shared_ptr.hpp"
+#include "boost/utility.hpp"
 #include "chen_types.hxx"
+
 _CHEN_BEGIN_
+
+class Server : boost::noncopyable
+{
+public:
+    static boost::shared_ptr<Server> create(void);
+
+public:
+    virtual bool run(void) = 0;
+
+protected:
+    Server(void);
+};
 
 _CHEN_END_
 

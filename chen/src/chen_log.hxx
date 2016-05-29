@@ -11,6 +11,7 @@
 #include "boost/function.hpp"
 #include "boost/thread.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include "boost/date_time/c_local_time_adjustor.hpp"
 #include "chen_types.hxx"
 
 _CHEN_BEGIN_
@@ -67,12 +68,17 @@ protected:
 class LogItem : boost::noncopyable
 {
 private:
+    typedef boost::date_time::c_local_adjustor<boost::posix_time::ptime>
+        boost_tm_local_adjustor;
+
+private:
     const char                     *m_src;
     const size_t                    m_srcLine;
     const Log::Flags                m_flags;
     const char                     *m_log;
     const boost::thread::id         m_threadId;
     const boost::posix_time::ptime  m_tm;
+
 public:
     const char *get_src(void) const { return m_src; }
     const size_t get_srcline(void) const { return m_srcLine; }
@@ -80,6 +86,10 @@ public:
     const char *get_log(void) const { return m_log; }
     const boost::thread::id &get_threadid(void) const { return m_threadId; }
     const boost::posix_time::ptime &get_tm(void) const { return m_tm; }
+    const boost::posix_time::ptime &get_tm_local(void) const
+    {
+        return boost_tm_local_adjustor::utc_to_local(m_tm);
+    }
 
 public:
     LogItem(const char *src, const size_t srcLine, 

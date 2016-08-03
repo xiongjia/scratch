@@ -18,23 +18,22 @@ exports.simple = (callback) => {
    *
    * Output of below code snippet:
    *
-   *   23:12:54 Begin A
-   *   23:12:55 End A (1018ms)
-   *   23:12:55 Begin B
-   *   23:12:56 End B (1001ms)
-   *   23:12:56 Begin C
-   *   23:12:57 End C (1000ms)
-   *   23:12:57 Final
-   *
+   *   00:10:02 Begin A: data = start
+   *   00:10:03 End A (1019ms)
+   *   00:10:03 Begin B: data = A
+   *   00:10:04 End B (1001ms)
+   *   00:10:04 Begin C: data = B
+   *   00:10:05 End C (1000ms)
+   *   00:10:05 Final
    */
   callback = callback || function () {};
-  funcA = misc.mkTestFunc({ name: 'A', delay: 1000, err: null });
-  funcB = misc.mkTestFunc({ name: 'B', delay: 1000, err: null });
-  funcC = misc.mkTestFunc({ name: 'C', delay: 1000, err: null });
-  promise = Promise.resolve();
-  promise = promise.then(() => misc.mkPromise(funcA))
-    .then(() => misc.mkPromise(funcB))
-    .then(() => misc.mkPromise(funcC));
+  funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
+  funcB = misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000 });
+  funcC = misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000 });
+  promise = Promise.resolve('start');
+  promise = promise.then((data) => misc.mkPromise(funcA, data))
+    .then((data) => misc.mkPromise(funcB, data))
+    .then((data) => misc.mkPromise(funcC, data));
   promise.then(() => funcFinal(), (err) => funcFinal(err))
     .then(() => { callback(); });
 };
@@ -48,21 +47,20 @@ exports.error = (callback) => {
    *
    * Output of below code snippet:
    *
-   *   23:35:18 Begin A
-   *   23:35:19 End A (1001ms)
-   *   23:35:19 Begin B
-   *   23:35:20 End B (1000ms)
-   *   23:35:20 Final ERR: Error: B Error
-   *
+   *   00:10:05 Begin A: data = start
+   *   00:10:06 End A (1000ms)
+   *   00:10:06 Begin B: data = A
+   *   00:10:07 End B (1001ms)
+   *   00:10:07 Final ERR: Error: B Err
    */
   callback = callback || function () {};
-  funcA = misc.mkTestFunc({ name: 'A', delay: 1000, err: null });
-  funcB = misc.mkTestFunc({ name: 'B', delay: 1000, err: 'B Error' });
-  funcC = misc.mkTestFunc({ name: 'C', delay: 1000, err: null });
-  promise = Promise.resolve();
-  promise = promise.then(() => misc.mkPromise(funcA))
-    .then(() => misc.mkPromise(funcB))
-    .then(() => misc.mkPromise(funcC));
+  funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
+  funcB = misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000, err: 'B Err' });
+  funcC = misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000 });
+  promise = Promise.resolve('start');
+  promise = promise.then((data) => misc.mkPromise(funcA, data))
+    .then((data) => misc.mkPromise(funcB, data))
+    .then((data) => misc.mkPromise(funcC, data));
   promise.then(() => funcFinal(), (err) => funcFinal(err))
     .then(() => { callback(); });
 };

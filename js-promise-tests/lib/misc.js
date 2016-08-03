@@ -5,26 +5,28 @@ let logger = exports.logger = (msg) => {
 };
 
 exports.mkTestFunc = (opts) => {
-  return function (callback) {
+  return function (data, callback) {
     let begin = Date.now();
+
     opts = opts || {};
     callback = callback || function () {};
-    logger(`Begin ${opts.name}`);
+
+    logger(`Begin ${opts.name}: data = ${data}`);
     setTimeout(() => {
       logger(`End ${opts.name} (${ Date.now() - begin }ms)`);
-      callback(opts.err ? new Error(opts.err) : undefined);
+      callback(opts.err ? new Error(opts.err) : undefined, opts.ret);
     }, opts.delay);
   };
 };
 
-exports.mkPromise = (func) => {
+exports.mkPromise = (func, data) => {
   return new Promise((resolve, reject) => {
-    func((err) => {
+    func(data, (err, ret) => {
       if (err) {
         reject(err);
       }
       else {
-        resolve();
+        resolve(ret);
       }
     });
   });

@@ -14,9 +14,10 @@ function funcFinal(err) {
 exports.simple = (callback) => {
   let funcA, funcB, funcC, promise;
 
-  /* Task A [Pass] -> Task B [Pass] -> Task C [Pass] -> Final
-   *
-   * Output of below code snippet:
+  logger('--------------------------------------------------------');
+  logger('Task A [Pass] -> Task B [Pass] -> Task C [Pass] -> Final');
+  logger('--------------------------------------------------------');
+  /* Output of below code snippet:
    *
    *   00:10:02 Begin A: data = start
    *   00:10:03 End A (1019ms)
@@ -41,11 +42,12 @@ exports.simple = (callback) => {
 exports.error = (callback) => {
   let funcA, funcB, funcC, promise;
 
-  /* Task A [Pass] -> Task B [Err] -X-> Task C [Skip] 
-   *                     |
-   *                     +--> Final [Error]
-   *
-   * Output of below code snippet:
+  logger('------------------------------------------------');
+  logger('Task A [Pass] -> Task B [Err] -X-> Task C [Skip]');
+  logger('                    |                           ');
+  logger('                    +--> Final [Error]          ');
+  logger('------------------------------------------------');
+  /* Output of below code snippet:
    *
    *   00:10:05 Begin A: data = start
    *   00:10:06 End A (1000ms)

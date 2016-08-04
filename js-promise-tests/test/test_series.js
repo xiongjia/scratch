@@ -3,15 +3,15 @@
 const misc = require('../lib/misc.js');
 const logger = misc.logger;
 
-function funcFinal(err) {
+function funcFinal(err, data) {
   if (err) {
     logger(`Final ERR: ${err.toString()}`);
     return;
   }
-  logger('Final');
+  logger(`Final: ${data}`);
 }
 
-exports.simple = (callback) => {
+exports.allPassed = (callback) => {
   let funcA, funcB, funcC, promise;
 
   logger('--------------------------------------------------------');
@@ -19,13 +19,13 @@ exports.simple = (callback) => {
   logger('--------------------------------------------------------');
   /* Output of below code snippet:
    *
-   *   00:10:02 Begin A: data = start
-   *   00:10:03 End A (1019ms)
-   *   00:10:03 Begin B: data = A
-   *   00:10:04 End B (1001ms)
-   *   00:10:04 Begin C: data = B
-   *   00:10:05 End C (1000ms)
-   *   00:10:05 Final
+   *   20:11:14 Begin A: data = start
+   *   20:11:15 End A (1000ms)
+   *   20:11:15 Begin B: data = A
+   *   20:11:16 End B (1000ms)
+   *   20:11:16 Begin C: data = B
+   *   20:11:17 End C (1000ms)
+   *   20:11:17 Final: C
    */
   callback = callback || function () {};
   funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
@@ -35,11 +35,11 @@ exports.simple = (callback) => {
   promise = promise.then((data) => misc.mkPromise(funcA, data))
     .then((data) => misc.mkPromise(funcB, data))
     .then((data) => misc.mkPromise(funcC, data));
-  promise.then(() => funcFinal(), (err) => funcFinal(err))
-    .then(() => { callback(); });
+  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
+    .then(() => callback());
 };
 
-exports.error = (callback) => {
+exports.waterfall = (callback) => {
   let funcA, funcB, funcC, promise;
 
   logger('------------------------------------------------');
@@ -63,15 +63,51 @@ exports.error = (callback) => {
   promise = promise.then((data) => misc.mkPromise(funcA, data))
     .then((data) => misc.mkPromise(funcB, data))
     .then((data) => misc.mkPromise(funcC, data));
-  promise.then(() => funcFinal(), (err) => funcFinal(err))
-    .then(() => { callback(); });
+  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
+    .then(() => callback());
+};
+
+exports.ignoreErr = (callback) => {
+  let funcA, funcB, funcC, promise;
+
+  logger('----------------------------------------------------------------');
+  logger('Task A [Ignore] -> Task B [Ignore] -X-> Task C [Ignore] -> Final');
+  logger('----------------------------------------------------------------');
+  /* Output of below code snippet:
+   *
+   *   21:18:53 Begin A: data = start
+   *   21:18:54 End A (1001ms)
+   *   21:18:54 Begin B: data = Error: A Err
+   *   21:18:55 End B (1002ms)
+   *   21:18:55 Begin C: data = Error: B Err
+   *   21:18:56 End C (1000ms)
+   *   21:18:56 Final: Error: C Err
+   */
+  callback = callback || function () {};
+  funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000, err: 'A Err' });
+  funcB = misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000, err: 'B Err' });
+  funcC = misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000, err: 'C Err' });
+  promise = Promise.resolve('start');
+  promise = promise.then((data) => misc.mkPromise(funcA, data))
+    .catch((err) => err.toString())
+    .then((data) => misc.mkPromise(funcB, data))
+    .catch((err) => err.toString())
+    .then((data) => misc.mkPromise(funcC, data))
+    .catch((err) => err.toString());
+  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
+    .then(() => callback());
 };
 
 (() => {
+  if (require.main !== module) {
+    return;
+  }
   Promise.resolve().then(() => {
-    return new Promise((resolve, reject) => exports.simple(resolve));
+    return new Promise((resolve, reject) => exports.allPassed(resolve));
   }).then(() => {
-    return new Promise((resolve, reject) => exports.error(resolve));
+    return new Promise((resolve, reject) => exports.waterfall(resolve));
+  }).then(() => {
+    return new Promise((resolve, reject) => exports.ignoreErr(resolve));
   });
 })();
 

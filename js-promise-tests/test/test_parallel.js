@@ -17,13 +17,13 @@ exports.allPassed = (callback) => {
   logger('--------------------------------------');
   /* Output of below code snippet:
    *
-   *   23:23:40 Begin A: data = start
-   *   23:23:40 Begin B: data = start
-   *   23:23:40 Begin C: data = start
-   *   23:23:41 End A (1001ms)
-   *   23:23:42 End C (2001ms)
-   *   23:23:43 End B (3002ms)
-   *   23:23:43 Final: A,B,C
+   *   [23:23:40] Begin A: data = start
+   *   [23:23:40] Begin B: data = start
+   *   [23:23:40] Begin C: data = start
+   *   [23:23:41] End A (1001ms)
+   *   [23:23:42] End C (2001ms)
+   *   [23:23:43] End B (3002ms)
+   *   [23:23:43] Final: A,B,C
    */
   callback = callback || function () {};
   funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
@@ -50,13 +50,13 @@ exports.taskCErr = (callback) => {
   logger('---------------------------------------------');
   /* Output of below code snippet:
    *
-   *   23:23:37 Begin A: data = start
-   *   23:23:37 Begin B: data = start
-   *   23:23:37 Begin C: data = start
-   *   23:23:38 End A (1002ms)
-   *   23:23:39 End C (2001ms)
-   *   23:23:40 End B (3001ms)
-   *   23:23:40 Final: A,B,Error: C Err
+   *   [23:23:37] Begin A: data = start
+   *   [23:23:37] Begin B: data = start
+   *   [23:23:37] Begin C: data = start
+   *   [23:23:38] End A (1002ms)
+   *   [23:23:39] End C (2001ms)
+   *   [23:23:40] End B (3001ms)
+   *   [23:23:40] Final: A,B,Error: C Err
    */
   callback = callback || function () {};
   funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });

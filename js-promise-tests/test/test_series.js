@@ -19,13 +19,13 @@ exports.allPassed = (callback) => {
   logger('--------------------------------------------------------');
   /* Output of below code snippet:
    *
-   *   20:11:14 Begin A: data = start
-   *   20:11:15 End A (1000ms)
-   *   20:11:15 Begin B: data = A
-   *   20:11:16 End B (1000ms)
-   *   20:11:16 Begin C: data = B
-   *   20:11:17 End C (1000ms)
-   *   20:11:17 Final: C
+   *   [20:11:14] Begin A: data = start
+   *   [20:11:15] End A (1000ms)
+   *   [20:11:15] Begin B: data = A
+   *   [20:11:16] End B (1000ms)
+   *   [20:11:16] Begin C: data = B
+   *   [20:11:17] End C (1000ms)
+   *   [20:11:17] Final: C
    */
   callback = callback || function () {};
   funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
@@ -49,11 +49,11 @@ exports.waterfall = (callback) => {
   logger('------------------------------------------------');
   /* Output of below code snippet:
    *
-   *   00:10:05 Begin A: data = start
-   *   00:10:06 End A (1000ms)
-   *   00:10:06 Begin B: data = A
-   *   00:10:07 End B (1001ms)
-   *   00:10:07 Final ERR: Error: B Err
+   *   [00:10:05] Begin A: data = start
+   *   [00:10:06] End A (1000ms)
+   *   [00:10:06] Begin B: data = A
+   *   [00:10:07] End B (1001ms)
+   *   [00:10:07] Final ERR: Error: B Err
    */
   callback = callback || function () {};
   funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
@@ -75,13 +75,13 @@ exports.ignoreErr = (callback) => {
   logger('----------------------------------------------------------------');
   /* Output of below code snippet:
    *
-   *   21:18:53 Begin A: data = start
-   *   21:18:54 End A (1001ms)
-   *   21:18:54 Begin B: data = Error: A Err
-   *   21:18:55 End B (1002ms)
-   *   21:18:55 Begin C: data = Error: B Err
-   *   21:18:56 End C (1000ms)
-   *   21:18:56 Final: Error: C Err
+   *   [21:18:53] Begin A: data = start
+   *   [21:18:54] End A (1001ms)
+   *   [21:18:54] Begin B: data = Error: A Err
+   *   [21:18:55] End B (1002ms)
+   *   [21:18:55] Begin C: data = Error: B Err
+   *   [21:18:56] End C (1000ms)
+   *   [21:18:56] Final: Error: C Err
    */
   callback = callback || function () {};
   funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000, err: 'A Err' });

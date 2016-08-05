@@ -1,7 +1,7 @@
 'use strict';
 
 let logger = exports.logger = (msg) => {
-  console.log(`${(new Date()).toLocaleTimeString()} %s`, msg);
+  console.log(`[${(new Date()).toLocaleTimeString()}] %s`, msg);
 };
 
 exports.mkTestFunc = (opts) => {

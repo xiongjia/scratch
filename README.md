@@ -11,4 +11,5 @@ This "scratch" repository is saving my test codes  (e.g. The project template; T
 * **gazlowe** : My algorithm tests
 * **scala-scratch** : My Scala test code
 * **kharazim** : My Java Netty test code
+* *js-promise* : The ES6 JS promise tests
 

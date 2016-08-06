@@ -72,9 +72,9 @@ exports.waterfall = (callback) => {
 };
 
 exports.ignoreErr = (callback) => {
-  logger('----------------------------------------------------------------');
-  logger('Task A [Ignore] -> Task B [Ignore] -X-> Task C [Ignore] -> Final');
-  logger('----------------------------------------------------------------');
+  logger('--------------------------------------------------------------');
+  logger('Task A [Ignore] -> Task B [Ignore] -> Task C [Ignore] -> Final');
+  logger('--------------------------------------------------------------');
   /* Output of below code snippet:
    *
    *   [21:18:53] Begin A: data = start

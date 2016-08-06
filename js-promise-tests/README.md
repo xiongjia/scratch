@@ -15,7 +15,7 @@ Task A [Pass] -> Task B [Err] -X-> Task C [Skip]
 ```
 - Ignore errors
 ```
-Task A [Ignore] -> Task B [Ignore] -X-> Task C [Ignore] -> Final
+Task A [Ignore] -> Task B [Ignore] -> Task C [Ignore] -> Final
 ```
 
 ## Parallel - `node test/test_parallel.js`
@@ -31,4 +31,24 @@ Task A [Pass] -+
 Task B [Pass] -|-> Final [A,B Pass; C Error] 
 Task C [Err ] -+                             
 ```
+
+## Retry - `node test/test_retry.js`
+- Retry 3 times and task passed
+```
+A [Err; 1st] -> A [Err; 2nd] -> A [Pass; 3rd] -> Final ');
+```
+
+- Retry 3 times but task still failed
+```
+ A [Err; 1st] -> A [Err; 2nd] -> A [Err; 3rd] -> Final [Err]
+```
+
+## Until - `node test/test_until.js`
+- `exports.untilPassed()` :    
+  - Set the max retry times to 1000, retry delay 10ms.
+  - After 100 calls, the retryTask will be switched to success. 
+- `exports.untilErr()` :    
+  - Set the max retry times to 1000, retry delay 10ms.
+  - The retryTask always retrun error. 
+  - This task will be terminated with error after 1000 times retry.
 

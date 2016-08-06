@@ -11,9 +11,25 @@ function funcFinal(err, data) {
   logger(`Final: ${data}`);
 }
 
-exports.allPassed = (callback) => {
-  let funcA, funcB, funcC, promise;
+function series(tasks, ignoreErr, callback) {
+  let promise;
 
+  callback = callback || function () {};
+  function mkSeriesPromise(task) {
+    return (data) => misc.mkPromise(task, data);
+  }
+  promise = Promise.resolve('start');
+  for (const task of tasks) {
+    promise = promise.then(mkSeriesPromise(task));
+    if (ignoreErr) {
+      promise = promise.catch((err) => err.toString());
+    }
+  }
+  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
+    .then(() => callback());
+}
+
+exports.allPassed = (callback) => {
   logger('--------------------------------------------------------');
   logger('Task A [Pass] -> Task B [Pass] -> Task C [Pass] -> Final');
   logger('--------------------------------------------------------');
@@ -27,21 +43,14 @@ exports.allPassed = (callback) => {
    *   [20:11:17] End C (1000ms)
    *   [20:11:17] Final: C
    */
-  callback = callback || function () {};
-  funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
-  funcB = misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000 });
-  funcC = misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000 });
-  promise = Promise.resolve('start');
-  promise = promise.then((data) => misc.mkPromise(funcA, data))
-    .then((data) => misc.mkPromise(funcB, data))
-    .then((data) => misc.mkPromise(funcC, data));
-  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
-    .then(() => callback());
+  series([
+    misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 }),
+    misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000 }),
+    misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000 })
+  ], false, callback);
 };
 
 exports.waterfall = (callback) => {
-  let funcA, funcB, funcC, promise;
-
   logger('------------------------------------------------');
   logger('Task A [Pass] -> Task B [Err] -X-> Task C [Skip]');
   logger('                    |                           ');
@@ -55,21 +64,14 @@ exports.waterfall = (callback) => {
    *   [00:10:07] End B (1001ms)
    *   [00:10:07] Final ERR: Error: B Err
    */
-  callback = callback || function () {};
-  funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 });
-  funcB = misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000, err: 'B Err' });
-  funcC = misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000 });
-  promise = Promise.resolve('start');
-  promise = promise.then((data) => misc.mkPromise(funcA, data))
-    .then((data) => misc.mkPromise(funcB, data))
-    .then((data) => misc.mkPromise(funcC, data));
-  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
-    .then(() => callback());
+  series([
+    misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000 }),
+    misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000, err: 'B Err' }),
+    misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000 })
+  ], false, callback);
 };
 
 exports.ignoreErr = (callback) => {
-  let funcA, funcB, funcC, promise;
-
   logger('----------------------------------------------------------------');
   logger('Task A [Ignore] -> Task B [Ignore] -X-> Task C [Ignore] -> Final');
   logger('----------------------------------------------------------------');
@@ -83,19 +85,11 @@ exports.ignoreErr = (callback) => {
    *   [21:18:56] End C (1000ms)
    *   [21:18:56] Final: Error: C Err
    */
-  callback = callback || function () {};
-  funcA = misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000, err: 'A Err' });
-  funcB = misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000, err: 'B Err' });
-  funcC = misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000, err: 'C Err' });
-  promise = Promise.resolve('start');
-  promise = promise.then((data) => misc.mkPromise(funcA, data))
-    .catch((err) => err.toString())
-    .then((data) => misc.mkPromise(funcB, data))
-    .catch((err) => err.toString())
-    .then((data) => misc.mkPromise(funcC, data))
-    .catch((err) => err.toString());
-  promise.then((data) => funcFinal(undefined, data), (err) => funcFinal(err))
-    .then(() => callback());
+  series([
+    misc.mkTestFunc({ name: 'A', ret: 'A', delay: 1000, err: 'A Err' }),
+    misc.mkTestFunc({ name: 'B', ret: 'B', delay: 1000, err: 'B Err' }),
+    misc.mkTestFunc({ name: 'C', ret: 'C', delay: 1000, err: 'C Err' })
+  ], true, callback);
 };
 
 (() => {

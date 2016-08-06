@@ -19,6 +19,29 @@ exports.mkTestFunc = (opts) => {
   };
 };
 
+exports.mkRetryFunc = (opts) => {
+  let retryCnt, onRetry;
+  retryCnt = 0;
+  onRetry = opts.onRetry || function () {};
+  return function (data, callback) {
+    logger(`Begin ${opts.name}(${retryCnt}): data = ${data}`);
+    setTimeout(() => {
+      let retryCheck;
+      retryCnt++;
+      retryCheck = onRetry({ data: data, retryCnt: retryCnt });
+      logger(`Retry ${opts.name}[${retryCnt}]: ${retryCheck}`);
+      if (retryCheck) {
+        logger(`End Retry ${opts.name}; no err`);
+        callback(undefined, opts.ret);
+      }
+      else {
+        logger(`End Retry ${opts.name}; err: ${opts.err}`);
+        callback(new Error(`${opts.err} (${retryCnt})`));
+      }
+    }, opts.delay);
+  };
+};
+
 exports.mkPromise = (func, data) => {
   return new Promise((resolve, reject) => {
     func(data, (err, ret) => {
@@ -31,3 +54,4 @@ exports.mkPromise = (func, data) => {
     });
   });
 };
+

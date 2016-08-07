@@ -2,7 +2,7 @@
 
 The simple async patterns for JS Promise (ES6 Promise).
 
-## Series - `node test/test_parallel.js`
+## Series - `node test/test_series.js`
 - All passed:
 ```
 Task A [Pass] -> Task B [Pass] -> Task C [Pass] -> Final
@@ -30,6 +30,13 @@ Task C [Pass] -+
 Task A [Pass] -+                             
 Task B [Pass] -|-> Final [A,B Pass; C Error] 
 Task C [Err ] -+                             
+```
+
+## Race - `node test/test_race.js`
+```
+Task A [Pass (3seconds)] -+
+                          |-> Final [B]
+Task B [Pass (1seconds)] -+
 ```
 
 ## Retry - `node test/test_retry.js`

@@ -42,7 +42,7 @@ Task B [Pass (1seconds)] -+
 ## Retry - `node test/test_retry.js`
 - Retry 3 times and task passed
 ```
-A [Err; 1st] -> A [Err; 2nd] -> A [Pass; 3rd] -> Final ');
+A [Err; 1st] -> A [Err; 2nd] -> A [Pass; 3rd] -> Final
 ```
 
 - Retry 3 times but task still failed

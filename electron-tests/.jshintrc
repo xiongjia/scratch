@@ -13,6 +13,6 @@
   "node": true,
   "strict": true,
   "esversion": 6,
-  "predef": []
+  "predef": ['document']
 }
 

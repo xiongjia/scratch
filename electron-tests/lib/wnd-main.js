@@ -1,16 +1,11 @@
 'use strict';
 
-const misc = require('./misc.js');
-
 exports.create = (ctx) => {
   let mainWnd;
 
   ctx = ctx || {};
-  const logger = ctx.logger;
-  const electron = ctx.electron;
-  const cfg = ctx.cfg;
-
-  const BrowserWindow = electron.BrowserWindow;
+  const { logger, cfg, electron } = ctx;
+  const { BrowserWindow } = electron;
   const wndPage =`file://${cfg.assets}/index.html`;
   const wndSz = { width: 800, height: 600 };
 

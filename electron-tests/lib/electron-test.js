@@ -8,7 +8,7 @@ exports.run = (ctx) => {
   logger = misc.mkLogger({ handler: ctx.logger });
   const cfg = ctx.cfg;
   const electron = require('electron');
-  const app = electron.app;
+  const { app } = electron;
   const mainWindow = require('./wnd-main.js');
 
   app.on('ready', () => {

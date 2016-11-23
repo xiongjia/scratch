@@ -18,14 +18,8 @@ repositories {
 }
 
 dependencies {
-    /* Add compile dependencies here:
-     * Example:
-     * compile "org.zeromq:jeromq:0.3.4"
-     * compile "org.lwjgl.lwjgl:lwjgl:2.9.1"
-     */
-
-    /* test compile dependencies */
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.projectlombok:lombok:1.16.10'
+    testCompile 'junit:junit:4.12'
 }
 
 jar {
@@ -37,4 +31,3 @@ jar {
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }
-

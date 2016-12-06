@@ -1,14 +1,12 @@
 package scratch;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Scratch {
-    private final static Logger LOG = Logger.getLogger(Scratch.class.getName());
+    private final static Logger log = LoggerFactory.getLogger(Scratch.class);
 
     public static void main(String[] args) {
-        LOG.setLevel(Level.ALL);
-        LOG.info("Hello JScratch !");
+    	log.info("Hello JScratch !");
     }
 }
-

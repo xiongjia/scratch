@@ -1,8 +1,12 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
-apply plugin: 'application'
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'maven'
+    id 'application'
+    id 'net.ltgt.apt' version '0.8'
+}
 
+sourceCompatibility = JavaVersion.VERSION_1_8
 mainClassName = 'scratch.Scratch'
 
 eclipse {
@@ -24,9 +28,11 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.7'
     compile 'com.beust:jcommander:1.58'
 
+    runtime 'org.codehaus.groovy:groovy-all:2.4.7'
+
     testCompile 'junit:junit:4.12'
 
-    runtime 'org.codehaus.groovy:groovy-all:2.4.7'
+    apt 'org.projectlombok:lombok:1.16.10'
 }
 
 task fatJar(type: Jar) {

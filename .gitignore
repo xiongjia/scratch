@@ -24,6 +24,8 @@ tags
 .cache-main
 
 jscratch/.gitignore
+jscratch/.apt_generated
+jscratch/.factorypath
 jscratch/bin
 jscratch/build
 jmeter-example-sampler/.gitignore

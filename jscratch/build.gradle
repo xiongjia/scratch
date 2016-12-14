@@ -27,6 +27,7 @@ dependencies {
     compile 'ch.qos.logback:logback-core:1.1.7'
     compile 'ch.qos.logback:logback-classic:1.1.7'
     compile 'com.beust:jcommander:1.58'
+    compile 'org.modelmapper:modelmapper:0.7.7'
 
     runtime 'org.codehaus.groovy:groovy-all:2.4.7'
 

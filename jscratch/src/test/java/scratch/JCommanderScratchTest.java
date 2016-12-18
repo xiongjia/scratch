@@ -18,7 +18,7 @@ public class JCommanderScratchTest {
     			"--str", "JCommanderTest",
     			"--listStr", "str1",
     			"--listStr", "str2" };
-    	Commander cmdArgs = cmd.parser(argv);
+    	final Commander cmdArgs = cmd.parser(argv);
     	assertEquals(cmdArgs.num.intValue(), 100);
     	assertEquals(cmdArgs.str, "JCommanderTest");
     	assertTrue(cmdArgs.verbose);
@@ -37,7 +37,7 @@ public class JCommanderScratchTest {
 
     @Test
     public void cmdInvalidParam() {
-    	JCommanderScratch cmd = new JCommanderScratchBuilder().build();
+    	final JCommanderScratch cmd = new JCommanderScratchBuilder().build();
     	final String[] argv = { "--badOption" };
     	try {
     		cmd.parser(argv);

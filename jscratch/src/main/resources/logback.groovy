@@ -5,7 +5,7 @@ import static ch.qos.logback.classic.Level.DEBUG
 
 appender("STDOUT", ConsoleAppender) {
   encoder(PatternLayoutEncoder) {
-    pattern = "%-5level : %msg%n"
+    pattern = "%-5level [%thread] : %msg%n"
   }
 }
 root(DEBUG, ["STDOUT"])

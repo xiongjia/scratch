@@ -3,6 +3,7 @@ plugins {
     id 'eclipse'
     id 'maven'
     id 'application'
+    id 'checkstyle'
     id 'net.ltgt.apt' version '0.8'
 }
 
@@ -61,5 +62,13 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
+    gradleVersion = '3.2.1'
+}
+
+checkstyle {
+    toolVersion = "6.13"
+}
+
+task checkstyle(type: Checkstyle) {
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }

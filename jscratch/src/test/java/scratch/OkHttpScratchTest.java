@@ -81,4 +81,13 @@ public class OkHttpScratchTest {
 
         okHttp.shutdownClient();
     }
+
+    @Test(expected = IOException.class)
+    public void timeoutTest() throws IOException {
+        final HttpUrl mockUrl = mockServ.url("/");
+        OkHttpScratch okHttp = new OkHttpScratch.Builder()
+                .setTimeoutConn(3).setTimeoutRd(3).setTimeoutWr(3)
+                .build();
+        okHttp.get(mockUrl.toString());
+    }
 }

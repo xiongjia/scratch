@@ -40,9 +40,20 @@ public class OkHttpScratch {
         private int timeoutWr = 30;
         private int timeoutConn = 30;
 
-        public void setTimeoutRd(int timeoutRd) { this.timeoutRd = timeoutRd; }
-        public void setTimeoutWr(int timeoutWr) { this.timeoutWr = timeoutWr; }
-        public void setTimeoutConn(int timeoutConn) { this.timeoutConn = timeoutConn; }
+        public Builder setTimeoutRd(int timeoutRd) {
+            this.timeoutRd = timeoutRd;
+            return this;
+        }
+
+        public Builder setTimeoutWr(int timeoutWr) {
+            this.timeoutWr = timeoutWr;
+            return this;
+        }
+
+        public Builder setTimeoutConn(int timeoutConn) {
+            this.timeoutConn = timeoutConn;
+            return this;
+        }
 
         public OkHttpScratch build() {
             OkHttpClient client = new OkHttpClient.Builder()

@@ -17,23 +17,23 @@ import lombok.ToString;
  * @author lexiongjia@gmail.com
  */
 public class LombokScratch {
-    @Data
-	@ToString(callSuper = false, includeFieldNames = false, exclude = "txt")
-    @EqualsAndHashCode(callSuper = false, exclude = {"txt"})
-    public static class LombokData {
-    	private String txt = this.getClass().getName();
-    	private int num = 0;
-    }
+  @Data
+  @ToString(callSuper = false, includeFieldNames = false, exclude = "txt")
+  @EqualsAndHashCode(callSuper = false, exclude = {"txt"})
+  public static class LombokData {
+    private String txt = this.getClass().getName();
+    private int num = 0;
+  }
 
-    @Data(staticConstructor = "of")
-    public static class LombokConstructor {
-    	private final String constructor;
-    	private int num = 0;
-    }
+  @Data(staticConstructor = "of")
+  public static class LombokConstructor {
+    private final String constructor;
+    private int num = 0;
+  }
 
-    public static class LombokSetterGetter {
-    	@Setter @NonNull @Getter private String txt = this.getClass().getName();
-    	@Setter @Getter private int num = 0;
-    	@Setter(AccessLevel.PRIVATE) @Getter private String pval = "pval";
-    }
-};
+  public static class LombokSetterGetter {
+    @Setter @NonNull @Getter private String txt = this.getClass().getName();
+    @Setter @Getter private int num = 0;
+    @Setter(AccessLevel.PRIVATE) @Getter private String pval = "pval";
+  }
+}

@@ -66,9 +66,6 @@ task wrapper(type: Wrapper) {
 }
 
 checkstyle {
-    toolVersion = "6.13"
-}
-
-task checkstyle(type: Checkstyle) {
-    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    toolVersion = "7.3"
+    configFile = file('config/checkstyle/google_checks.xml')
 }

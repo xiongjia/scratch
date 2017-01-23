@@ -7,7 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.zeromq.ZContext;
+import org.zeromq.ZMQ;
+import org.zeromq.ZMQ.Poller;
 import org.zeromq.ZMQ.Socket;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Scratch code for the JeroMQ https://github.com/zeromq/jeromq
@@ -20,12 +25,50 @@ import org.zeromq.ZMQ.Socket;
  */
 public class JeroMsgQueueScratch {
   private static final Logger log = LoggerFactory.getLogger(JeroMsgQueueScratch.class);
-  private static final ZContext zctx = new ZContext();
+  private ZContext zctx = new ZContext();
+
+  public interface ZChannel {
+    void send(String topic, String data);
+
+    Map<String, String> recvStr(long timeoutMilliseconds);
+
+    String getBindEndPoint();
+  }
+
+  /** Create JeroMQ publisher. */
+  public ZChannel buildPublisher() {
+    if (zctx == null) {
+      return null;
+    }
+    return ZChannelImpl.builder(zctx, ZMQ.PUB)
+      .bindRandomPort(true)
+      .bindEndPoint("tcp://127.0.0.1")
+      .linger(0)
+      .build();
+  }
+
+  /** Create JeroMQ subscriber. */
+  public ZChannel buildSubscriber(String endPoint, String topic) {
+    if (zctx == null) {
+      return null;
+    }
+    return ZChannelImpl.builder(zctx, ZMQ.SUB)
+      .connEndPoint(endPoint)
+      .topic(topic)
+      .build();
+  }
+
+  /** Destroy JeroMQ context. */
+  public void destoryContext() {
+    zctx.close();
+    zctx.destroy();
+    zctx = null;
+  }
 
   @Builder(toBuilder = true,
            builderClassName = "ZChannelInternalBuilder",
            builderMethodName = "internalBuilder")
-  public static class ZChannel {
+  private static class ZChannelImpl implements ZChannel {
     private final long defaultLinger = -1;
     private final long defaultHighWaterMark = 20000;
 
@@ -39,15 +82,36 @@ public class JeroMsgQueueScratch {
     @Getter private String connEndPoint = null;
     @Getter private String topic = null;
 
+    private ZContext zctx;
     private Socket zsock;
 
-    public String recvStr() {
-      return zsock.recvStr();
+    @SuppressWarnings("serial")
+    @Override
+    public Map<String, String> recvStr(long timeoutMilliseconds) {
+      final Poller poller = new Poller(1);
+      poller.register(zsock, Poller.POLLIN);
+      final int pollerRet = poller.poll(timeoutMilliseconds);
+      if (pollerRet == -1) {
+        return null;
+      }
+
+      if (poller.pollin(0)) {
+        final String topic = zsock.recvStr();
+        final String data = zsock.recvStr();
+        return new HashMap<String, String>() {{
+            put("topic", topic);
+            put("data", data);
+          }
+        };
+      } else {
+        return null;
+      }
     }
 
+    @Override
     public void send(String topic, String data) {
-      zsock.send(topic);
-      zsock.sendMore(data);
+      zsock.sendMore(topic.getBytes());
+      zsock.send(data);
     }
 
     private void init() {
@@ -94,19 +158,20 @@ public class JeroMsgQueueScratch {
       zsock.connect(endpoint);
     }
 
-    public static Builder builder(int zsocketType) {
-      return new Builder(zsocketType);
+    public static Builder builder(ZContext zctx, int zsocketType) {
+      return new Builder(zctx, zsocketType);
     }
 
     public static class Builder extends ZChannelInternalBuilder {
-      Builder(int zsocketType) {
+      Builder(ZContext zctx, int zsocketType) {
         super();
         this.zsocketType(zsocketType);
+        this.zctx(zctx);
       }
 
       @Override
-      public ZChannel build() {
-        ZChannel instance = super.build();
+      public ZChannelImpl build() {
+        ZChannelImpl instance = super.build();
         instance.init();
         return instance;
       }

@@ -33,6 +33,8 @@ public class JeroMsgQueueScratch {
     Map<String, String> recvStr(long timeoutMilliseconds);
 
     String getBindEndPoint();
+
+    void close();
   }
 
   /** Create JeroMQ publisher. */
@@ -106,6 +108,11 @@ public class JeroMsgQueueScratch {
       } else {
         return null;
       }
+    }
+
+    @Override
+    public void close() {
+      zsock.close();
     }
 
     @Override

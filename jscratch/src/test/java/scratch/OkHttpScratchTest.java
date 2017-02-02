@@ -74,9 +74,7 @@ public class OkHttpScratchTest {
         rep.complete(null);
       }
     });
-
-    /* timeout is 35 seconds */
-    ResponseData ret = rep.get(35, TimeUnit.SECONDS);
+    ResponseData ret = rep.get(30, TimeUnit.SECONDS);
     assertNotEquals(ret, null);
 
     assertEquals(ret.getCode(), 200);

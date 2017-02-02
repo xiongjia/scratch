@@ -1,7 +1,6 @@
 package scratch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +10,13 @@ import org.junit.Test;
 import scratch.JeroMsgQueueScratch.ZChannel;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class JeroMsgQueueScratchTest {
   private JeroMsgQueueScratch jeromq;
@@ -27,22 +33,35 @@ public class JeroMsgQueueScratchTest {
 
   @Ignore("Test is ignored")
   @Test
-  public void testPubSubPattern() {
+  public void testPubSubPattern()
+      throws InterruptedException, ExecutionException, TimeoutException {
     final String topic = "zscratch";
     final String testData = "test-data-123";
-    final long timeoutMilliseconds = 1000 * 30;
 
     ZChannel zpub = jeromq.buildPublisher();
     ZChannel zsub = jeromq.buildSubscriber(zpub.getBindEndPoint(), topic);
-
     zpub.send(topic, testData);
-    final Map<String, String> rcv = zsub.recvStr(timeoutMilliseconds);
-    if (rcv == null) {
-      fail("recvStr is <null>");
-      return;
+
+    class Recv implements Callable<Map<String, String>> {
+      final long timeoutMilliseconds = 1000 * 30;
+      final ZChannel zsub;
+
+      public Recv(ZChannel zsub) {
+        this.zsub = zsub;
+      }
+
+      @Override
+      public Map<String, String> call() throws Exception {
+        return this.zsub.recvStr(timeoutMilliseconds);
+      }
     }
-    assertEquals(rcv.get("topic"), topic);
-    assertEquals(rcv.get("data"), testData);
+
+    ExecutorService exec = Executors.newFixedThreadPool(1);
+    Callable<Map<String, String>> recv = new Recv(zsub);
+    Future<Map<String, String>> future = exec.submit(recv);
+    final Map<String, String> recvData = future.get(30, TimeUnit.SECONDS);
+    assertEquals(recvData.get("topic"), topic);
+    assertEquals(recvData.get("data"), testData);
 
     zpub.close();
     zsub.close();

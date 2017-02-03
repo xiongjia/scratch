@@ -90,13 +90,16 @@ public class JeroMsgQueueScratch {
     @SuppressWarnings("serial")
     @Override
     public Map<String, String> recvStr(long timeoutMilliseconds) {
+      log.debug("start recvStr");
       final Poller poller = new Poller(1);
       poller.register(zsock, Poller.POLLIN);
       final int pollerRet = poller.poll(timeoutMilliseconds);
       if (pollerRet == -1) {
+        log.debug("invalid poll=(-1)");
         return null;
       }
 
+      log.debug("poll return num = {}", pollerRet);
       if (poller.pollin(0)) {
         final String topic = zsock.recvStr();
         final String data = zsock.recvStr();
@@ -106,6 +109,7 @@ public class JeroMsgQueueScratch {
           }
         };
       } else {
+        log.debug("invalid !poll(0)");
         return null;
       }
     }
@@ -117,6 +121,7 @@ public class JeroMsgQueueScratch {
 
     @Override
     public void send(String topic, String data) {
+      log.debug("sending: {}, {}", topic, data);
       zsock.sendMore(topic.getBytes());
       zsock.send(data);
     }

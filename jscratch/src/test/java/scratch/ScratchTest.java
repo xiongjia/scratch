@@ -35,7 +35,6 @@ public class ScratchTest {
     log.info("tearDown()");
   }
 
-
   @Test
   public void baseTest1() {
     log.info("baseTest1()");

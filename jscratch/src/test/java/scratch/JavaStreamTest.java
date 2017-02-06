@@ -2,6 +2,7 @@ package scratch;
 
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -11,6 +12,14 @@ public class JavaStreamTest {
   final List<Integer> testNums = IntStream.range(0, testNumsSize)
       .boxed()
       .collect(Collectors.toList());
+
+  @Test
+  public void scanNumsFor() {
+    for (Iterator<Integer> itr = testNums.iterator(); itr.hasNext();) {
+      @SuppressWarnings("unused")
+      int testVal = itr.next();
+    }
+  }
 
   @Test
   public void scanNumsForEach() {
@@ -31,6 +40,14 @@ public class JavaStreamTest {
   @Test
   public void scanNumsStreamParallelForEach() {
     testNums.stream().parallel().forEach((num) -> {
+      @SuppressWarnings("unused")
+      int testVal = num;
+    });
+  }
+
+  @Test
+  public void scanNumsParallelStreamForEach() {
+    testNums.parallelStream().forEach((num) -> {
       @SuppressWarnings("unused")
       int testVal = num;
     });

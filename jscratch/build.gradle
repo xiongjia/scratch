@@ -34,6 +34,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
     compile 'org.zeromq:jeromq:0.3.6'
     compile 'junit:junit:4.12'
+    compile 'org.seleniumhq.selenium:selenium-java:3.0.1'
 
     runtime 'org.codehaus.groovy:groovy-all:2.4.7'
 

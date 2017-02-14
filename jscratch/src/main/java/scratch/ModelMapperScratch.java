@@ -8,7 +8,7 @@ import org.modelmapper.PropertyMap;
 /**
  * Scratch code for the ModelMapper https://github.com/jhalterman/modelmapper
  * NOTE:
- *   This sample is using lombok.builder.
+ *   This sample is using lombok.Data.
  *   In Java IDE (e.g. Eclipse), you need install the Lombok first.
  *   (Run java -jar lombok.jar)
  *

@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
  *
  * @author lexiongjia@gmail.com
  */
-
 class GensonScratch {
   private static final Genson genson = new GensonBuilder()
       .useClassMetadata(false).useRuntimeType(true).create();

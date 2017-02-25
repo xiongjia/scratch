@@ -8,7 +8,10 @@ plugins {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-mainClassName = 'scratch.Scratch'
+mainClassName       = 'scratch.Scratch'
+
+final appBaseName = 'Scratch'
+final appVersion = '1.0'
 
 eclipse {
     classpath {
@@ -50,8 +53,8 @@ dependencies {
 }
 
 task fatJar(type: Jar) {
-    baseName = jar.baseName + '-' + jar.version + '-all'
-    manifest.mainAttributes('Main-Class' : 'scratch.Scratch')
+    baseName = appBaseName + '-' + appVersion + '-all'
+    manifest.mainAttributes('Main-Class' : mainClassName)
     from {
         configurations.compile.collect {
             it.isDirectory() ? it : zipTree(it)
@@ -64,9 +67,9 @@ task fatJar(type: Jar) {
 }
 
 jar {
-    baseName = 'jscratch'
-    version =  '0.0.1'
-    manifest.mainAttributes('Main-Class' : 'scratch.Scratch')
+    baseName = appBaseName
+    version =  appVersion
+    manifest.mainAttributes('Main-Class' : mainClassName)
 }
 
 task wrapper(type: Wrapper) {

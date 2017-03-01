@@ -3,6 +3,7 @@ package scratch;
 import feign.Client;
 import feign.Feign;
 import feign.Headers;
+import feign.Param;
 import feign.Request;
 import feign.Request.Options;
 import feign.RequestLine;
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 class FeignScratch {
   private static final Logger log = LoggerFactory.getLogger(FeignScratch.class);
+  private static final String apiVersion = "api/v1.0";
 
   public static class MockClient implements Client {
     @Override
@@ -41,12 +43,20 @@ class FeignScratch {
   }
 
   public static interface TestApi {
-    @RequestLine("GET /api/v1.0/ping")
-    String ping();
+    @RequestLine("GET /{apiVersion}/ping")
+    String ping(@Param("apiVersion") String apiVersion);
 
-    @RequestLine("POST /api/v1.0/pong")
+    default String ping() {
+      return ping(apiVersion);
+    }
+
+    @RequestLine("POST /{apiVersion}/pong")
     @Headers("Content-Type: application/json")
-    void pong(PostData data);
+    void pong(@Param("apiVersion") String apiVersion, PostData data);
+
+    default void pong(PostData data) {
+      pong(apiVersion, data);
+    }
   }
 
   static void feignTest() {

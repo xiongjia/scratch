@@ -8,21 +8,25 @@ import com.google.inject.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 public class GuiceScratch {
   private static final Logger log = LoggerFactory.getLogger(GuiceScratch.class);
 
-  public interface PrintService {
-    public void printMessage(String message);
+  public static class PrintService {
+    public void printMessage(String message) {
+      log.info("Default Print: {}", message);
+    }
   }
 
-  public static class SimplePrintService implements PrintService {
+  public static class SimplePrintService extends PrintService {
     @Override
     public void printMessage(String message) {
       log.info("Simple Print: {}", message);
     }
   }
 
-  public static class ComplexPrintService implements PrintService {
+  public static class ComplexPrintService extends PrintService {
     @Override
     public void printMessage(String message) {
       log.info("Complex Print: {}", message);
@@ -42,10 +46,22 @@ public class GuiceScratch {
     }
   }
 
+  public static class TestApp {
+    @Inject
+    private PrintService printSvc = new PrintService();
+
+    public void print() {
+      printSvc.printMessage("Test APP");
+    }
+  }
+
   /** guice tests. */
   public static void guiceTest(boolean simplePrint) {
     final Injector injector = Guice.createInjector(new PrintServiceModule(simplePrint));
     final PrintService printSvc = injector.getInstance(PrintService.class);
     printSvc.printMessage("test");
+
+    final TestApp testApp = injector.getInstance(TestApp.class);
+    testApp.print();
   }
 }

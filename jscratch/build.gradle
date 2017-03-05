@@ -42,13 +42,18 @@ dependencies {
     compile 'org.glassfish.jersey.core:jersey-server:2.25.1'
     compile 'org.glassfish.jersey.containers:jersey-container-netty-http:2.25'
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.17'
+
     compile 'io.github.openfeign:feign-core:9.0.0'
     compile 'io.github.openfeign:feign-gson:9.0.0'
+
     compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'com.google.guava:guava:21.0'
+
     compile 'com.google.inject:guice:4.1.0'
     compile 'org.springframework:spring-core:4.3.6.RELEASE'
     compile 'org.springframework:spring-context:4.3.6.RELEASE'
     compile 'org.springframework:spring-beans:4.3.6.RELEASE'
+
     compile 'org.codehaus.groovy:groovy-all:2.4.7'
 
     testCompile 'com.squareup.okhttp3:mockwebserver:3.5.0'

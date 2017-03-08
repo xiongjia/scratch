@@ -6,6 +6,7 @@ plugins {
     id 'application'
     id 'checkstyle'
     id 'net.ltgt.apt' version '0.8'
+    id 'org.akhikhl.gretty' version '1.4.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -28,9 +29,12 @@ repositories {
 
 dependencies {
     compile 'org.projectlombok:lombok:1.16.10'
+    compile 'com.typesafe.akka:akka-actor_2.11:2.4.17'
+
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'ch.qos.logback:logback-core:1.1.7'
     compile 'ch.qos.logback:logback-classic:1.1.7'
+
     compile 'com.beust:jcommander:1.58'
     compile 'org.modelmapper:modelmapper:0.7.7'
     compile 'com.owlike:genson:1.4'
@@ -38,10 +42,13 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
     compile 'org.zeromq:jeromq:0.3.6'
     compile 'junit:junit:4.12'
+
     compile 'org.seleniumhq.selenium:selenium-java:3.0.1'
+
     compile 'org.glassfish.jersey.core:jersey-server:2.25.1'
     compile 'org.glassfish.jersey.containers:jersey-container-netty-http:2.25'
-    compile 'com.typesafe.akka:akka-actor_2.11:2.4.17'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'javax.servlet:jstl:1.2'
 
     compile 'io.github.openfeign:feign-core:9.0.0'
     compile 'io.github.openfeign:feign-gson:9.0.0'
@@ -91,4 +98,8 @@ task wrapper(type: Wrapper) {
 checkstyle {
     toolVersion = "7.3"
     configFile = file('config/checkstyle/google_checks.xml')
+}
+
+gretty {
+    port = 9000
 }

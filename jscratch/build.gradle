@@ -7,6 +7,7 @@ plugins {
     id 'checkstyle'
     id 'net.ltgt.apt' version '0.8'
     id 'org.akhikhl.gretty' version '1.4.0'
+    id 'war'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8

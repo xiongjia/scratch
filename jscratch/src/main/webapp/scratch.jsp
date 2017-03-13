@@ -13,6 +13,9 @@
   </jsp:useBean>
 
   <h1>Scratch</h1>
-  <p>testData = <jsp:getProperty property="testData" name="data"/>
+  <p>testData = <jsp:getProperty property="testData" name="data"/><br></p>
+
+  <core:set var="scratchAttr" value='${requestScope["scratch"]}' />
+  <p>testAttr = <core:out value="${scratchAttr}" /><br></p>
 </body>
 </html>

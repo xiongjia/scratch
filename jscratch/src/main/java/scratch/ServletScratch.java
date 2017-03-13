@@ -18,6 +18,7 @@ public class ServletScratch extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     log.debug("new request");
+    request.setAttribute("scratch", "test attr");
     request.getRequestDispatcher("scratch.jsp").forward(request, response);
   }
 }

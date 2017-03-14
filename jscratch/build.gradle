@@ -33,6 +33,7 @@ dependencies {
     compile 'com.typesafe.akka:akka-actor_2.11:2.4.17'
 
     compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.apache.logging.log4j:log4j-core:2.8.1'    
     compile 'ch.qos.logback:logback-core:1.1.7'
     compile 'ch.qos.logback:logback-classic:1.1.7'
 
@@ -50,6 +51,7 @@ dependencies {
     compile 'org.glassfish.jersey.containers:jersey-container-netty-http:2.25'
     compile 'javax.servlet:javax.servlet-api:3.1.0'
     compile 'javax.servlet:jstl:1.2'
+    compile 'org.apache.struts:struts2-core:2.5.10.1'
 
     compile 'io.github.openfeign:feign-core:9.0.0'
     compile 'io.github.openfeign:feign-gson:9.0.0'

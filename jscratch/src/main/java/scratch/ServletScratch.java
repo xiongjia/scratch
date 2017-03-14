@@ -21,4 +21,17 @@ public class ServletScratch extends HttpServlet {
     request.setAttribute("scratch", "test attr");
     request.getRequestDispatcher("scratch.jsp").forward(request, response);
   }
+
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    /* The example of the post request:
+     * curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d 'data=your data' \
+     *    "http://localhost:9000/jscratch/scratch"
+     */
+    final String reqData = request.getParameter("data");
+    log.debug("post parameter: {}", reqData);
+    request.setAttribute("scratch", String.format("request parameter: %s",  reqData));
+    request.getRequestDispatcher("scratch.jsp").forward(request, response);
+  }
 }

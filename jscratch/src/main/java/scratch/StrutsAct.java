@@ -11,7 +11,7 @@ public class StrutsAct extends DefaultActionSupport {
 
   @Override
   public String execute() throws Exception {
-      this.data = "scratch data";
-      return "ScratchView";
+    this.data = "scratch data";
+    return "ScratchView";
   }
 }

@@ -111,5 +111,5 @@ gretty {
 
 flyway {
     driver = 'org.sqlite.JDBC'
-    url = 'jdbc:sqlite:./test.db'
+    url = 'jdbc:sqlite:src/main/resources/scratch.db'
 }

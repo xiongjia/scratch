@@ -28,6 +28,8 @@ jscratch/.apt_generated
 jscratch/.factorypath
 jscratch/bin
 jscratch/build
+jscratch/**/*.db
+
 jmeter-example-sampler/.gitignore
 jmeter-example-sampler/bin
 jmeter-example-sampler/build

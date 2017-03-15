@@ -94,6 +94,11 @@ jar {
     baseName = appBaseName
     version =  appVersion
     manifest.mainAttributes('Main-Class' : mainClassName)
+    exclude('**/*.db')
+}
+
+war {
+    rootSpec.exclude('*.db')
 }
 
 task wrapper(type: Wrapper) {

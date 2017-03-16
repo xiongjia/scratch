@@ -116,5 +116,6 @@ gretty {
 
 flyway {
     driver = 'org.sqlite.JDBC'
-    url = 'jdbc:sqlite:src/main/resources/scratch.db'
+    /* the default sqlite db file folder is $env[db_store_sqlite] */
+    url = 'jdbc:sqlite:' + System.getenv('db_store_sqlite') + '/scratch.db'
 }

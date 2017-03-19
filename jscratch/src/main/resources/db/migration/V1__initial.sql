@@ -1,5 +1,8 @@
-
-CREATE TABLE test_data (
-  value VARCHAR(25) NOT NULL PRIMARY KEY
+-- test tables
+ 
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT
 );
 
+-- TODO insert test data

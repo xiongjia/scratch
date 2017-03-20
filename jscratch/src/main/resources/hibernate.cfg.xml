@@ -4,15 +4,17 @@
   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <!-- TODO load the db folder form ENV or JVM properties -->
-    <property name="connection.url">jdbc:sqlite:/F:/db/sqlite/scratch.db</property>
+    <!-- default sqlite db folder is ${db_store_sqlite} -->
+    <!-- Add this folder to JVM args (e.g. -Ddb_store_sqlite=f:/db -->
+    <property name="connection.url">jdbc:sqlite:${db_store_sqlite}/scratch.db</property>
     <property name="connection.driver_class">org.sqlite.JDBC</property>
-    <property name="connection.username"></property>
-    <property name="connection.password"></property>
-    <property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
+	<property name="dialect">gwenn.dialect.SqliteDialect</property>  
 
 	<property name="hbm2ddl.auto">update</property>
 	<property name="show_sql">true</property>
 	<property name="format_sql">true</property>
+	<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+	
+	 <mapping class="scratch.UserEntity"></mapping>
   </session-factory>
 </hibernate-configuration>

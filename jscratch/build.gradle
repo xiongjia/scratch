@@ -66,8 +66,7 @@ dependencies {
     compile 'org.springframework:spring-beans:4.3.6.RELEASE'
 
     compile 'org.hibernate:hibernate-core:5.2.8.Final'
-    compile 'org.xerial:sqlite-jdbc:3.16.1'    
-    compile 'net.kemitix:sqlite-dialect:0.1.0'
+    compile 'org.xerial:sqlite-jdbc:3.16.1'
 
     compile 'org.codehaus.groovy:groovy-all:2.4.7'
 

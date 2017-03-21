@@ -8,9 +8,7 @@
  *
  */
 
-package gwenn.dialect;
-
-import gwenn.dialect.identity.SqliteDialectIdentityColumnSupport;
+package sqlite.dialect;
 
 import org.hibernate.JDBCException;
 import org.hibernate.ScrollMode;
@@ -37,6 +35,8 @@ import org.hibernate.exception.spi.ViolatedConstraintNameExtracter;
 import org.hibernate.internal.util.JdbcExceptionHelper;
 import org.hibernate.mapping.Column;
 import org.hibernate.type.StandardBasicTypes;
+
+import sqlite.dialect.SqliteDialectIdentityColumnSupport;
 
 import java.sql.SQLException;
 import java.sql.Types;

@@ -8,7 +8,7 @@
     <!-- Add this folder to JVM args (e.g. -Ddb_store_sqlite=f:/db -->
     <property name="connection.url">jdbc:sqlite:${db_store_sqlite}/scratch.db</property>
     <property name="connection.driver_class">org.sqlite.JDBC</property>
-	<property name="dialect">gwenn.dialect.SqliteDialect</property>  
+	<property name="dialect">sqlite.dialect.SqliteDialect</property>  
 
 	<property name="hbm2ddl.auto">update</property>
 	<property name="show_sql">true</property>

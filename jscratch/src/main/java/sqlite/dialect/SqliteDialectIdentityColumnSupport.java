@@ -1,4 +1,4 @@
-package gwenn.dialect.identity;
+package sqlite.dialect;
 
 import org.hibernate.dialect.identity.IdentityColumnSupportImpl;
 

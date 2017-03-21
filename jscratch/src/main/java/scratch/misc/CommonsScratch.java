@@ -1,4 +1,4 @@
-package scratch;
+package scratch.misc;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;

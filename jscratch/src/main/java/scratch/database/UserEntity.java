@@ -1,4 +1,4 @@
-package scratch;
+package scratch.database;
 
 import lombok.Getter;
 import lombok.Setter;

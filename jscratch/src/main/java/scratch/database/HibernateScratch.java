@@ -1,4 +1,4 @@
-package scratch;
+package scratch.database;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

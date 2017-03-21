@@ -4,7 +4,7 @@
   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <!-- default sqlite db folder is ${db_store_sqlite} -->
+    <!-- The default sqlite db folder is ${db_store_sqlite} -->
     <!-- Add this folder to JVM args (e.g. -Ddb_store_sqlite=f:/db -->
     <property name="connection.url">jdbc:sqlite:${db_store_sqlite}/scratch.db</property>
     <property name="connection.driver_class">org.sqlite.JDBC</property>
@@ -15,6 +15,6 @@
 	<property name="format_sql">true</property>
 	<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
 	
-	 <mapping class="scratch.UserEntity"></mapping>
+	 <mapping class="scratch.database.UserEntity"></mapping>
   </session-factory>
 </hibernate-configuration>

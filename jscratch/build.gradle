@@ -54,6 +54,9 @@ dependencies {
     compile 'javax.servlet:jstl:1.2'
     compile 'org.apache.struts:struts2-core:2.5.10.1'
 
+    compile 'org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-parent:1.5.2.RELEASE'
+
     compile 'io.github.openfeign:feign-core:9.0.0'
     compile 'io.github.openfeign:feign-gson:9.0.0'
     compile 'javax.mail:javax.mail-api:1.5.6'

@@ -1,4 +1,4 @@
-package scratch;
+package scratch.misc;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -8,14 +8,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * Scratch code for the Lombok https://github.com/rzwitserloot/lombok
- * NOTE:
- *   In Java IDE (e.g. Eclipse), you need install the Lombok first.
- *   (Run java -jar lombok.jar)
- *
- * @author lexiongjia@gmail.com
- */
 public class LombokScratch {
   @Data
   @ToString(callSuper = false, includeFieldNames = false, exclude = "txt")

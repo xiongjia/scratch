@@ -1,4 +1,4 @@
-package scratch;
+package scratch.distributed;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;

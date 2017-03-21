@@ -1,11 +1,11 @@
-package scratch;
+package scratch.unittest;
 
 import org.junit.runner.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import scratch.UnitTestsScratch.TestItem;
+import scratch.unittest.UnitTestsScratch.TestItem;
 
 import java.io.File;
 import java.net.MalformedURLException;

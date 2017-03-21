@@ -7,6 +7,8 @@ import lombok.val;
 
 import org.junit.Test;
 
+import scratch.unittest.UnitTestsScratch;
+
 import java.util.ArrayList;
 
 public class UnitTestsScratchTest {

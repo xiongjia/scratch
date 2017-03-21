@@ -1,4 +1,4 @@
-package scratch;
+package scratch.unittest;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,4 +1,4 @@
-package scratch;
+package scratch.unittest;
 
 import junit.framework.TestCase;
 

@@ -1,4 +1,4 @@
-package scratch;
+package scratch.webdriver;
 
 import org.junit.After;
 import org.junit.Before;

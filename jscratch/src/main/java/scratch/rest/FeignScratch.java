@@ -1,4 +1,4 @@
-package scratch;
+package scratch.rest;
 
 import feign.Client;
 import feign.Feign;

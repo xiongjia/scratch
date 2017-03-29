@@ -2,8 +2,12 @@ package scratch.misc;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class BeanSource {
+public class BeanSource implements Serializable {
+  private static final long serialVersionUID = -8242134062070572818L;
+
   private String srcStr = "source";
   private int srcNum = 0;
 

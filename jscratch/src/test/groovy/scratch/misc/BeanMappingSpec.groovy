@@ -5,13 +5,13 @@ import spock.lang.Specification
 class BeanMappingSpec extends Specification {
   def "source to target (ModelMapper tests)"() {
     expect:
-    beans.getTarget().getTargetStr() == targetStr
-    beans.getTarget().getTargetNum() == targetNum
+      beans.getTarget().getTargetStr() == targetStr
+      beans.getTarget().getTargetNum() == targetNum
 
     where:
-    beans                    || targetStr || targetNum
-    new Beans("src",    10)  || "src"     || 10
-    new Beans("test2", 100)  || "test2"   || 100
+      beans                    || targetStr || targetNum
+      new Beans("src",    10)  || "src"     || 10
+      new Beans("test2", 100)  || "test2"   || 100
   }
 
   static class Beans {

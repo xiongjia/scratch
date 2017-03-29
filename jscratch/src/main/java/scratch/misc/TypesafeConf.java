@@ -1,9 +1,9 @@
-package scratch;
+package scratch.misc;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-public class TypesafeConfScratch {
+public class TypesafeConf {
   private final Config baseConf = ConfigFactory.load("typesafe-conf-base.conf");
   private final Config conf = ConfigFactory.load("typesafe-conf.conf").withFallback(baseConf);
 

@@ -1,4 +1,4 @@
-package scratch;
+package scratch.misc;
 
 import lombok.Setter;
 

@@ -1,6 +1,6 @@
 package scratch.misc
 
-import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.ParameterException
 
 import scratch.misc.JCommanderScratch.Commander
 import scratch.misc.JCommanderScratch.JCommanderScratchBuilder

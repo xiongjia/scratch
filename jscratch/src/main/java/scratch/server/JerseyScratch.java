@@ -1,4 +1,4 @@
-package scratch;
+package scratch.server;
 
 import io.netty.channel.Channel;
 

@@ -1,4 +1,4 @@
-package scratch;
+package scratch.misc;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;

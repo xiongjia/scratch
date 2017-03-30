@@ -1,9 +1,9 @@
 package scratch.misc
 
-import com.owlike.genson.JsonBindingException;
+import com.owlike.genson.JsonBindingException
 
-import scratch.misc.GensonScratch.JsonObj;
-import scratch.misc.GensonScratch.JsonRootObj;
+import scratch.misc.GensonScratch.JsonObj
+import scratch.misc.GensonScratch.JsonRootObj
 
 import spock.lang.Specification
 

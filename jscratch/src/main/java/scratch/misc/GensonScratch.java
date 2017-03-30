@@ -1,4 +1,4 @@
-package scratch;
+package scratch.misc;
 
 import com.owlike.genson.Genson;
 import com.owlike.genson.GensonBuilder;

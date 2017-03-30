@@ -1,4 +1,4 @@
-package scratch.misc;
+package scratch.misc
 
 import spock.lang.Specification
 

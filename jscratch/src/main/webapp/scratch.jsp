@@ -8,7 +8,7 @@
   <title>Scratch</title>
 </head>
 <body>
-  <jsp:useBean id="data"  class="scratch.ServletBean">
+  <jsp:useBean id="data"  class="scratch.server.ServletBean">
 	<jsp:setProperty name="data" property="testData" value="The test value" />
   </jsp:useBean>
 

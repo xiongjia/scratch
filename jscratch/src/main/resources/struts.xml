@@ -8,7 +8,7 @@
   <include file="struts-default.xml"/>
   <package name="default" extends="struts-default">
  
-  <action name="scratchAction" class="scratch.StrutsAct">
+  <action name="scratchAction" class="scratch.server.StrutsAct">
     <result name="ScratchView">/scratch-struts-view.jsp</result>
   </action>
   </package>

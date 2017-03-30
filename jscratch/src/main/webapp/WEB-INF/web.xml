@@ -20,7 +20,7 @@
 
   <servlet>
     <servlet-name>scratch</servlet-name>
-    <servlet-class>scratch.ServletScratch</servlet-class>
+    <servlet-class>scratch.server.ServletScratch</servlet-class>
   </servlet>
 
   <servlet-mapping>

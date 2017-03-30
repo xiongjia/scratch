@@ -1,4 +1,4 @@
-package scratch;
+package scratch.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,7 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import scratch.OkHttpScratch.ResponseData;
+import scratch.rest.OkHttpScratch.ResponseData;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;

@@ -1,4 +1,4 @@
-package scratch;
+package scratch.misc;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;

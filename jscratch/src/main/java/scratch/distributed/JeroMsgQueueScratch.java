@@ -1,4 +1,4 @@
-package scratch;
+package scratch.distributed;
 
 import lombok.Builder;
 import lombok.Getter;

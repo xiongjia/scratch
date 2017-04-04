@@ -1,7 +1,5 @@
 package scratch.database;
 
-import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,6 +8,8 @@ import org.hibernate.query.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class HibernateScratch {
   private static final Logger log = LoggerFactory.getLogger(HibernateScratch.class);

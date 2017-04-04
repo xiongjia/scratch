@@ -11,6 +11,23 @@ import org.slf4j.LoggerFactory;
 public class HibernateScratch {
   private static final Logger log = LoggerFactory.getLogger(HibernateScratch.class);
 
+  private static void insert(Session session) {
+    log.debug("begin transaction");
+    final Transaction tx = session.beginTransaction();
+
+    /* insert data */
+    final UserEntity usr1 = new UserEntity("user_1");
+    session.save(usr1);
+    log.debug("usr1[{}]: {}", usr1.getId(), usr1.getName());
+
+    final UserEntity usr2 = new UserEntity("user_2");
+    session.save(usr2);
+    log.debug("usr2[{}]: {}", usr2.getId(), usr2.getName());
+
+    tx.commit();
+    log.debug("commit transaction");
+  }
+
   /** Hibernate tests. */
   public static void testHibernate() {
     /* default sqlite db folder is ${db_store_sqlite}
@@ -21,18 +38,9 @@ public class HibernateScratch {
         .buildSessionFactory();
 
     final Session session = sessionFactory.openSession();
+    insert(session);
 
-    log.debug("begin transaction");
-    final Transaction tx = session.beginTransaction();
-
-    /* insert data */
-    final UserEntity usr1 = new UserEntity(new Long(1), "user_1");
-    session.save(usr1);
-    final UserEntity usr2 = new UserEntity(new Long(2), "user_2");
-    session.save(usr2);
-
-    tx.commit();
-    log.debug("commit transaction");
     session.close();
+    sessionFactory.close();
   }
 }

@@ -23,6 +23,10 @@ public class UserEntity {
   @Column(name = "name")
   @Getter @Setter private String name;
 
+  public UserEntity() {
+    this.name = "";
+  }
+
   public UserEntity(String name) {
     this.name = name;
   }

@@ -1,9 +1,12 @@
 package scratch.database;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,17 @@ public class HibernateScratch {
     log.debug("commit transaction");
   }
 
+  private static void query(Session session) {
+    final String hql = "FROM UserEntity WHERE name = :name";
+    final Query<UserEntity> query = session.createQuery(hql, UserEntity.class);
+    query.setParameter("name", "user_1");
+
+    final List<UserEntity> results = query.list();
+    results.stream().forEach(item -> {
+      log.debug("user[{}] = {}", item.getId(), item.getName());
+    });
+  }
+
   /** Hibernate tests. */
   public static void testHibernate() {
     /* default sqlite db folder is ${db_store_sqlite}
@@ -38,7 +52,9 @@ public class HibernateScratch {
         .buildSessionFactory();
 
     final Session session = sessionFactory.openSession();
+
     insert(session);
+    query(session);
 
     session.close();
     sessionFactory.close();

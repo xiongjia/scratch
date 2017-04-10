@@ -72,8 +72,9 @@ dependencies {
     compile 'org.springframework:spring-beans:4.3.6.RELEASE'
 
     compile 'org.hibernate:hibernate-core:5.2.8.Final'
-    compile 'org.xerial:sqlite-jdbc:3.16.1'
     compile 'org.mybatis:mybatis:3.4.2'
+    compile 'org.xerial:sqlite-jdbc:3.16.1'
+    compile 'com.h2database:h2:1.4.194'
 
     compile 'org.codehaus.groovy:groovy-all:2.4.7'
 

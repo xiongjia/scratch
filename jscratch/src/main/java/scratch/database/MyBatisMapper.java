@@ -1,5 +1,7 @@
 package scratch.database;
 
+import java.util.List;
+
 public interface MyBatisMapper {
-  public UserEntity select();
+  public List<UserEntity> selectAll();
 }

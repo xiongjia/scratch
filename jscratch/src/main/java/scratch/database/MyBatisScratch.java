@@ -10,9 +10,21 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.List;
 
 public class MyBatisScratch {
   private static final Logger log = LoggerFactory.getLogger(MyBatisScratch.class);
+
+  private static void selectAll(MyBatisMapper mapper) {
+    try {
+      final List<UserEntity> users = mapper.selectAll();
+      users.stream().forEach((usr) -> {
+        log.debug("usr {}: {}", usr.getId(), usr.getName());
+      });
+    } catch (Throwable err) {
+      log.error("SELECT Error", err);
+    }
+  }
 
   /** MyBatis tests. */
   public static void test() {
@@ -23,8 +35,7 @@ public class MyBatisScratch {
       final SqlSession session = sessionFactory.openSession();
 
       final MyBatisMapper mapper = session.getMapper(MyBatisMapper.class);
-      final UserEntity user = mapper.select();
-      log.debug("usrer {}: {}", user.getId(), user.getName());
+      selectAll(mapper);
       session.close();
     } catch (IOException err) {
       log.error("MyBatis error: ", err);

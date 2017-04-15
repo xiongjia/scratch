@@ -2,18 +2,18 @@ package scratch.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class SpringBootApp {
+public class SpringBootApp extends SpringBootServletInitializer {
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+    return application.sources(SpringBootApp.class);
+  }
+
   /** Spring boot application. */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     SpringApplication.run(SpringBootApp.class, args);
-    // final ApplicationContext context = SpringApplication.run(SpringBootApp.class, args);
-    //    // System.out.println("Let's inspect the beans provided by Spring Boot:");
-    //    final String[] beanNames = context.getBeanDefinitionNames();
-    //    Arrays.sort(beanNames);
-    //    for (String beanName : beanNames) {
-    //      // System.out.println(beanName);
-    //    }
   }
 }

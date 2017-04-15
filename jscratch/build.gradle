@@ -122,7 +122,7 @@ bootRepackage {
 }
 
 run {
-  main = appMainClassName
+    main = appMainClassName
 }
 
 task runApp(type:JavaExec) {

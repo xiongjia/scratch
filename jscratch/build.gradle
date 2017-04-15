@@ -14,9 +14,10 @@ plugins {
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 
-final appMainClassName = 'scratch.Scratch'
-final appBaseName      = 'scratch'
-final appVersion       = '1.0'
+final appMainClassName     = 'scratch.Scratch'
+final bootRunMainClassName = 'scratch.server.SpringBootApp'
+final appBaseName          = 'scratch'
+final appVersion           = '1.0'
 
 eclipse {
     classpath {
@@ -113,15 +114,20 @@ war {
 }
 
 springBoot {
-    mainClass = 'scratch.server.SpringBootApp'
+    mainClass = bootRunMainClassName
 }
 
 bootRepackage {
-    mainClass = 'scratch.server.SpringBootApp'
+    mainClass = bootRunMainClassName
 }
 
 run {
-    mainClassName = appMainClassName
+  main = appMainClassName
+}
+
+task runApp(type:JavaExec) {
+    main = appMainClassName
+    classpath = sourceSets.main.runtimeClasspath
 }
 
 task wrapper(type: Wrapper) {

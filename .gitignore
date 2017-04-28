@@ -29,6 +29,7 @@ jscratch/.factorypath
 jscratch/bin
 jscratch/build
 jscratch/**/*.db
+jscratch/test-output
 
 jmeter-example-sampler/.gitignore
 jmeter-example-sampler/bin

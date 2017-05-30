@@ -51,6 +51,7 @@ chen/build
 # node.js projects
 node_modules
 bower_components
+npm-debug.log
 
 zealot/dist
 tracer/build

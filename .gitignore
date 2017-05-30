@@ -53,6 +53,7 @@ node_modules
 bower_components
 
 zealot/dist
+tracer/build
 
 # iOS / OS X project (Xcode, CocoaPods)
 DerivedData

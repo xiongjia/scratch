@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "React tests",
   "scripts": {
-    "dev": "webpack-dev-server --content-base src --inline --hot"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject",
+    "test": "react-scripts test"
   },
   "author": "Xiong-Jia.Le <lexiongjia@gmail.com> (https://github.com/xiongjia)",
   "license": "ISC",

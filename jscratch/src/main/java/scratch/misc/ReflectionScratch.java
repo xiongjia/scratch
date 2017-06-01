@@ -18,25 +18,6 @@ public class ReflectionScratch {
     }
   }
 
-  /** reflection tests (groovy). */
-  public static void testGroovy() {
-    final GroovyScratch obj = new GroovyScratch();
-    final GroovyExtends errObj = new GroovyExtends();
-
-    try {
-      final Method method = obj.getClass().getMethod("get", String.class);
-      final String ret = (String)method.invoke(obj, "test string1");
-      log.debug("retVal = {}", ret);
-      final Method mtGetErrCode = errObj.getClass().getMethod("getErrorCode");
-      log.debug("retVal = {}", (int)mtGetErrCode.invoke(errObj));
-    } catch (NoSuchMethodException
-           | IllegalAccessException
-           | IllegalArgumentException
-           | InvocationTargetException  err) {
-      log.debug("Error: ", err);
-    }
-  }
-
   /** reflection tests. */
   public static void test() {
     final Object obj = new TestObj();

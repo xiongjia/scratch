@@ -52,9 +52,12 @@ chen/build
 node_modules
 bower_components
 npm-debug.log
+yarn-debug.log*
+yarn-error.log*
 
 zealot/dist
-tracer/build
+tracer/**/*/build
+tracer/**/*/coverage
 
 # iOS / OS X project (Xcode, CocoaPods)
 DerivedData

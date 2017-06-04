@@ -39,14 +39,14 @@ exports = module.exports = {
   entry: './src/index.js',
   plugins: plugins,
   output: {
-		path: path.join(__dirname, 'dist'),
-		filename: prod ? 'bundle.[hash:12].min.js' : 'bundle.js'
-	},
+    path: path.join(__dirname, 'dist'),
+    filename: prod ? 'bundle.[hash:12].min.js' : 'bundle.js'
+  },
   module: {
     loaders: [{
       test: /\.(js|jsx)$/,
-			exclude: /node_modules/,
-			loaders: ['babel-loader']
+      exclude: /node_modules/,
+      loaders: ['babel-loader']
     }, {
       test: /\.(png|jpg|gif)$/,
       loaders: ['url-loader?limit=10000&name=images/[hash:12].[ext]'],

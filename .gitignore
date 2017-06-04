@@ -57,6 +57,7 @@ yarn-error.log*
 
 zealot/dist
 tracer/**/*/build
+tracer/**/*/dist
 tracer/**/*/coverage
 
 # iOS / OS X project (Xcode, CocoaPods)

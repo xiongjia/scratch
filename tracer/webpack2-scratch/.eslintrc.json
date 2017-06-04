@@ -6,7 +6,8 @@
     "node": true
   },
   "globals": {
-    "PRODUCTION": true
+    "APP_PRODUCTION": true,
+    "APP_LOGLEVEL": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {
@@ -20,6 +21,8 @@
   "rules": {
     "indent": [ "error", 2 ],
     "quotes": [ "error", "single" ],
-    "semi": [ "error", "always" ]
+    "semi": [ "error", "always" ],
+    "no-console": 0,
+    "no-unused-vars": ["error", { "args": "none" }]
   }
 }

@@ -29,7 +29,8 @@ const plugins = (() => {
     template: path.join(__dirname, 'public/index-template.html')
   }));
   webpackPlugins.push(new webpack.DefinePlugin({
-    PRODUCTION: prod
+    APP_PRODUCTION: prod,
+    APP_LOGLEVEL: JSON.stringify(prod ? 'silent' : 'trace')
   }));
   return webpackPlugins;
 })();

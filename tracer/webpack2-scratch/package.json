@@ -27,6 +27,7 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "draggabilly": "^2.1.1",
     "loglevel": "^1.4.1"
   }

@@ -41,6 +41,9 @@ kharazim/.gitignore
 kharazim/bin
 kharazim/build
 
+orthrus/**/*/build
+orthrus/**/*/.gradle
+
 # CMake projects
 roach/build
 anubarak/build

@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+final appMainClassName = 'orthrus.Orthrus'
+final appBaseName      = 'orthrus'
+final appVersion       = '1.0'
+
+mainClassName = appMainClassName
+
+jar {
+    baseName = appBaseName
+    version =  appVersion
+    manifest.mainAttributes('Main-Class' : appMainClassName)
+}
+

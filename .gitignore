@@ -43,6 +43,7 @@ kharazim/build
 
 orthrus/**/*/build
 orthrus/**/*/.gradle
+orthrus/**/*/dist
 
 # CMake projects
 roach/build

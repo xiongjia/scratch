@@ -19,7 +19,7 @@ public class OrthrusController {
   }
 
   /** Index request. */
-  @RequestMapping(value = "/test", method = RequestMethod.GET)
+  @RequestMapping(value = "/api/test", method = RequestMethod.GET)
   public ResponseEntity<TestResponseEnt> index() {
     return new ResponseEntity<TestResponseEnt>(new TestResponseEnt.TestResponseEntBuilder()
         .data("SprintTest").num(666).build(),

@@ -72,5 +72,15 @@ exports = module.exports = {
       })(),
       exclude: /node_modules/
     }]
+  },
+  devServer: {
+    compress: true,
+    port: 9090,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9501/',
+        changeOrigin: true
+      }
+    }
   }
 };

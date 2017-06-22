@@ -4,12 +4,14 @@
   "description": "Orthrus client",
   "main": "index.js",
   "scripts": {
+    "start": "webpack-dev-server",
     "build": "webpack"
   },
   "author": "Xiong-jia.Le <lexiongjia@gmail.com> (https://github.com/xiongjia)",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.4"
+    "axios": "^0.16.2",
+    "loglevel": "^1.4.1"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

@@ -5,40 +5,14 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const prod = (process.env.NODE_ENV === 'production');
-
-const plugins = (() => {
-  let webpackPlugins = [];
-  if (prod) {
-    webpackPlugins.push(new webpack.optimize.UglifyJsPlugin());
-    webpackPlugins.push(new ExtractTextPlugin('style-[contenthash:10].css'));
-  }
-  webpackPlugins.push(new HtmlWebpackPlugin({
-    inject: true,
-    minify: (() => {
-      if (prod) {
-        return {
-          collapseWhitespace: true,
-          removeComments: true,
-          removeRedundantAttributes: true
-        };
-      }
-      return {};
-    })(),
-    template: path.join(__dirname, 'public/index-template.html')
-  }));
-  webpackPlugins.push(new webpack.DefinePlugin({
-    APP_PRODUCTION: prod,
-    APP_LOGLEVEL: JSON.stringify(prod ? 'silent' : 'trace')
-  }));
-  return webpackPlugins;
-})();
 
 exports = module.exports = {
   devtool: 'source-map',
   entry: './src/index.js',
-  plugins: plugins,
   output: {
     path: path.join(__dirname, 'dist'),
     filename: prod ? 'bundle.[hash:12].min.js' : 'bundle.js'
@@ -72,5 +46,37 @@ exports = module.exports = {
       })(),
       exclude: /node_modules/
     }]
-  }
+  },
+  plugins: (() => {
+    let webpackPlugins = [];
+    if (prod) {
+      webpackPlugins.push(new UglifyJSPlugin({
+        comments: false
+      }));
+      webpackPlugins.push(new ExtractTextPlugin('style-[contenthash:10].css'));
+    }
+    webpackPlugins.push(new CleanWebpackPlugin(['dist'], {
+      verbose: true,
+      dry: false
+    }));
+    webpackPlugins.push(new HtmlWebpackPlugin({
+      inject: true,
+      minify: (() => {
+        if (prod) {
+          return {
+            collapseWhitespace: true,
+            removeComments: true,
+            removeRedundantAttributes: true
+          };
+        }
+        return {};
+      })(),
+      template: path.join(__dirname, 'public/index-template.html')
+    }));
+    webpackPlugins.push(new webpack.DefinePlugin({
+      APP_PRODUCTION: prod,
+      APP_LOGLEVEL: JSON.stringify(prod ? 'silent' : 'trace')
+    }));
+    return webpackPlugins;
+  })()
 };

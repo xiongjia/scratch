@@ -1,4 +1,5 @@
 plugins {
+    id 'base'
     id 'eclipse'
     id 'idea'
     id 'java'
@@ -15,7 +16,12 @@ jar {
     baseName = appBaseName
     version =  appVersion
     manifest.mainAttributes('Main-Class' : appMainClassName)
+    from('../client/dist') {
+        into 'static'
+    }
 }
+jar.dependsOn(':client:build')
+
 
 eclipse {
     classpath {

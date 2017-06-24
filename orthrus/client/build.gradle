@@ -1,10 +1,10 @@
 plugins {
-    id 'com.moowork.node' version '1.1.1'
+    id 'com.moowork.node' version '1.2.0'
 }
 
-task yarnScriptBuild(type: YarnTask) {
-    args = ['run', 'build']
+task bundle(type: YarnTask) {
+    args = ['run', 'pack']
 }
 
-task build(dependsOn: ['yarn', 'yarnScriptBuild'])
+task build(dependsOn: ['yarn', 'bundle'])
 

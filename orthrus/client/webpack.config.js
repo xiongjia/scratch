@@ -5,15 +5,21 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const prod = (process.env.NODE_ENV === 'production');
 
 const plugins = (() => {
   let webpackPlugins = [];
   if (prod) {
-    webpackPlugins.push(new webpack.optimize.UglifyJsPlugin());
+    webpackPlugins.push(new UglifyJSPlugin());
     webpackPlugins.push(new ExtractTextPlugin('style-[contenthash:10].css'));
   }
+  webpackPlugins.push(new CleanWebpackPlugin([ 'dist' ], {
+    verbose: true,
+    dry: false
+  }));
   webpackPlugins.push(new HtmlWebpackPlugin({
     inject: true,
     minify: (() => {

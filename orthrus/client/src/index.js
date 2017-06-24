@@ -1,16 +1,13 @@
 'use strict';
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import Layout from './components/layout.js';
 import * as misc from './misc.js';
-import * as axios from 'axios';
 
 const logger = misc.getLogger('index');
 
+logger.debug('orthrus client');
 const root = document.getElementById('root');
-root.innerHTML = 'hello';
-
-logger.debug('orthrus client dbg log');
-
-/* axios tests */
-axios.get('/api/test')
-  .then(res => logger.debug('res: ', res))
-  .catch(err => logger.debug('err: ', err));
+ReactDOM.render(<Layout data={'test'} />, root);

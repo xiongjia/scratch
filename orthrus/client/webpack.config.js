@@ -54,11 +54,17 @@ exports = module.exports = {
       enforce: 'pre',
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
-      loader: 'eslint-loader'
+      loader: 'eslint-loader',
+      options: {
+        formatter: require('eslint-friendly-formatter')
+      }
     }, {
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
-      loaders: ['babel-loader']
+      loader: 'babel-loader',
+      query: {
+        presets: ['es2015', 'stage-0', 'react']
+      }
     }, {
       test: /\.(png|jpg|gif)$/,
       loaders: ['url-loader?limit=10000&name=images/[hash:12].[ext]'],

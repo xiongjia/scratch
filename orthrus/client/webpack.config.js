@@ -63,7 +63,11 @@ exports = module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader',
       query: {
-        presets: ['es2015', 'stage-0', 'react']
+        presets: ['es2015', 'stage-0', 'react'],
+        plugins: [
+          'transform-class-properties',
+          'transform-decorators-legacy'
+        ]
       }
     }, {
       test: /\.(png|jpg|gif)$/,

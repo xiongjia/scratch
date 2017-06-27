@@ -31,6 +31,7 @@ namespace gazlowe
     {
     public:
         TreeNodes(void);
+        virtual ~TreeNodes(void);
 
         static boost::shared_ptr<TreeNodes> Create(void);
     public:
@@ -45,7 +46,7 @@ namespace gazlowe
 
     /* ListNode struct for leetcode problems */
     typedef struct _ListNode ListNode;
-    struct _ListNode 
+    struct _ListNode
     {
         int val;
         ListNode *next;
@@ -56,6 +57,7 @@ namespace gazlowe
     {
     public:
         LinkedList(void);
+        virtual ~LinkedList(void);
 
         static boost::shared_ptr<LinkedList> Create(void);
     public:

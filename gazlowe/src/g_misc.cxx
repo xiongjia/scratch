@@ -76,7 +76,7 @@ namespace gazlowe
             DumpEntry(node->left, data);
             DumpEntry(node->right, data);
         }
-        
+
         void LoadEntry(TreeNode **node,
                        std::istream_iterator<std::string> &itr,
                        std::istream_iterator<std::string> &eos)
@@ -100,6 +100,11 @@ namespace gazlowe
     };
 
     TreeNodes::TreeNodes(void)
+    {
+        /* NOP */
+    }
+
+    TreeNodes::~TreeNodes(void)
     {
         /* NOP */
     }
@@ -163,6 +168,11 @@ namespace gazlowe
     };
 
     LinkedList::LinkedList(void)
+    {
+        /* NOP */
+    }
+
+    LinkedList::~LinkedList(void)
     {
         /* NOP */
     }

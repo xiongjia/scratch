@@ -95,7 +95,7 @@ namespace gazlowe
             int res = 0;
             std::for_each(nums.begin(), nums.end(), 
                          [&](const int num) { res ^= num; });
-            int cmp = res & (res - 1) ^ res;
+            int cmp = (res & (res - 1)) ^ res;
             int a = 0;
             int b = 0;
             std::for_each(nums.begin(), nums.end(), [&](const int num)

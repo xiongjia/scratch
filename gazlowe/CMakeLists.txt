@@ -78,6 +78,21 @@ add_executable(gazlowe
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_sort_list.cxx"
     "${PROJECT_SOURCE_DIR}/src/g_leetcode_contains_duplicate.cxx")
 
+
+file(GLOB SOURCES_GROUP_GENERAL
+    "src/main.cxx"
+    "src/g_misc.*")
+
+file(GLOB SOURCES_GROUP_LEETCODE
+    "src/g_leetcode_*")
+
+file(GLOB SOURCES_GROUP_OTHERS
+    "src/g_sorting_qsort.*")
+
+source_group("general" FILES ${SOURCES_GROUP_GENERAL})
+source_group("leetcode" FILES ${SOURCES_GROUP_LEETCODE})
+source_group("others" FILES ${SOURCES_GROUP_OTHERS})
+
 target_link_libraries(gazlowe
     debug "${gazlowe_boost_dbg_libs}"
     optimized "${gazlowe_boost_opt_libs}")

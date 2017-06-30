@@ -1,6 +1,6 @@
 # orthrus
 
-A simple test for React (Client) + Spring (REST API) + Gradle (build tools).
+A simple test for React (Client) + Spring (REST Server) + Gradle (build tools).
 
 ## setup
 - build: `gradle bootRepackage` 

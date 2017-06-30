@@ -1,6 +1,7 @@
 # scratch
 
-This "scratch" repository is saving my test codes  (e.g. The project template; The prototype and others).
+This "scratch" repository is saving my test codes 
+(e.g. The project template; The prototype and others).
 
 ## Contents
 * **jmeter-example-sampler** : An Example plugin for [Apache JMeter](http://jmeter.apache.org/) .
@@ -11,5 +12,7 @@ This "scratch" repository is saving my test codes  (e.g. The project template; T
 * **gazlowe** : My algorithm tests
 * **scala-scratch** : My Scala test code
 * **kharazim** : My Java Netty test code
-* *js-promise* : The ES6 JS promise tests
+* **js-promise** : The ES6 JS promise tests
+* **orthrus** : Spring Server + React Client + Gradle build tools
+
 

@@ -44,6 +44,9 @@ kharazim/build
 orthrus/**/*/build
 orthrus/**/*/.gradle
 orthrus/**/*/dist
+orthrus/**/*/.apt_generated
+orthrus/**/*/.factorypath
+orthrus/server/bin
 
 # CMake projects
 roach/build

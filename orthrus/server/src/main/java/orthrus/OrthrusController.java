@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrthrusController {
   @Builder
   @Data
-  public static class TestResponseEnt {
-    private String data = "data";
+  public static class TestData {
+    private String data = "testdata";
     private int num = 100;
   }
 
   /** Index request. */
-  @RequestMapping(value = "/api/test", method = RequestMethod.GET)
-  public ResponseEntity<TestResponseEnt> index() {
-    return new ResponseEntity<TestResponseEnt>(new TestResponseEnt.TestResponseEntBuilder()
+  @RequestMapping(value = "/api/v1/test-data", method = RequestMethod.GET)
+  public ResponseEntity<TestData> index() {
+    return new ResponseEntity<TestData>(new TestData.TestDataBuilder()
         .data("SprintTest").num(666).build(),
         HttpStatus.OK);
   }

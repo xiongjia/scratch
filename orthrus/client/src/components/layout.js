@@ -3,17 +3,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { incData } from '../actions/data-action.js';
+import * as axios from 'axios';
+
+import { getTestData, getTestDataErr } from '../actions/data-action.js';
 
 import * as misc from '../misc.js';
 const logger = misc.getLogger('layout');
 
-@connect((store) => {
-  return {
-    data: store.data
-  };
-})
-
+@connect((store) => store.data)
 export default class Layout extends React.Component {
   static propTypes = {
     data: PropTypes.number.isRequired,
@@ -26,9 +23,12 @@ export default class Layout extends React.Component {
   }
 
   componentWillMount() {
-    setTimeout(() => {
-      this.props.dispatch(incData());
-    }, 1000 * 5);
+    logger.debug('will mount');
+    this.props.dispatch((dispatch) => {
+      axios.get('/api/v1/test-data')
+        .then(res => dispatch(getTestData(res.data)))
+        .catch(err => dispatch(getTestDataErr(err)));
+    });
   }
 
   shouldComponentUpdate () {

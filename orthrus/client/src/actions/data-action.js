@@ -5,5 +5,5 @@ export function getTestData(testData) {
 }
 
 export function getTestDataErr(err) {
-  return { type: 'GET_TEST_DATA_ERR', err: err };
+  return { type: 'GET_TEST_DATA_ERR', err: err.toString() };
 }

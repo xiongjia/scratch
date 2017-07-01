@@ -41,6 +41,7 @@ public class FileSysScratch {
       return;
     }
     log.debug("isDir: {}, isFile: {}", src.isDirectory(), src.isFile());
+    log.debug("file size: {}", src.length());
   }
 
   /** read dir. */

@@ -44,6 +44,7 @@ repositories {
 dependencies {
     compile 'org.projectlombok:lombok:1.16.10'
     compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'commons-codec:commons-codec:1.10'
     compile 'com.google.guava:guava:21.0'
     compile 'com.google.jimfs:jimfs:1.1'
     compile 'org.quartz-scheduler:quartz:2.2.3'

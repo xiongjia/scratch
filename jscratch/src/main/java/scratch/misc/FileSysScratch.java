@@ -3,11 +3,14 @@ package scratch.misc;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
+import org.apache.commons.codec.binary.Hex;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
@@ -15,22 +18,12 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Formatter;
 
 public class FileSysScratch {
   private static final Logger log = LoggerFactory.getLogger(FileSysScratch.class);
-
-  private static String byteArray2Hex(final byte[] hash) {
-    Formatter fmt = new Formatter();
-    for (byte b : hash) {
-      fmt.format("%02x", b);
-    }
-    final String result = fmt.toString();
-    fmt.close();
-    return result;
-  }
 
   /** jimfs tests. */
   public static void jimFs() throws IOException {
@@ -61,19 +54,22 @@ public class FileSysScratch {
       log.debug("cannot read file {}", filename);
     }
 
-
     final ByteBuffer buf = ByteBuffer.allocate(1024 * 4);
     final Charset charset = Charset.forName("US-ASCII");
-    final MessageDigest md = MessageDigest.getInstance("SHA");
     final SeekableByteChannel byteChannel = Files.newByteChannel(path);
     while (byteChannel.read(buf) > 0) {
-      md.update(buf);
       buf.rewind();
       log.debug("buf: {}", charset.decode(buf));
       buf.flip();
     }
     byteChannel.close();
-    log.debug("sha1: {}", byteArray2Hex(md.digest()));
+
+    final MessageDigest md = MessageDigest.getInstance("SHA-1");
+    final InputStream in = Files.newInputStream(path);
+    final DigestInputStream din = new DigestInputStream(in, md);
+    while (din.read() != -1) { }
+
+    log.debug("sha1: {}", Hex.encodeHexString(md.digest()));
   }
 
   /** file info. */

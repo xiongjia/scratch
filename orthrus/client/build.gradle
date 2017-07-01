@@ -6,5 +6,7 @@ task bundle(type: YarnTask) {
     args = ['run', 'pack']
 }
 
+bundle.dependsOn(yarn_install)
+
 task build(dependsOn: ['yarn', 'bundle'])
 

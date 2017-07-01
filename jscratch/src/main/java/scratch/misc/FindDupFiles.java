@@ -1,20 +1,22 @@
 package scratch.misc;
 
+import com.google.common.collect.Lists;
+
+import lombok.Builder;
+import lombok.Getter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+
 import java.util.ArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import lombok.Getter;
-import lombok.Builder;
+import java.util.List;
 
 public class FindDupFiles {
   private static final Logger log = LoggerFactory.getLogger(FindDupFiles.class);
@@ -79,16 +81,17 @@ public class FindDupFiles {
       Files.list(path).forEach((subPath) -> {
         scan(subPath.toAbsolutePath().toString());
       });
-    } catch (IOException ignore) {
+    } catch (IOException err) {
+      log.debug("Cannot scan folder {}", filename, err);
     }
   }
 
+  /** Run. */
   public void run() {
     this.srcFiles.stream().forEach(file -> {
       log.debug("scan files in {}", file);
       scan(file);
     });
-
     log.debug("src files [{}]: {}", files.size(), files);
   }
 }

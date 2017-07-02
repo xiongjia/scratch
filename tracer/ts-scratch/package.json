@@ -1,0 +1,15 @@
+{
+  "name": "ts-scratch",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "node ./dist/main.js",
+    "build": "gulp"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.7",
+    "typescript": "^2.4.1"
+  }
+}

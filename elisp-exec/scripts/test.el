@@ -11,6 +11,7 @@
 ; strings
 (message "substr: %s" (substring "0123456789" 0 -1))
 (message "and: %s" (and nil "abc"))
+(message "concat %s" (concat "123" "abc"))
 
 ; project root
 (defvar app-root-path
@@ -18,4 +19,7 @@
     (substring (file-name-directory (or load-file-name (buffer-file-name))) 0 -1))
   "The root dir of this project")
 (message "app root: %s " app-root-path)
+
+(load-file (concat app-root-path "scripts/misc.el"))
+(test-export)
 

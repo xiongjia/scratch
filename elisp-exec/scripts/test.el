@@ -23,3 +23,8 @@
 (load-file (concat app-root-path "scripts/misc.el"))
 (test-export)
 
+(message "Load data from file: ")
+(message (file-contents
+  (concat app-root-path "assets/test-data.txt")))
+
+

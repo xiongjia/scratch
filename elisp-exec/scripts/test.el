@@ -28,3 +28,20 @@
   (concat app-root-path "assets/test-data.txt")))
 
 
+; env
+(message "get env: %s" (getenv "HOME"))
+(message "get env: %s" (not (string= (getenv "HOME") nil)))
+(message "get env: %s" (not (string= (getenv "HOME100") nil)))
+
+; misc
+(setq testdata
+  `(
+    ("test"
+     :base "abc"
+     :base2 t
+     )
+    ("data" :components ("test"))))
+
+(message "test data: %s" testdata)
+
+

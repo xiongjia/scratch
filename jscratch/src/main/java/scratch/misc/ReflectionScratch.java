@@ -1,5 +1,8 @@
 package scratch.misc;
 
+import org.joor.Reflect;
+import org.joor.ReflectException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +15,17 @@ public class ReflectionScratch {
   public static class TestObj {
     public String testMethod(String src1, String src2) {
       return String.format("Src = %s; %s", src1, src2);
+    }
+  }
+
+  /** jOOR tests. */
+  public static void testjoor() {
+    try {
+      final Reflect objReflect = Reflect.on("scratch.misc.ReflectionScratch$TestObj");
+      final String ret = objReflect.create().call("testMethod", "str1", "str2").get();
+      log.debug("ret: {}", ret);
+    } catch (ReflectException reflectErr) {
+      log.error("err: ", reflectErr);
     }
   }
 

@@ -1,0 +1,21 @@
+# OS junk files
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYLE.BIN/
+
+# IDE or Editor generated files
+*.swp
+tags
+.tern-port
+.tmp
+.sass-cache
+
+# Dependencies
+deps/
+!deps/CMakeLists.txt
+

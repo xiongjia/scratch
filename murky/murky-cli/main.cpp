@@ -2,10 +2,19 @@
  *
  */
 
+#include <stdio.h>
 #include "zlib.h"
+#include "boost/make_shared.hpp"
 
-int main(const int argc, const char **argv)
+struct test_data {
+    int x;
+};
+
+int main(const int /* argc */, const char ** /* argv */)
 {
+    boost::shared_ptr<test_data> s = boost::make_shared<test_data>();
+    printf("cmake test %d\n", s->x);
+
     z_stream zstream;
     zstream.zalloc = Z_NULL;
     zstream.zfree = Z_NULL;

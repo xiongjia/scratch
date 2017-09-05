@@ -16,6 +16,5 @@ tags
 .sass-cache
 
 # Dependencies
-deps/
+deps/*
 !deps/CMakeLists.txt
-

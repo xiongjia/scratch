@@ -1,0 +1,80 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'eclipse'
+    id 'maven'
+    id 'application'
+    id 'checkstyle'
+    id 'net.ltgt.apt'             version '0.8'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+
+final appMainClassName     = 'probius.Probius'
+final appBaseName          = 'probius'
+final appVersion           = '1.0'
+mainClassName              = 'probius.Probius'
+
+eclipse {
+    classpath {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    /* logging */
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.apache.logging.log4j:log4j-core:2.8.1'
+    compile 'ch.qos.logback:logback-core:1.1.7'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+
+    testCompile 'junit:junit:4.12'
+}
+
+task fatJar(type: Jar) {
+    baseName = appBaseName + '-' + appVersion + '-all'
+    manifest.mainAttributes('Main-Class' : appMainClassName)
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
+}
+
+jar {
+    baseName = appBaseName
+    version =  appVersion
+    manifest.mainAttributes('Main-Class' : appMainClassName)
+    exclude('**/*.db')
+}
+
+run {
+    main = appMainClassName
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task runApp(type:JavaExec) {
+    main = appMainClassName
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2.1'
+}
+
+checkstyle {
+    toolVersion = "7.3"
+    configFile = file('config/checkstyle/google_checks.xml')
+}
+

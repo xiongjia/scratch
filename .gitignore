@@ -31,6 +31,14 @@ jscratch/build
 jscratch/**/*.db
 jscratch/test-output
 
+probius/.gitignore
+probius/.apt_generated
+probius/.factorypath
+probius/bin
+probius/build
+probius/**/*.db
+probius/test-output
+
 jmeter-example-sampler/.gitignore
 jmeter-example-sampler/bin
 jmeter-example-sampler/build

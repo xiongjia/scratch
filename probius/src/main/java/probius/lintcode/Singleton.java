@@ -1,6 +1,5 @@
 package probius.lintcode;
 
-
 /**
  * LintCode exercise - singleton http://www.lintcode.com/en/problem/singleton/
  *  Singleton is a most widely used design pattern.

@@ -17,6 +17,7 @@ public class ListNode {
     this.next = null;
   }
 
+  /** create list nodes. */
   public static ListNode create(int[] data) {
     ListNode result = null;
     ListNode tail = null;
@@ -37,6 +38,7 @@ public class ListNode {
     ListNode.dump(this);
   }
 
+  /** dump list nodes. */
   public static void dump(ListNode hdr) {
     if (hdr == null) {
       log.debug(" null ");

@@ -38,6 +38,9 @@ probius/bin
 probius/build
 probius/**/*.db
 probius/test-output
+probius/*.iml
+probius/*.iws
+probius/*.ipr
 
 jmeter-example-sampler/.gitignore
 jmeter-example-sampler/bin

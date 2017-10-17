@@ -1,14 +1,9 @@
 package probius.lintcode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The ListNode data class for lintcode exercise.
  */
 public class ListNode {
-  private static final Logger log = LoggerFactory.getLogger(ListNode.class);
-
   public int val;
   public ListNode next;
 
@@ -19,6 +14,10 @@ public class ListNode {
 
   /** create list nodes. */
   public static ListNode create(int[] data) {
+    if (data == null) {
+      return null;
+    }
+
     ListNode result = null;
     ListNode tail = null;
     for (int item : data) {
@@ -34,14 +33,14 @@ public class ListNode {
     return result;
   }
 
-  public void dump() {
-    ListNode.dump(this);
+  public String dump() {
+    return ListNode.dump(this);
   }
 
   /** dump list nodes. */
-  public static void dump(ListNode hdr) {
+  public static String dump(ListNode hdr) {
     if (hdr == null) {
-      log.debug("<null>");
+      return "<null>";
     }
     final StringBuilder sb = new StringBuilder();
     int idx = 0;
@@ -49,6 +48,6 @@ public class ListNode {
       sb.append(String.format("([%d]={%d})->", idx++, item.val));
     }
     sb.append("<null>");
-    log.debug(sb.toString());
+    return sb.toString();
   }
 }

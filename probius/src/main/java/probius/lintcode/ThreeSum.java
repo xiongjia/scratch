@@ -22,18 +22,29 @@ public class ThreeSum {
   /** solution. */
   public List<List<Integer>> threeSum(int[] numbers) {
     final List<List<Integer>> result = new LinkedList<>();
-    if (numbers.length <= 2) {
+    if (numbers == null) {
+      return result;
+    }
+
+    final int numsLen = numbers.length;
+    if (numsLen <= 2) {
       return result;
     }
 
     Arrays.sort(numbers);
-    for (int i = 0; i < numbers.length - 2; ++i) {
+    final int min = numbers[0];
+    final int max = numbers[numsLen - 1];
+    if (min * 3 > 0 || max * 3 < 0) {
+      return result;
+    }
+
+    for (int i = 0; i < numsLen - 2; ++i) {
       if (i != 0 && (numbers[i] == numbers[i - 1])) {
         continue;
       }
 
       int lo = i + 1;
-      int hi = numbers.length - 1;
+      int hi = numsLen - 1;
       final int sum = 0 - numbers[i];
       while (lo < hi) {
         if (numbers[lo] + numbers[hi] == sum) {

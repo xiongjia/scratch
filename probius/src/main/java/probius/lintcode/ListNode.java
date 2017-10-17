@@ -41,14 +41,14 @@ public class ListNode {
   /** dump list nodes. */
   public static void dump(ListNode hdr) {
     if (hdr == null) {
-      log.debug(" null ");
+      log.debug("<null>");
     }
     final StringBuilder sb = new StringBuilder();
     int idx = 0;
     for (ListNode item = hdr; item != null; item = item.next) {
-      sb.append(String.format(" ([%d]={%d})-> ", idx++, item.val));
+      sb.append(String.format("([%d]={%d})->", idx++, item.val));
     }
-    sb.append(" null ");
+    sb.append("<null>");
     log.debug(sb.toString());
   }
 }

@@ -28,12 +28,11 @@ public class MergeTwoSortedLists {
       if (hdr1.val > hdr2.val) {
         node = hdr2;
         hdr2 = hdr2.next;
-        node.next = null;
       } else {
         node = hdr1;
         hdr1 = hdr1.next;
-        node.next = null;
       }
+      node.next = null;
 
       if (tail == null) {
         result = node;

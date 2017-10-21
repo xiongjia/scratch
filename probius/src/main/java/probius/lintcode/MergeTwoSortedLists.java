@@ -24,7 +24,7 @@ public class MergeTwoSortedLists {
     ListNode hdr1 = l1;
     ListNode hdr2 = l2;
     for (; !(hdr1 == null || hdr2 == null);) {
-      ListNode node = null;
+      ListNode node;
       if (hdr1.val > hdr2.val) {
         node = hdr2;
         hdr2 = hdr2.next;
@@ -42,9 +42,7 @@ public class MergeTwoSortedLists {
         tail = node;
       }
     }
-    if (hdr1 != null || hdr2 != null) {
-      tail.next = (hdr1 == null ? hdr2 : hdr1);
-    }
+    tail.next = (hdr1 == null ? hdr2 : hdr1);
     return result;
   }
 }

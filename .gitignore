@@ -23,6 +23,11 @@ tags
 .gradle
 .cache-main
 
+*.iml
+*.iws
+*.ipr
+
+
 jscratch/.gitignore
 jscratch/.apt_generated
 jscratch/.factorypath
@@ -38,9 +43,6 @@ probius/bin
 probius/build
 probius/**/*.db
 probius/test-output
-probius/*.iml
-probius/*.iws
-probius/*.ipr
 
 jmeter-example-sampler/.gitignore
 jmeter-example-sampler/bin

@@ -1,5 +1,8 @@
 package probius.lintcode;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * The ListNode data class for lintcode exercise.
  */
@@ -13,7 +16,8 @@ public class ListNode {
   }
 
   /** create list nodes. */
-  public static ListNode create(int[] data) {
+  @Nullable
+  public static ListNode create(@Nullable int[] data) {
     if (data == null) {
       return null;
     }
@@ -38,6 +42,7 @@ public class ListNode {
   }
 
   /** dump list nodes. */
+  @Nonnull
   public static String dump(ListNode hdr) {
     if (hdr == null) {
       return "<null>";

@@ -3,6 +3,7 @@ plugins {
     id 'groovy'
     id 'scala'
     id 'eclipse'
+    id 'idea'
     id 'maven'
     id 'application'
     id 'checkstyle'

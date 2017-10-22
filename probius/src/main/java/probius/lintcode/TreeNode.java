@@ -2,6 +2,9 @@ package probius.lintcode;
 
 import java.util.StringTokenizer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * The TreeNode data class for lintcode exercise.
  */
@@ -19,7 +22,8 @@ public class TreeNode {
   }
 
   /** serialize. */
-  public static String serialize(TreeNode root) {
+  @Nonnull
+  public static String serialize(@Nullable TreeNode root) {
     if (root == null) {
       return "";
     }
@@ -39,13 +43,15 @@ public class TreeNode {
   }
 
   /** deserialize. */
-  public static TreeNode deserialize(String tree) {
+  @Nullable
+  public static TreeNode deserialize(@Nullable String tree) {
     if (tree == null || tree.isEmpty()) {
       return null;
     }
     return deserialize(new StringTokenizer(tree, ","));
   }
 
+  @Nullable
   private static TreeNode deserialize(StringTokenizer tokenizer) {
     if (!tokenizer.hasMoreTokens()) {
       return null;

@@ -44,6 +44,14 @@ probius/build
 probius/**/*.db
 probius/test-output
 
+tychus/.gitignore
+tychus/.apt_generated
+tychus/.factorypath
+tychus/bin
+tychus/build
+tychus/**/*.db
+tychus/test-output
+
 jmeter-example-sampler/.gitignore
 jmeter-example-sampler/bin
 jmeter-example-sampler/build

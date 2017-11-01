@@ -3,10 +3,12 @@ package tychus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tychus.discard.DiscardServer;
+
 public class Tychus {
   private static final Logger log = LoggerFactory.getLogger(Tychus.class);
 
-  public static void main(String[] args) {
-    log.info("Hello Tychus!");
+  public static void main(String[] args) throws Exception {
+    new DiscardServer(8887).run();
   }
 }

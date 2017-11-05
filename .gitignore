@@ -22,6 +22,7 @@ tags
 .settings
 .gradle
 .cache-main
+.idea
 
 *.iml
 *.iws

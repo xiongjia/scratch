@@ -27,7 +27,7 @@ tags
 *.iml
 *.iws
 *.ipr
-
+out
 
 jscratch/.gitignore
 jscratch/.apt_generated

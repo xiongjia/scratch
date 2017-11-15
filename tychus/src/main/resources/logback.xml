@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss} %-5p %c{1}:%L - %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="io.netty"  level="${TYCHUS_NETTY_LOGLEVEL:-ERROR}" />
+
+  <root level="debug">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>

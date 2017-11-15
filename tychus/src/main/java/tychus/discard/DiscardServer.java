@@ -10,15 +10,21 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DiscardServer {
+  private static final Logger log = LoggerFactory.getLogger(DiscardServer.class);
   private int port;
 
   public DiscardServer(int port) {
     this.port = port;
   }
 
-  /** Start server. */
+  /** Start discard server. */
   public void run() throws Exception {
+    log.info("Discard server (port {}) running", this.port);
+
     final EventLoopGroup srvGroup = new NioEventLoopGroup();
     final EventLoopGroup wrkGroup = new NioEventLoopGroup();
 

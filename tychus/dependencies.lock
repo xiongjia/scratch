@@ -1,0 +1,205 @@
+{
+    "checkstyle": {
+        "com.puppycrawl.tools:checkstyle": {
+            "locked": "7.3"
+        }
+    },
+    "compile": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "compileClasspath": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "default": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "runtime": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "runtimeClasspath": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "testCompile": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "testCompileClasspath": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "testRuntime": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    },
+    "testRuntimeClasspath": {
+        "ch.qos.logback:logback-classic": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "ch.qos.logback:logback-core": {
+            "locked": "1.1.7",
+            "requested": "1.1.7"
+        },
+        "io.netty:netty-all": {
+            "locked": "4.1.16.Final",
+            "requested": "4.1.16.Final"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.8.1",
+            "requested": "2.8.1"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.21"
+        }
+    }
+}

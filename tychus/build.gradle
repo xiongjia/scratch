@@ -6,7 +6,9 @@ plugins {
   id 'maven'
   id 'application'
   id 'checkstyle'
-  id 'net.ltgt.apt'             version '0.8'
+  id 'project-report'
+  id 'nebula.dependency-lock' version '4.9.5'
+  id 'net.ltgt.apt'           version '0.8'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8

@@ -13,6 +13,10 @@
             "locked": "1.1.7",
             "requested": "1.1.7"
         },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
+        },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
             "requested": "4.1.16.Final"
@@ -34,6 +38,10 @@
         "ch.qos.logback:logback-core": {
             "locked": "1.1.7",
             "requested": "1.1.7"
+        },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
         },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
@@ -57,6 +65,10 @@
             "locked": "1.1.7",
             "requested": "1.1.7"
         },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
+        },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
             "requested": "4.1.16.Final"
@@ -78,6 +90,10 @@
         "ch.qos.logback:logback-core": {
             "locked": "1.1.7",
             "requested": "1.1.7"
+        },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
         },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
@@ -101,6 +117,10 @@
             "locked": "1.1.7",
             "requested": "1.1.7"
         },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
+        },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
             "requested": "4.1.16.Final"
@@ -122,6 +142,10 @@
         "ch.qos.logback:logback-core": {
             "locked": "1.1.7",
             "requested": "1.1.7"
+        },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
         },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
@@ -145,6 +169,10 @@
             "locked": "1.1.7",
             "requested": "1.1.7"
         },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
+        },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
             "requested": "4.1.16.Final"
@@ -167,6 +195,10 @@
             "locked": "1.1.7",
             "requested": "1.1.7"
         },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
+        },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",
             "requested": "4.1.16.Final"
@@ -188,6 +220,10 @@
         "ch.qos.logback:logback-core": {
             "locked": "1.1.7",
             "requested": "1.1.7"
+        },
+        "com.google.guava:guava": {
+            "locked": "23.0",
+            "requested": "23.0"
         },
         "io.netty:netty-all": {
             "locked": "4.1.16.Final",

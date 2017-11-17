@@ -11,7 +11,6 @@ public class EchoServer extends Server {
 
   @Override
   protected ChannelHandler createChannelHandler() {
-    /* XXX TODO create echo server channel handler */
-    return null;
+    return new EchoServerHandler();
   }
 }

@@ -71,6 +71,8 @@ dependencies {
     compile 'org.testng:testng:6.11'
     compile 'org.seleniumhq.selenium:selenium-java:3.0.1'
     compile 'com.googlecode.junit-toolbox:junit-toolbox:2.3'
+    compile 'org.openjdk.jmh:jmh-core:1.19'
+    compile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
 
     /* server */
     compile 'org.glassfish.jersey.core:jersey-server:2.25.1'

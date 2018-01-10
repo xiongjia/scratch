@@ -1,9 +1,10 @@
 'use strict';
 
+const argv = require('yargs').argv;
 const gulp = require('gulp');
 
 const conf = {
-  DEBUG: true
+  DEBUG: argv.debug
 };
 
 const dirs = {

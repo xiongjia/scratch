@@ -1,10 +1,6 @@
-// bower:scss
-// endbower
-// inject:app
-// endinject
+/* main.scss */
+@import "bootstrap";
+@import "bootstrap/theme";
 
-$primary-color: gray;
-
-body {
-  background-color: $primary-color;
-}
+// $primary-color: gray;
+// body {background-color: $primary-color;}

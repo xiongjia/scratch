@@ -13,10 +13,11 @@ const dirs = {
   SRC: 'src',
   SRC_BOOTSTRAP_SASS: 'node_modules/bootstrap-sass',
   DEST: 'dist',
-  DEST_CSS_MAP: '.'
+  DEST_CSS: 'dist/css',
+  DEST_FONTS: 'dist/fonts'
 };
 
-gulp.task('build', [ 'html' ]);
+gulp.task('build', [ 'fonts', 'html' ]);
 gulp.task('default', seq('clean', 'build'));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
@@ -31,7 +32,7 @@ gulp.task('sass', () => {
 
   const sassOpt = {
     outputStyle: 'nested',
-    precison: 3,
+    precison: 6,
     errLogToConsole: true,
     includePaths: [ dirs.SRC_BOOTSTRAP_SASS + '/assets/stylesheets' ]
   };
@@ -40,9 +41,9 @@ gulp.task('sass', () => {
     .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
     .pipe(sass(sassOpt))
     .pipe(minifyCss())
-    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS_MAP)))
+    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS)))
     .pipe(rev())
-    .pipe(gulp.dest(dirs.DEST));
+    .pipe(gulp.dest(dirs.DEST_CSS));
 });
 
 gulp.task('html', [ 'sass' ], () => {
@@ -53,12 +54,13 @@ gulp.task('html', [ 'sass' ], () => {
   ], { read: false });
 
   return gulp.src([ dirs.SRC + '/**/*.html' ])
-    .pipe(inject(items), { relative: true })
+    .pipe(inject(items, { ignorePath: dirs.DEST, relative: true }))
     .pipe(gulp.dest(dirs.DEST));
 });
 
 gulp.task('fonts', () => {
-  const src = ['node_modules/bootstrap-sass/assets/fonts/**/*'];
-  return gulp.src(src)
-    .pipe(gulp.dest('dist'));
+  const src = [
+    dirs.SRC_BOOTSTRAP_SASS + '/assets/fonts/**/*'
+  ];
+  return gulp.src(src).pipe(gulp.dest(dirs.DEST_FONTS));
 });

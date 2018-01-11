@@ -4,6 +4,7 @@ const argv = require('yargs').argv;
 const gulp = require('gulp');
 const del = require('del');
 const seq = require('gulp-sequence');
+const browserSync = require('browser-sync').create();
 
 const conf = {
   DEBUG: argv.debug
@@ -46,6 +47,11 @@ gulp.task('sass', () => {
     .pipe(gulp.dest(dirs.DEST_CSS));
 });
 
+gulp.task('html-watch', [ 'html' ], (done) => {
+  browserSync.reload();
+  done();
+});
+
 gulp.task('html', [ 'sass' ], () => {
   const inject = require('gulp-inject');
   const items = gulp.src([
@@ -54,7 +60,7 @@ gulp.task('html', [ 'sass' ], () => {
   ], { read: false });
 
   return gulp.src([ dirs.SRC + '/**/*.html' ])
-    .pipe(inject(items, { ignorePath: dirs.DEST, relative: true }))
+    .pipe(inject(items, { ignorePath: dirs.DEST + '/', relative: false }))
     .pipe(gulp.dest(dirs.DEST));
 });
 
@@ -63,4 +69,12 @@ gulp.task('fonts', () => {
     dirs.SRC_BOOTSTRAP_SASS + '/assets/fonts/**/*'
   ];
   return gulp.src(src).pipe(gulp.dest(dirs.DEST_FONTS));
+});
+
+gulp.task('serv', [ 'build' ], () => {
+  browserSync.init({
+    server: { baseDir: dirs.DEST },
+    browser: 'google chrome'
+  });
+  gulp.watch('src/**/*.html', [ 'html-watch' ]);
 });

@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const argv = require('yargs').argv;
 const gulp = require('gulp');
 const del = require('del');
@@ -7,6 +8,8 @@ const seq = require('gulp-sequence');
 const browserSync = require('browser-sync').create();
 
 const conf = {
+  BROWSER: argv.browser ||
+    (os.platform() === 'win32' ? 'chrome.exe' : 'google chrome'),
   DEBUG: argv.debug
 };
 
@@ -18,17 +21,25 @@ const dirs = {
   DEST_FONTS: 'dist/fonts'
 };
 
-gulp.task('build', [ 'fonts', 'html' ]);
-gulp.task('default', seq('clean', 'build'));
+gulp.task('build', seq('lint:js', [ 'fonts', 'html' ]));
+gulp.task('default', seq(['clean', 'lint:js'], 'build'));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
 gulp.task('clean', [ 'clean:all' ]);
+
+gulp.task('lint:js', () => {
+  const eslint = require('gulp-eslint');
+  return gulp.src(['**/*.js','!node_modules/**'])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
+});
 
 gulp.task('sass', () => {
   const sourcemaps = require('gulp-sourcemaps');
   const sass = require('gulp-sass');
   const gulpif = require('gulp-if');
-  const minifyCss = require('gulp-minify-css');
+  const cleanCSS = require('gulp-clean-css');
   const rev = require('gulp-rev');
 
   const sassOpt = {
@@ -41,15 +52,10 @@ gulp.task('sass', () => {
   return gulp.src([ dirs.SRC + '/**/*.scss' ])
     .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
     .pipe(sass(sassOpt))
-    .pipe(minifyCss())
+    .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS)))
     .pipe(rev())
     .pipe(gulp.dest(dirs.DEST_CSS));
-});
-
-gulp.task('html-watch', [ 'html' ], (done) => {
-  browserSync.reload();
-  done();
 });
 
 gulp.task('html', [ 'sass' ], () => {
@@ -74,7 +80,12 @@ gulp.task('fonts', () => {
 gulp.task('serv', [ 'build' ], () => {
   browserSync.init({
     server: { baseDir: dirs.DEST },
-    browser: 'google chrome'
+    browser: conf.BROWSER
   });
-  gulp.watch('src/**/*.html', [ 'html-watch' ]);
+  gulp.watch(dirs.SRC + '/**/*.html', [ 'html-watch' ]);
+});
+
+gulp.task('html-watch', [ 'html' ], (done) => {
+  browserSync.reload();
+  done();
 });

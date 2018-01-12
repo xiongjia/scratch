@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp",
-    "serv": "gulp serv"
+    "buildDebug": "gulp --debug",
+    "serv": "gulp serv --debug"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +15,10 @@
     "browser-sync": "^2.23.5",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.2",
+    "gulp-eslint": "^4.0.1",
     "gulp-if": "^2.0.2",
     "gulp-inject": "^4.3.0",
-    "gulp-minify-css": "^1.2.4",
     "gulp-rev": "^8.1.1",
     "gulp-sass": "^3.1.0",
     "gulp-sequence": "^1.0.0",

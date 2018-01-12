@@ -29,9 +29,8 @@ gulp.task('clean', [ 'clean:all' ]);
 
 gulp.task('lint:js', () => {
   const eslint = require('gulp-eslint');
-  return gulp.src(['**/*.js','!node_modules/**'])
-    .pipe(eslint())
-    .pipe(eslint.format())
+  return gulp.src([ '**/*.js', '!node_modules/**' ])
+    .pipe(eslint()).pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });
 
@@ -54,8 +53,7 @@ gulp.task('sass', () => {
     .pipe(sass(sassOpt))
     .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS)))
-    .pipe(rev())
-    .pipe(gulp.dest(dirs.DEST_CSS));
+    .pipe(rev()).pipe(gulp.dest(dirs.DEST_CSS));
 });
 
 gulp.task('html', [ 'sass' ], () => {
@@ -83,8 +81,10 @@ gulp.task('serv', [ 'build' ], () => {
     browser: conf.BROWSER
   });
   gulp.watch(dirs.SRC + '/**/*.html', [ 'html-watch' ]);
+  gulp.watch(dirs.SRC + '/**/*.sass', [ 'sass-watch' ]);
 });
 
+gulp.task('sass-watch', [ 'html-watch' ]);
 gulp.task('html-watch', [ 'html' ], (done) => {
   browserSync.reload();
   done();

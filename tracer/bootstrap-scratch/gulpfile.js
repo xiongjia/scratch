@@ -4,6 +4,7 @@ const os = require('os');
 const argv = require('yargs').argv;
 const gulp = require('gulp');
 const gutil = require('gulp-util');
+const gulpif = require('gulp-if');
 const del = require('del');
 const seq = require('gulp-sequence');
 const browserSync = require('browser-sync').create();
@@ -51,7 +52,6 @@ gulp.task('lint:js', () => {
 gulp.task('sass', () => {
   const sourcemaps = require('gulp-sourcemaps');
   const sass = require('gulp-sass');
-  const gulpif = require('gulp-if');
   const cleanCSS = require('gulp-clean-css');
   const rev = require('gulp-rev');
 
@@ -72,7 +72,9 @@ gulp.task('sass', () => {
 
 gulp.task('index', [ 'sass' ], () => {
   const inject = require('gulp-inject');
+  const htmlbeautify = require('gulp-html-beautify');
   const posthtml = require('gulp-posthtml');
+  const htmlmin = require('gulp-htmlmin');
   const include = require('posthtml-include')({
     root: path.join(__dirname, dirs.SRC)
   });
@@ -88,6 +90,8 @@ gulp.task('index', [ 'sass' ], () => {
       plugins: [ include ],
       options: {}
     })))
+    .pipe(gulpif(conf.DEBUG, htmlbeautify({ indentSize: 2 })))
+    .pipe(gulpif(!conf.DEBUG, htmlmin({ collapseWhitespace: true })))
     .pipe(gulp.dest(dirs.DEST));
 });
 

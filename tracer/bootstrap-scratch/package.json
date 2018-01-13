@@ -18,6 +18,8 @@
     "gulp": "^3.9.1",
     "gulp-clean-css": "^3.9.2",
     "gulp-eslint": "^4.0.1",
+    "gulp-html-beautify": "^1.0.1",
+    "gulp-htmlmin": "^4.0.0",
     "gulp-if": "^2.0.2",
     "gulp-inject": "^4.3.0",
     "gulp-posthtml": "^3.0.2",

@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible"
+              content="IE=edge">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1">
+
         <title>bootstrap scratch</title>
         <!-- inject:css -->
         <!-- endinject -->
     </head>
-    <body>
-        <h1>scratch</h1>
-        <button type="button" class="btn btn-default" aria-label="Left Align">
-            <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-        </button>
+    <body role="document">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <a href="#">HTML</a>
+            <a href="#">CSS</a>
+        </nav>
+        <div class="container theme-showcase" role="main">
+            <div class="jumbotron">
+                <h1>Scratch</h1>
+                <p>bootstrp tests</p>
+            </div>
+
+            <include src="components/buttons.html"></include>
+        </div>
     </body>
 </html>

@@ -3,13 +3,23 @@
 const os = require('os');
 const argv = require('yargs').argv;
 const gulp = require('gulp');
+const gutil = require('gulp-util');
 const del = require('del');
 const seq = require('gulp-sequence');
 const browserSync = require('browser-sync').create();
+const path = require('path');
 
 const conf = {
-  BROWSER: argv.browser ||
-    (os.platform() === 'win32' ? 'chrome.exe' : 'google chrome'),
+  BROWSER: (() => {
+    if (argv.browser) {
+      return argv.browser;
+    }
+    if (os.platform() === 'win32') {
+      return 'chrome.exe';
+    } else {
+      return 'google chrome';
+    }
+  })(),
   DEBUG: argv.debug
 };
 
@@ -21,7 +31,11 @@ const dirs = {
   DEST_FONTS: 'dist/fonts'
 };
 
-gulp.task('build', seq('lint:js', [ 'fonts', 'html' ]));
+gutil.log('bootstrap scratch');
+gutil.log('conf = %j', conf);
+gutil.log('dirs = %j', dirs);
+
+gulp.task('build', seq('lint:js', [ 'fonts', 'index' ]));
 gulp.task('default', seq(['clean', 'lint:js'], 'build'));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
@@ -56,15 +70,24 @@ gulp.task('sass', () => {
     .pipe(rev()).pipe(gulp.dest(dirs.DEST_CSS));
 });
 
-gulp.task('html', [ 'sass' ], () => {
+gulp.task('index', [ 'sass' ], () => {
   const inject = require('gulp-inject');
+  const posthtml = require('gulp-posthtml');
+  const include = require('posthtml-include')({
+    root: path.join(__dirname, dirs.SRC)
+  });
+
   const items = gulp.src([
     dirs.DEST + '/**/*.css',
     dirs.DEST + '/**/*.js'
   ], { read: false });
 
-  return gulp.src([ dirs.SRC + '/**/*.html' ])
+  return gulp.src([ dirs.SRC + '/index.html' ])
     .pipe(inject(items, { ignorePath: dirs.DEST + '/', relative: false }))
+    .pipe(posthtml(() => ({
+      plugins: [ include ],
+      options: {}
+    })))
     .pipe(gulp.dest(dirs.DEST));
 });
 
@@ -85,7 +108,7 @@ gulp.task('serv', [ 'build' ], () => {
 });
 
 gulp.task('sass-watch', [ 'html-watch' ]);
-gulp.task('html-watch', [ 'html' ], (done) => {
+gulp.task('html-watch', [ 'index' ], (done) => {
   browserSync.reload();
   done();
 });

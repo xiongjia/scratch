@@ -28,6 +28,7 @@ const conf = {
 const dirs = {
   SRC: 'src',
   SRC_BOOTSTRAP_SASS: 'node_modules/bootstrap-sass',
+  SRC_JQUERY: 'node_modules/jquery',
   DEST: 'dist',
   DEST_CSS: 'dist/css',
   DEST_CSS_MAP: '.',
@@ -44,8 +45,8 @@ gulp.task('build', seq('lint:js', [ 'fonts', 'index' ]));
 gulp.task('default', seq('clean', 'lint:js', 'build'));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
-gulp.task('clean:js', () => del([ dirs.DEST + '/**/*.js' ]));
-gulp.task('clean:css', () => del([ dirs.DEST + '/**/*.css' ]));
+gulp.task('clean:js', () => del([ dirs.DEST + '/**/*.{js,map}' ]));
+gulp.task('clean:css', () => del([ dirs.DEST + '/**/*.{css,map}' ]));
 gulp.task('clean', [ 'clean:all' ]);
 
 gulp.task('lint:js', () => {
@@ -71,7 +72,9 @@ gulp.task('sass', [ 'clean:css' ], () => {
     .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
     .pipe(sass(sassOpt))
     .pipe(cleanCSS({compatibility: 'ie8'}))
-    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS_MAP)))
+    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS_MAP, {
+      addComment: false
+    })))
     .pipe(rev()).pipe(gulp.dest(dirs.DEST_CSS));
 });
 
@@ -86,7 +89,9 @@ gulp.task('index', [ 'sass', 'js' ], () => {
 
   const items = gulp.src([
     dirs.DEST + '/**/*.css',
-    dirs.DEST + '/**/*.js'
+    dirs.DEST + '/**/jquery*.js',
+    dirs.DEST + '/**/bootstrap*.js',
+    dirs.DEST + '/**/bundle*.js'
   ], { read: false });
 
   return gulp.src([ dirs.SRC + '/index.html' ])
@@ -107,7 +112,18 @@ gulp.task('fonts', () => {
   return gulp.src(src).pipe(gulp.dest(dirs.DEST_FONTS));
 });
 
-gulp.task('js', [ 'clean:js' ], () => {
+gulp.task('js', seq('clean:js', [ 'js:libs', 'js:bundle' ]));
+
+gulp.task('js:libs', () => {
+  const libs = [
+    dirs.SRC_JQUERY + '/dist/jquery.min.js',
+    dirs.SRC_BOOTSTRAP_SASS + '/assets/javascripts/bootstrap.min.js'
+  ];
+  return gulp.src(libs)
+    .pipe(gulp.dest(dirs.DEST_JS));
+});
+
+gulp.task('js:bundle', () => {
   const sourcemaps = require('gulp-sourcemaps');
   const source = require('vinyl-source-stream');
   const buffer = require('vinyl-buffer');
@@ -126,7 +142,9 @@ gulp.task('js', [ 'clean:js' ], () => {
     .pipe(buffer())
     .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
     .pipe(uglify())
-    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_JS_MAP)))
+    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_JS_MAP, {
+      addComment: false
+    })))
     .pipe(rev()).pipe(gulp.dest(dirs.DEST_JS));
 });
 

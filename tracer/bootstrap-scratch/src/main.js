@@ -1,10 +1,7 @@
 'use strict';
 
-import 'jquery';
-import 'bootstrap-sass';
+import each from 'lodash/each';
 
-import _ from 'lodash';
-
-_.each([ 'test1', 'test2' ], (item) => {
+each([ 'test1', 'test2' ], (item) => {
   console.log('item: %s', item);
 });

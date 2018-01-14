@@ -5,6 +5,9 @@
     "es6": true,
     "node": true
   },
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "globals": {},
   "rules": {
     "indent": [ "error", 2 ],

@@ -22,7 +22,12 @@ const conf = {
       return 'google chrome';
     }
   })(),
-  DEBUG: argv.debug
+  DEBUG: argv.debug,
+  NAME: 'bootstrap-scratch',
+  DESC: 'bootstrap scratch',
+  VER: '0.1',
+  DEV_NAME: 'xiong-jia.le',
+  DEV_URL: 'https://github.com/xiongjia'
 };
 
 const dirs = {
@@ -41,12 +46,13 @@ gutil.log('bootstrap scratch');
 gutil.log('conf = %j', conf);
 gutil.log('dirs = %j', dirs);
 
-gulp.task('build', seq('lint:js', [ 'fonts', 'index' ]));
+gulp.task('build', seq('lint:js', [ 'fonts', 'index' ], 'assets:fav'));
 gulp.task('default', seq('clean', 'lint:js', 'build'));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
-gulp.task('clean:js', () => del([ dirs.DEST + '/**/*.{js,map}' ]));
-gulp.task('clean:css', () => del([ dirs.DEST + '/**/*.{css,map}' ]));
+gulp.task('clean:js', () => del([ dirs.DEST + '/js/**/*.{js,map}' ]));
+gulp.task('clean:css', () => del([ dirs.DEST + '/css/**/*.{css,map}' ]));
+gulp.task('clean:assets:fav', () => del([ dirs.DEST + '/favicon*.{ico,png}' ]));
 gulp.task('clean', [ 'clean:all' ]);
 
 gulp.task('lint:js', () => {
@@ -75,7 +81,8 @@ gulp.task('sass', [ 'clean:css' ], () => {
     .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS_MAP, {
       addComment: false
     })))
-    .pipe(rev()).pipe(gulp.dest(dirs.DEST_CSS));
+    .pipe(gulpif(!conf.DEBUG, rev()))
+    .pipe(gulp.dest(dirs.DEST_CSS));
 });
 
 gulp.task('index', [ 'sass', 'js' ], () => {
@@ -145,7 +152,43 @@ gulp.task('js:bundle', () => {
     .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_JS_MAP, {
       addComment: false
     })))
-    .pipe(rev()).pipe(gulp.dest(dirs.DEST_JS));
+    .pipe(gulpif(!conf.DEBUG, rev()))
+    .pipe(gulp.dest(dirs.DEST_JS));
+});
+
+gulp.task('assets:fav', [ 'clean:assets:fav' ], () => {
+  const favicons = require('gulp-favicons');
+  return gulp.src(dirs.SRC + '/assets/fav.png')
+    .pipe(favicons({
+      appName: conf.NAME,
+      appDescription: conf.DESC,
+      developerName: conf.DEV_NAME,
+      developerURL: conf.DEV_URL,
+      background: '#fff',
+      theme_color: '#fff',
+      path: '/',
+      display: 'standalone',
+      orientation: 'portrait',
+      version: conf.VER,
+      logging: false,
+      online: false,
+      preferOnline: false,
+      html: './dist/index.html',
+      pipeHTML: true,
+      replace: true,
+      icons: {
+        android: false,
+        appleIcon: false,
+        appleStartup: false,
+        coast: false,
+        favicons: true,
+        firefox: false,
+        windows: false,
+        yandex: false
+      }
+    }))
+    .on('error', gutil.log)
+    .pipe(gulp.dest(dirs.DEST));
 });
 
 gulp.task('serv', [ 'build' ], () => {
@@ -155,6 +198,12 @@ gulp.task('serv', [ 'build' ], () => {
   });
   gulp.watch(dirs.SRC + '/**/*.html', [ 'html-watch' ]);
   gulp.watch(dirs.SRC + '/**/*.scss', [ 'sass-watch' ]);
+  gulp.watch(dirs.SRC + '/assets/fav*.png', [ 'assets-watch:fav' ]);
+});
+
+gulp.task('assets-watch:fav', [ 'assets:fav' ], (done) => {
+  browserSync.reload();
+  done();
 });
 
 gulp.task('sass-watch', [ 'html-watch' ]);
@@ -162,3 +211,4 @@ gulp.task('html-watch', [ 'index' ], (done) => {
   browserSync.reload();
   done();
 });
+

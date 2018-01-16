@@ -35,6 +35,7 @@ const dirs = {
   SRC_BOOTSTRAP_SASS: 'node_modules/bootstrap-sass',
   SRC_JQUERY: 'node_modules/jquery',
   DEST: 'dist',
+  DEST_ASSETS: 'dist/assets',
   DEST_CSS: 'dist/css',
   DEST_CSS_MAP: '.',
   DEST_FONTS: 'dist/fonts',
@@ -46,13 +47,13 @@ gutil.log('bootstrap scratch');
 gutil.log('conf = %j', conf);
 gutil.log('dirs = %j', dirs);
 
-gulp.task('build', seq('lint:js', [ 'fonts', 'index' ], 'assets:fav'));
+gulp.task('build', seq('lint:js', [ 'fonts', 'assets:fav', 'index' ]));
 gulp.task('default', seq('clean', 'lint:js', 'build'));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
 gulp.task('clean:js', () => del([ dirs.DEST + '/js/**/*.{js,map}' ]));
 gulp.task('clean:css', () => del([ dirs.DEST + '/css/**/*.{css,map}' ]));
-gulp.task('clean:assets:fav', () => del([ dirs.DEST + '/favicon*.{ico,png}' ]));
+gulp.task('clean:assets:fav', () => del([ dirs.DEST + '/assets/favicon*.{ico,png}' ]));
 gulp.task('clean', [ 'clean:all' ]);
 
 gulp.task('lint:js', () => {
@@ -172,10 +173,8 @@ gulp.task('assets:fav', [ 'clean:assets:fav' ], () => {
       version: conf.VER,
       logging: false,
       online: false,
-      preferOnline: false,
-      html: './dist/index.html',
-      pipeHTML: true,
-      replace: true,
+      pipeHTML: false,
+      replace: false,
       icons: {
         android: false,
         appleIcon: false,
@@ -188,7 +187,7 @@ gulp.task('assets:fav', [ 'clean:assets:fav' ], () => {
       }
     }))
     .on('error', gutil.log)
-    .pipe(gulp.dest(dirs.DEST));
+    .pipe(gulp.dest(dirs.DEST_ASSETS));
 });
 
 gulp.task('serv', [ 'build' ], () => {

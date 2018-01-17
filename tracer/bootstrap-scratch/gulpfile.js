@@ -137,20 +137,24 @@ gulp.task('js:bundle', () => {
   const buffer = require('vinyl-buffer');
   const browserify = require('browserify');
   const uglify = require('gulp-uglify');
+  const envify = require('envify/custom');
 
   const ent = {
     entries: [ 'src/main.js'],
-    debug: true
+    debug: conf.DEBUG
   };
 
   return browserify(ent)
     .transform('babelify', { presets: [ 'env' ] })
+    .transform(envify({
+      ENV_DEBUG: conf.DEBUG
+    }))
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
-    .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
-    .pipe(uglify())
-    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_JS_MAP, {
+    .pipe(gulpif(!conf.DEBUG, sourcemaps.init()))
+    .pipe(gulpif(!conf.DEBUG, uglify()))
+    .pipe(gulpif(!conf.DEBUG, sourcemaps.write(dirs.DEST_JS_MAP, {
       addComment: false
     })))
     .pipe(gulpif(!conf.DEBUG, rev()))

@@ -3,12 +3,12 @@
 import * as misc from './misc.js';
 import each from 'lodash/each';
 
-const dbg = misc.mkDbgLog('main');
-
+/* app conf */
 const appConf = {
   debug: process.env.ENV_DEBUG
 };
 
+const dbg = misc.mkDbgLog('main');
 misc.initDbgLog(appConf);
 dbg('app conf: %j', appConf);
 

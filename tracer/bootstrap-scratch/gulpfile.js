@@ -22,7 +22,7 @@ const conf = {
       return 'google chrome';
     }
   })(),
-  DEBUG: argv.debug,
+  DEBUG: !!argv.debug,
   NAME: 'bootstrap-scratch',
   DESC: 'bootstrap scratch',
   VER: '0.1',
@@ -147,7 +147,8 @@ gulp.task('js:bundle', () => {
   return browserify(ent)
     .transform('babelify', { presets: [ 'env' ] })
     .transform(envify({
-      ENV_DEBUG: conf.DEBUG
+      ENV_DEBUG: conf.DEBUG,
+      ENV_VER: conf.VER
     }))
     .bundle()
     .pipe(source('bundle.js'))

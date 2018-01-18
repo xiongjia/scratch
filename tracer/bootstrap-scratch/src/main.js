@@ -1,13 +1,17 @@
 'use strict';
 
+import * as misc from './misc.js';
 import each from 'lodash/each';
+
+const dbg = misc.mkDbgLog('main');
 
 const appConf = {
   debug: process.env.ENV_DEBUG
 };
 
-console.log('app conf:', appConf);
+misc.initDbgLog(appConf);
+dbg('app conf: %j', appConf);
 
 each([ 'test1', 'test2' ], (item) => {
-  console.log('item: %s', item);
+  dbg('item: %s', item);
 });

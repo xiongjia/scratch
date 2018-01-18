@@ -48,7 +48,7 @@ gutil.log('conf = %j', conf);
 gutil.log('dirs = %j', dirs);
 
 gulp.task('build', (cb) => {
-  return seq('lint:js', [ 'fonts', 'assets:fav', 'index' ])(cb);
+  return seq('lint:js', [ 'fonts', 'index' ])(cb);
 });
 
 gulp.task('default', (cb) => seq('clean', 'lint:js', 'build')(cb));
@@ -56,6 +56,7 @@ gulp.task('default', (cb) => seq('clean', 'lint:js', 'build')(cb));
 gulp.task('clean:all', () => del([ dirs.DEST ]));
 gulp.task('clean:js', () => del([ dirs.DEST + '/js/**/*.{js,map}' ]));
 gulp.task('clean:css', () => del([ dirs.DEST + '/css/**/*.{css,map}' ]));
+gulp.task('clean:assets:img', () => del([ dirs.DEST + '/assets/img/**/*' ]));
 gulp.task('clean:assets:fav', () => {
   return del([ dirs.DEST + '/assets/favicon*.{ico,png}' ]);
 });
@@ -91,7 +92,7 @@ gulp.task('sass', [ 'clean:css' ], () => {
     .pipe(gulp.dest(dirs.DEST_CSS));
 });
 
-gulp.task('index', [ 'sass', 'js' ], () => {
+gulp.task('index', [ 'sass', 'js', 'assets' ], () => {
   const inject = require('gulp-inject');
   const htmlbeautify = require('gulp-html-beautify');
   const posthtml = require('gulp-posthtml');
@@ -167,6 +168,12 @@ gulp.task('js:bundle', () => {
     .pipe(gulp.dest(dirs.DEST_JS));
 });
 
+gulp.task('assets', [ 'assets:img', 'assets:fav' ]);
+gulp.task('assets:img', [ 'clean:assets:img' ], () => {
+  return gulp.src(dirs.SRC + '/assets/img/**/*')
+    .pipe(gulp.dest(dirs.DEST + '/assets/img'));
+});
+
 gulp.task('assets:fav', [ 'clean:assets:fav' ], () => {
   const favicons = require('gulp-favicons');
   return gulp.src(dirs.SRC + '/assets/fav.png')
@@ -206,19 +213,17 @@ gulp.task('serv', [ 'build' ], () => {
     browser: conf.BROWSER
   });
   gulp.watch(dirs.SRC + '/**/*.html', [ 'html-watch' ]);
-  gulp.watch(dirs.SRC + '/**/*.scss', [ 'sass-watch' ]);
+  gulp.watch(dirs.SRC + '/**/*.scss', [ 'html-watch' ]);
   gulp.watch(dirs.SRC + '/assets/fav*.png', [ 'assets-watch:fav' ]);
-  gulp.watch(dirs.SRC + '/**/*.js', [ 'js-watch' ]);
+  gulp.watch(dirs.SRC + '/assets/img/**/*', [ 'html-watch' ]);
+  gulp.watch(dirs.SRC + '/**/*.js', [ 'html-watch' ]);
 });
-
 
 gulp.task('assets-watch:fav', [ 'assets:fav' ], (done) => {
   browserSync.reload();
   done();
 });
 
-gulp.task('js-watch', [ 'html-watch' ]);
-gulp.task('sass-watch', [ 'html-watch' ]);
 gulp.task('html-watch', [ 'index' ], (done) => {
   browserSync.reload();
   done();

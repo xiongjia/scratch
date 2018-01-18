@@ -47,13 +47,18 @@ gutil.log('bootstrap scratch');
 gutil.log('conf = %j', conf);
 gutil.log('dirs = %j', dirs);
 
-gulp.task('build', seq('lint:js', [ 'fonts', 'assets:fav', 'index' ]));
-gulp.task('default', seq('clean', 'lint:js', 'build'));
+gulp.task('build', (cb) => {
+  return seq('lint:js', [ 'fonts', 'assets:fav', 'index' ])(cb);
+});
+
+gulp.task('default', (cb) => seq('clean', 'lint:js', 'build')(cb));
 
 gulp.task('clean:all', () => del([ dirs.DEST ]));
 gulp.task('clean:js', () => del([ dirs.DEST + '/js/**/*.{js,map}' ]));
 gulp.task('clean:css', () => del([ dirs.DEST + '/css/**/*.{css,map}' ]));
-gulp.task('clean:assets:fav', () => del([ dirs.DEST + '/assets/favicon*.{ico,png}' ]));
+gulp.task('clean:assets:fav', () => {
+  return del([ dirs.DEST + '/assets/favicon*.{ico,png}' ]);
+});
 gulp.task('clean', [ 'clean:all' ]);
 
 gulp.task('lint:js', () => {
@@ -120,7 +125,7 @@ gulp.task('fonts', () => {
   return gulp.src(src).pipe(gulp.dest(dirs.DEST_FONTS));
 });
 
-gulp.task('js', seq('clean:js', [ 'js:libs', 'js:bundle' ]));
+gulp.task('js', (cb) => seq('clean:js', [ 'js:libs', 'js:bundle' ])(cb));
 
 gulp.task('js:libs', () => {
   const libs = [
@@ -203,16 +208,18 @@ gulp.task('serv', [ 'build' ], () => {
   gulp.watch(dirs.SRC + '/**/*.html', [ 'html-watch' ]);
   gulp.watch(dirs.SRC + '/**/*.scss', [ 'sass-watch' ]);
   gulp.watch(dirs.SRC + '/assets/fav*.png', [ 'assets-watch:fav' ]);
+  gulp.watch(dirs.SRC + '/**/*.js', [ 'js-watch' ]);
 });
+
 
 gulp.task('assets-watch:fav', [ 'assets:fav' ], (done) => {
   browserSync.reload();
   done();
 });
 
+gulp.task('js-watch', [ 'html-watch' ]);
 gulp.task('sass-watch', [ 'html-watch' ]);
 gulp.task('html-watch', [ 'index' ], (done) => {
   browserSync.reload();
   done();
 });
-

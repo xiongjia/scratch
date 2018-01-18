@@ -30,6 +30,7 @@
     "gulp-html-beautify": "^1.0.1",
     "gulp-htmlmin": "^4.0.0",
     "gulp-if": "^2.0.2",
+    "gulp-imagemin": "^4.1.0",
     "gulp-inject": "^4.3.0",
     "gulp-posthtml": "^3.0.2",
     "gulp-rev": "^8.1.1",

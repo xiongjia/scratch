@@ -170,7 +170,9 @@ gulp.task('js:bundle', () => {
 
 gulp.task('assets', [ 'assets:img', 'assets:fav' ]);
 gulp.task('assets:img', [ 'clean:assets:img' ], () => {
+  const imagemin = require('gulp-imagemin');
   return gulp.src(dirs.SRC + '/assets/img/**/*')
+    .pipe(imagemin())
     .pipe(gulp.dest(dirs.DEST + '/assets/img'));
 });
 

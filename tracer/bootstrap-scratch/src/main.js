@@ -11,7 +11,16 @@ const dbg = misc.mkDbgLog('main');
 misc.initDbgLog(appConf);
 dbg('app conf: %j', appConf);
 
+/* buttons tests */
 $('#btnDefault').on('click', () => {
   dbg('btn clicked (default)');
-  alert('test1');
+  alert('btn clicked (default)');
+});
+
+/* dropdown menu in tabcontent-testtab.html */
+const btnPick = $('#btnPick');
+$('#dropdownMenuItems li a').on('click', function () {
+  const item = $(this).text();
+  dbg('menu item selected: %s', item);
+  btnPick.text(item);
 });

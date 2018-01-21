@@ -1,0 +1,49 @@
+<!-- test tab -->
+<form class="form-horizontal" id="testForm">
+  <!-- input box -->
+  <div class="form-group">
+    <label class="control-label col-md-1">Input1</label>
+    <div class="col-md-8">
+      <div class="input-group">
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-cloud"></span>
+        </span>
+        <input type="text"
+               class="form-control"
+               placeholder="e.g. Input1" />
+        <span class="input-group-addon">!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- input box -->
+  <div class="form-group">
+    <label class="control-label col-md-1">mail</label>
+    <div class="col-md-8">
+      <div class="input-group">
+        <span class="input-group-addon">@</span>
+        <input type="text"
+               class="form-control"
+               placeholder="e.g. mail" />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-1">others</label>
+    <div class="col-md-8">
+      <div class="btn-group btn-group-sm" data-toggle="buttons">
+        <label class="btn btn-success"><input type="radio" />Java</label>
+        <label class="btn btn-success"><input type="radio" />Javascript</label>
+        <button class="btn btn-success" id="btnPick">Pick One...</button>
+        <button class="btn btn-success" data-toggle="dropdown">
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" id="dropdownMenuItems">
+          <li><a href="#" tabindex="-1">C/C++</a></li>
+          <li><a href="#" tabindex="-1">Python<a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</form>

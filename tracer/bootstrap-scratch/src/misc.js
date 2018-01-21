@@ -11,3 +11,9 @@ export const initDbgLog = (opts) => {
 };
 
 export const mkDbgLog = (prefix) => debug('scratch:' + prefix);
+
+export const updateTooltip = (opts) => {
+  opts.element.tooltip('hide')
+    .attr(opts.attr || 'title', opts.text || '')
+    .tooltip('fixTitle');
+};

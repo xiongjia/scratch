@@ -12,10 +12,17 @@ misc.initDbgLog(appConf);
 dbg('app conf: %j', appConf);
 
 /* buttons tests */
-$('#btnDefault').on('click', () => {
+const btnDefault = $('#btnDefault');
+btnDefault.on('click', () => {
   dbg('btn clicked (default)');
   alert('btn clicked (default)');
+  btnDefault.tooltip('hide')
+    .attr('title', Date().toString())
+    .tooltip('fixTitle');
 });
+btnDefault.tooltip('hide')
+  .attr('title', Date().toString())
+  .tooltip('fixTitle');
 
 /* dropdown menu in tabcontent-testtab.html */
 const btnPick = $('#btnPick');

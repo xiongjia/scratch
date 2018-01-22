@@ -1,7 +1,6 @@
 'use strict';
 
 import * as misc from './misc.js';
-import moment from 'moment';
 
 /* app conf */
 const appConf = {
@@ -14,9 +13,9 @@ dbg('app conf: %j', appConf);
 
 /* buttons tests */
 const btnDefault = $('#btnDefault');
-misc.updateTooltip({ element: btnDefault, text: moment().format('LTS') });
+misc.updateTooltip({ element: btnDefault, text: misc.genTooltipTxt() });
 btnDefault.on('click', () => {
-  misc.updateTooltip({ element: btnDefault, text: moment().format('LTS') });
+  misc.updateTooltip({ element: btnDefault, text: misc.genTooltipTxt() });
   dbg('btn clicked (default)');
   alert('btn clicked (default)');
 });

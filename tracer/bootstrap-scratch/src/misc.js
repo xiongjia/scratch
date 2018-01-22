@@ -1,6 +1,7 @@
 'use strict';
 
 import debug from 'debug';
+import moment from 'moment';
 
 export const initDbgLog = (opts) => {
   if (opts.debug) {
@@ -17,3 +18,5 @@ export const updateTooltip = (opts) => {
     .attr(opts.attr || 'title', opts.text || '')
     .tooltip('fixTitle');
 };
+
+export const genTooltipTxt = () => moment().format('LTS');

@@ -27,3 +27,7 @@ $('#dropdownMenuItems li a').on('click', function () {
   dbg('menu item selected: %s', item);
   btnPick.text(item);
 });
+
+/* charts.js */
+import Chart from 'chart.js';
+new Chart($('#testChart'), misc.genMockChartData());

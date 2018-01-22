@@ -5,7 +5,6 @@ const argv = require('yargs').argv;
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const gulpif = require('gulp-if');
-const del = require('del');
 const seq = require('gulp-sequence');
 const browserSync = require('browser-sync').create();
 const path = require('path');
@@ -43,31 +42,20 @@ const dirs = {
   DEST_JS_MAP: '.'
 };
 
+require('./gulp/task-fonts.js')(conf, dirs);
+require('./gulp/task-clean.js')(conf, dirs);
+require('./gulp/task-lint.js')(conf, dirs);
+require('./gulp/task-assets.js')(conf, dirs);
+
 gutil.log('bootstrap scratch');
 gutil.log('conf = %j', conf);
 gutil.log('dirs = %j', dirs);
 
 gulp.task('build', (cb) => {
-  return seq('lint:js', [ 'fonts', 'index' ])(cb);
+  return seq('lint', [ 'fonts', 'index' ])(cb);
 });
 
-gulp.task('default', (cb) => seq('clean', 'lint:js', 'build')(cb));
-
-gulp.task('clean:all', () => del([ dirs.DEST ]));
-gulp.task('clean:js', () => del([ dirs.DEST + '/js/**/*.{js,map}' ]));
-gulp.task('clean:css', () => del([ dirs.DEST + '/css/**/*.{css,map}' ]));
-gulp.task('clean:assets:img', () => del([ dirs.DEST + '/assets/img/**/*' ]));
-gulp.task('clean:assets:fav', () => {
-  return del([ dirs.DEST + '/assets/favicon*.{ico,png}' ]);
-});
-gulp.task('clean', [ 'clean:all' ]);
-
-gulp.task('lint:js', () => {
-  const eslint = require('gulp-eslint');
-  return gulp.src([ '**/*.js', '!node_modules/**', '!dist/**' ])
-    .pipe(eslint()).pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-});
+gulp.task('default', (cb) => seq('clean', 'build')(cb));
 
 gulp.task('sass', [ 'clean:css' ], () => {
   const sourcemaps = require('gulp-sourcemaps');
@@ -119,12 +107,6 @@ gulp.task('index', [ 'sass', 'js', 'assets' ], () => {
     .pipe(gulp.dest(dirs.DEST));
 });
 
-gulp.task('fonts', () => {
-  const src = [
-    dirs.SRC_BOOTSTRAP_SASS + '/assets/fonts/**/*'
-  ];
-  return gulp.src(src).pipe(gulp.dest(dirs.DEST_FONTS));
-});
 
 gulp.task('js', (cb) => seq('clean:js', [ 'js:libs', 'js:bundle' ])(cb));
 
@@ -168,46 +150,8 @@ gulp.task('js:bundle', () => {
     .pipe(gulp.dest(dirs.DEST_JS));
 });
 
-gulp.task('assets', [ 'assets:img', 'assets:fav' ]);
-gulp.task('assets:img', [ 'clean:assets:img' ], () => {
-  const imagemin = require('gulp-imagemin');
-  return gulp.src(dirs.SRC + '/assets/img/**/*')
-    .pipe(imagemin())
-    .pipe(gulp.dest(dirs.DEST + '/assets/img'));
-});
 
-gulp.task('assets:fav', [ 'clean:assets:fav' ], () => {
-  const favicons = require('gulp-favicons');
-  return gulp.src(dirs.SRC + '/assets/fav.png')
-    .pipe(favicons({
-      appName: conf.NAME,
-      appDescription: conf.DESC,
-      developerName: conf.DEV_NAME,
-      developerURL: conf.DEV_URL,
-      background: '#fff',
-      theme_color: '#fff',
-      path: '/',
-      display: 'standalone',
-      orientation: 'portrait',
-      version: conf.VER,
-      logging: false,
-      online: false,
-      pipeHTML: false,
-      replace: false,
-      icons: {
-        android: false,
-        appleIcon: false,
-        appleStartup: false,
-        coast: false,
-        favicons: true,
-        firefox: false,
-        windows: false,
-        yandex: false
-      }
-    }))
-    .on('error', gutil.log)
-    .pipe(gulp.dest(dirs.DEST_ASSETS));
-});
+
 
 gulp.task('serv', [ 'build' ], () => {
   browserSync.init({

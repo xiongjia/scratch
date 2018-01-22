@@ -16,6 +16,10 @@ exports = module.exports = (conf, dirs) => {
     const exp = require('posthtml-expressions')({
       locals: {
         title: conf.DESC,
+        debug: conf.DEBUG,
+        buildTM: conf.BUILD_TM,
+        buildTS: conf.BUILD_TS,
+        buildVer: conf.VER,
         home: { page: 'Home' }
       }
     });

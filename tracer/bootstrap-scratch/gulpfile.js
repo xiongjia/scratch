@@ -5,6 +5,7 @@ const argv = require('yargs').argv;
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const seq = require('gulp-sequence');
+const buildTM = new Date();
 
 const conf = {
   BROWSER: (() => {
@@ -22,7 +23,9 @@ const conf = {
   DESC: 'bootstrap scratch',
   VER: '0.1',
   DEV_NAME: 'xiong-jia.le',
-  DEV_URL: 'https://github.com/xiongjia'
+  DEV_URL: 'https://github.com/xiongjia',
+  BUILD_TM: buildTM.toISOString(),
+  BUILD_TS: buildTM.valueOf()
 };
 
 const dirs = {

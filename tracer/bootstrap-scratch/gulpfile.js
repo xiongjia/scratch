@@ -4,11 +4,7 @@ const os = require('os');
 const argv = require('yargs').argv;
 const gulp = require('gulp');
 const gutil = require('gulp-util');
-const gulpif = require('gulp-if');
 const seq = require('gulp-sequence');
-const browserSync = require('browser-sync').create();
-const path = require('path');
-const rev = require('gulp-rev');
 
 const conf = {
   BROWSER: (() => {
@@ -46,6 +42,10 @@ require('./gulp/task-fonts.js')(conf, dirs);
 require('./gulp/task-clean.js')(conf, dirs);
 require('./gulp/task-lint.js')(conf, dirs);
 require('./gulp/task-assets.js')(conf, dirs);
+require('./gulp/task-style.js')(conf, dirs);
+require('./gulp/task-script.js')(conf, dirs);
+require('./gulp/task-page.js')(conf, dirs);
+require('./gulp/task-serv.js')(conf, dirs);
 
 gutil.log('bootstrap scratch');
 gutil.log('conf = %j', conf);
@@ -56,121 +56,3 @@ gulp.task('build', (cb) => {
 });
 
 gulp.task('default', (cb) => seq('clean', 'build')(cb));
-
-gulp.task('sass', [ 'clean:css' ], () => {
-  const sourcemaps = require('gulp-sourcemaps');
-  const sass = require('gulp-sass');
-  const cleanCSS = require('gulp-clean-css');
-
-  const sassOpt = {
-    outputStyle: 'nested',
-    precison: 6,
-    errLogToConsole: true,
-    includePaths: [ dirs.SRC_BOOTSTRAP_SASS + '/assets/stylesheets' ]
-  };
-
-  return gulp.src([ dirs.SRC + '/**/*.scss' ])
-    .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
-    .pipe(sass(sassOpt))
-    .pipe(cleanCSS({compatibility: 'ie8'}))
-    .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS_MAP, {
-      addComment: false
-    })))
-    .pipe(gulpif(!conf.DEBUG, rev()))
-    .pipe(gulp.dest(dirs.DEST_CSS));
-});
-
-gulp.task('index', [ 'sass', 'js', 'assets' ], () => {
-  const inject = require('gulp-inject');
-  const htmlbeautify = require('gulp-html-beautify');
-  const posthtml = require('gulp-posthtml');
-  const htmlmin = require('gulp-htmlmin');
-  const include = require('posthtml-include')({
-    root: path.join(__dirname, dirs.SRC)
-  });
-
-  const items = gulp.src([
-    dirs.DEST + '/**/*.css',
-    dirs.DEST + '/**/jquery*.js',
-    dirs.DEST + '/**/bootstrap*.js',
-    dirs.DEST + '/**/bundle*.js'
-  ], { read: false });
-
-  return gulp.src([ dirs.SRC + '/index.html' ])
-    .pipe(inject(items, { ignorePath: dirs.DEST + '/', relative: false }))
-    .pipe(posthtml(() => ({
-      plugins: [ include ],
-      options: {}
-    })))
-    .pipe(gulpif(conf.DEBUG, htmlbeautify({ indentSize: 2 })))
-    .pipe(gulpif(!conf.DEBUG, htmlmin({ collapseWhitespace: true })))
-    .pipe(gulp.dest(dirs.DEST));
-});
-
-
-gulp.task('js', (cb) => seq('clean:js', [ 'js:libs', 'js:bundle' ])(cb));
-
-gulp.task('js:libs', () => {
-  const libs = [
-    dirs.SRC_JQUERY + '/dist/jquery.min.js',
-    dirs.SRC_BOOTSTRAP_SASS + '/assets/javascripts/bootstrap.min.js'
-  ];
-  return gulp.src(libs)
-    .pipe(gulp.dest(dirs.DEST_JS));
-});
-
-gulp.task('js:bundle', () => {
-  const sourcemaps = require('gulp-sourcemaps');
-  const source = require('vinyl-source-stream');
-  const buffer = require('vinyl-buffer');
-  const browserify = require('browserify');
-  const uglify = require('gulp-uglify');
-  const envify = require('envify/custom');
-
-  const ent = {
-    entries: [ 'src/main.js'],
-    debug: conf.DEBUG
-  };
-
-  return browserify(ent)
-    .transform('babelify', { presets: [ 'env' ] })
-    .transform(envify({
-      ENV_DEBUG: conf.DEBUG,
-      ENV_VER: conf.VER
-    }))
-    .bundle()
-    .pipe(source('bundle.js'))
-    .pipe(buffer())
-    .pipe(gulpif(!conf.DEBUG, sourcemaps.init()))
-    .pipe(gulpif(!conf.DEBUG, uglify()))
-    .pipe(gulpif(!conf.DEBUG, sourcemaps.write(dirs.DEST_JS_MAP, {
-      addComment: false
-    })))
-    .pipe(gulpif(!conf.DEBUG, rev()))
-    .pipe(gulp.dest(dirs.DEST_JS));
-});
-
-
-
-
-gulp.task('serv', [ 'build' ], () => {
-  browserSync.init({
-    server: { baseDir: dirs.DEST },
-    browser: conf.BROWSER
-  });
-  gulp.watch(dirs.SRC + '/**/*.html', [ 'html-watch' ]);
-  gulp.watch(dirs.SRC + '/**/*.scss', [ 'html-watch' ]);
-  gulp.watch(dirs.SRC + '/assets/fav*.png', [ 'assets-watch:fav' ]);
-  gulp.watch(dirs.SRC + '/assets/img/**/*', [ 'html-watch' ]);
-  gulp.watch(dirs.SRC + '/**/*.js', [ 'html-watch' ]);
-});
-
-gulp.task('assets-watch:fav', [ 'assets:fav' ], (done) => {
-  browserSync.reload();
-  done();
-});
-
-gulp.task('html-watch', [ 'index' ], (done) => {
-  browserSync.reload();
-  done();
-});

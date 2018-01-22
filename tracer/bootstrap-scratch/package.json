@@ -9,7 +9,8 @@
     "rbuild": "npm install && gulp clean && gulp",
     "buildDebug": "gulp --debug",
     "rbuildDebug": "npm install && gulp clean && gulp --debug",
-    "serv": "gulp serv --debug"
+    "serv": "gulp serv --debug",
+    "lint": "gulp lint"
   },
   "keywords": [],
   "author": "",

@@ -13,6 +13,12 @@ exports = module.exports = (conf, dirs) => {
     const include = require('posthtml-include')({
       root: path.join(__dirname, '..', dirs.SRC)
     });
+    const exp = require('posthtml-expressions')({
+      locals: {
+        title: conf.DESC,
+        home: { page: 'Home' }
+      }
+    });
 
     const items = gulp.src([
       dirs.DEST + '/**/*.css',
@@ -24,7 +30,7 @@ exports = module.exports = (conf, dirs) => {
     return gulp.src([ dirs.SRC + '/index.html' ])
       .pipe(inject(items, { ignorePath: dirs.DEST + '/', relative: false }))
       .pipe(posthtml(() => ({
-        plugins: [ include ],
+        plugins: [ include, exp ],
         options: {}
       })))
       .pipe(gulpif(conf.DEBUG, htmlbeautify({ indentSize: 2 })))

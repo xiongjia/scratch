@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "clean": "gulp clean",
-    "build": "gulp",
-    "rbuild": "npm install && gulp clean && gulp",
-    "buildDebug": "gulp --debug",
-    "rbuildDebug": "npm install && gulp clean && gulp --debug",
-    "serv": "gulp serv --debug",
+    "build": "jest && gulp",
+    "rbuild": "npm install && jest && gulp clean && gulp",
+    "buildDebug": "jest && gulp --debug",
+    "rbuildDebug": "npm install && jest && gulp clean && gulp --debug",
+    "serv": "jest && gulp serv --debug",
     "lint": "gulp lint",
     "test": "jest"
   },

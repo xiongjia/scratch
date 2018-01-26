@@ -7,6 +7,7 @@ const gulpif = require('gulp-if');
 exports = module.exports = (conf, dirs) => {
   gulp.task('index', [ 'sass', 'js', 'assets' ], () => {
     const inject = require('gulp-inject');
+    const injectStr = require('gulp-inject-string');
     const htmlbeautify = require('gulp-html-beautify');
     const posthtml = require('gulp-posthtml');
     const htmlmin = require('gulp-htmlmin');
@@ -37,6 +38,8 @@ exports = module.exports = (conf, dirs) => {
         plugins: [ include, exp ],
         options: {}
       })))
+      .pipe(injectStr.after('</title>', '<!-- string inj1 -->'))
+      .pipe(injectStr.after('</title>', '<!-- string inj2 -->'))
       .pipe(gulpif(conf.DEBUG, htmlbeautify({ indentSize: 2 })))
       .pipe(gulpif(!conf.DEBUG, htmlmin({ collapseWhitespace: true })))
       .pipe(gulp.dest(dirs.DEST));

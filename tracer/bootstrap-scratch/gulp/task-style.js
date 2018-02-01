@@ -9,6 +9,7 @@ exports = module.exports = (conf, dirs) => {
     const sourcemaps = require('gulp-sourcemaps');
     const sass = require('gulp-sass');
     const cleanCSS = require('gulp-clean-css');
+    const uncss = require('gulp-uncss');
 
     const sassOpt = {
       outputStyle: 'nested',
@@ -17,10 +18,17 @@ exports = module.exports = (conf, dirs) => {
       includePaths: [ dirs.SRC_BOOTSTRAP_SASS + '/assets/stylesheets' ]
     };
 
+    const uncssOpt = {
+      html: [ dirs.SRC + '/**/*.html' ]
+    };
+
     return gulp.src([ dirs.SRC + '/**/*.scss' ])
       .pipe(gulpif(conf.DEBUG, sourcemaps.init()))
       .pipe(sass(sassOpt))
-      .pipe(cleanCSS({compatibility: 'ie8'}))
+      .pipe(uncss(uncssOpt))
+      .pipe(gulpif(!conf.DEBUG, cleanCSS({
+        level: { 1: {specialComments: 0} }
+      })))
       .pipe(gulpif(conf.DEBUG, sourcemaps.write(dirs.DEST_CSS_MAP, {
         addComment: false
       })))

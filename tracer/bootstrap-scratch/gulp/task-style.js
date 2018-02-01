@@ -4,7 +4,7 @@ const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const rev = require('gulp-rev');
 
-const uncssBootstrapIgore = [
+const uncssBootstrapIgnore = [
   /\.affix/,
   /\.alert/,
   /\.close/,
@@ -37,7 +37,7 @@ exports = module.exports = (conf, dirs) => {
     const postcssPlugin = [
       uncss({
         html: [ dirs.SRC + '/**/*.html' ],
-        ignore: [ ...uncssBootstrapIgore ]
+        ignore: [ ...uncssBootstrapIgnore ]
       }),
     ];
 

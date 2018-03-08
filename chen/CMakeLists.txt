@@ -82,11 +82,16 @@ file(GLOB SOURCES_GROUP_CORE
 file(GLOB SOURCES_GROUP_SERV
   "src/chen_serv.*")
 
+file(GLOB SOURCES_GROUP_CFG
+  ".editorconfig")
+
 source_group("misc" FILES ${SOURCES_GROUP_MISC})
 source_group("core" FILES ${SOURCES_GROUP_CORE})
 source_group("serv" FILES ${SOURCES_GROUP_SERV})
+source_group("conf" FILES ${SOURCES_GROUP_CONF})
 
 add_executable(chen
+  ".editorconfig"
   "${PROJECT_SOURCE_DIR}/src/main.cxx")
 
 target_link_libraries(chen

@@ -6,10 +6,18 @@
 #include "boost/make_shared.hpp"
 #include "chen_log.hxx"
 
+class LogImpl;
+
 _CHEN_BEGIN_
 
-class LogImpl : public Log
-{
+boost::shared_ptr<Log> Log::GetInstance(void) {
+  static boost::shared_ptr<Log> inst = boost::make_shared<LogImpl>();
+  return inst;
+}
+
+_CHEN_END_
+
+class LogImpl : public chen::Log {
 private:
     boost::mutex m_mutex;
     Level        m_level;
@@ -124,19 +132,3 @@ private:
     }
 };
 
-boost::shared_ptr<Log> Log::get_instance(void)
-{
-    static boost::shared_ptr<Log> inst;
-    if (inst == nullptr)
-    {
-        inst = boost::make_shared<LogImpl>();
-    }
-    return inst;
-}
-
-Log::Log(void)
-{
-    /* NOP */
-}
-
-_CHEN_END_

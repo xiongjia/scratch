@@ -2,47 +2,46 @@
  * Chen - My Network protocol tests
  */
 
-#ifndef _CHEN_LOG_HXX_
-#define _CHEN_LOG_HXX_ 1
+#ifndef _LIBCHEN_CHEN_LOG_HXX_
+#define _LIBCHEN_CHEN_LOG_HXX_ 1
 
 #include <stdarg.h>
+
 #include "boost/shared_ptr.hpp"
 #include "boost/utility.hpp"
 #include "boost/function.hpp"
 #include "boost/thread.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/c_local_time_adjustor.hpp"
+
 #include "chen_types.hxx"
 
 _CHEN_BEGIN_
 
 class LogItem;
 
-class Log : boost::noncopyable
-{
+class Log : boost::noncopyable {
 public:
-    typedef enum
-    {
-        FErr  = (1 << 0),
-        FWar  = (1 << 1),
-        FInf  = (1 << 2),
-        FDbg  = (1 << 3)
-    } Flags;
+  typedef enum {
+    Error  = (1 << 0),
+    Warn   = (1 << 1),
+    Info   = (1 << 2),
+    Debug  = (1 << 3)
+  } Flags;
 
-    typedef enum
-    {
-        LEVEL_NONE = 0,
-        LEVEL_ERR  = 1,
-        LEVEL_INF  = 2,
-        LEVEL_WARN = 3,
-        LEVEL_DBG  = 4,
-        LEVEL_ALL  = 100
-    } Level;
+  typedef enum {
+    LevelNone  = 0,
+    LevelError = 1,
+    LevelInfo  = 2,
+    LevelWarn  = 3,
+    LevelDebug = 4,
+    LevelAll   = 100
+  } Level;
 
-    typedef boost::function<void(const LogItem &)> Logger;
+  typedef boost::function<void(const LogItem &)> Logger;
 
 public:
-    static boost::shared_ptr<Log> get_instance(void);
+  static boost::shared_ptr<Log> GetInstance(void);
 
 public:
     virtual bool is_skip(Flags flags) = 0;
@@ -61,8 +60,6 @@ public:
 
     virtual void set_handler(const Logger &handler) = 0;
     virtual const Logger& get_handler(void) const = 0;
-protected:
-    Log(void);
 };
 
 class LogItem : boost::noncopyable
@@ -118,4 +115,4 @@ _CHEN_END_
 #define CHEN_LOG_NOFMT(_flags, _msg) \
     chen::Log::get_instance()->write_nofmt(__FILE__, __LINE__, _flags, _msg)
 
-#endif /* !defined(_CHEN_LOG_HXX_) */
+#endif /* !defined(_LIBCHEN_CHEN_LOG_HXX_) */

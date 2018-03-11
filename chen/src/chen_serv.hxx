@@ -11,6 +11,7 @@
 
 _CHEN_BEGIN_
 
+#if 0
 class Server : boost::noncopyable
 {
 public:
@@ -22,6 +23,7 @@ public:
 protected:
     Server(void);
 };
+#endif
 
 _CHEN_END_
 

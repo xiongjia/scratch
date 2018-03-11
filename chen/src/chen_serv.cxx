@@ -10,6 +10,8 @@
 
 _CHEN_BEGIN_
 
+#if 0
+
 class ServerImpl : public Server
 {
 private:
@@ -50,5 +52,6 @@ Server::Server(void)
 {
     /* NOP */
 }
+#endif
 
 _CHEN_END_

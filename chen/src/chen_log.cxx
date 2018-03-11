@@ -6,9 +6,120 @@
 #include "boost/make_shared.hpp"
 #include "chen_log.hxx"
 
-class LogImpl;
+class LogImpl : public chen::Log {
+private:
+  Level level_;
+  boost::mutex mutex_;
+  Logger handler_;
+
+public:
+  LogImpl(void);
+
+  virtual void Append(const char *src, size_t line,
+                      Flags flags, const char *fmt, ...);
+
+  virtual void AppendVFmt(const char *src, size_t line,
+                          Flags flags, const char *fmt, va_list args);
+
+  virtual void AppendNoFmt(const char *src, size_t line,
+                           Flags flags, const char *log);
+
+  virtual void SetLevel(Level level) { level_ = level; }
+  virtual const Level GetLevel(void) const { return level_; }
+
+  virtual void SetHandler(const Logger &handler);
+
+  virtual bool NeedAppend(Flags flags);
+
+private:
+  static const char *GetSrcFilename(const char *src);
+};
+
+const char *LogImpl::GetSrcFilename(const char *src) {
+  const char *srcRelFName = (nullptr == src ? "" : src);
+  const char *slash = strrchr(srcRelFName, '/');
+  if (nullptr == slash) {
+    slash = strrchr(srcRelFName, '\\');
+  }
+  if (nullptr != slash) {
+    srcRelFName = slash + 1;
+  }
+  return srcRelFName;
+}
+
+LogImpl::LogImpl(void)
+  : Log()
+  , level_(Level::LevelNone) {
+  /* NOP */
+}
+
+bool LogImpl::NeedAppend(Flags flags) {
+  switch (level_) {
+    case Level::LevelError:
+      return !(flags & Flags::Error);
+    case Level::LevelWarn:
+      return !(flags & Flags::Error ||
+               flags & Flags::Warn);
+    case Level::LevelInfo:
+      return !(flags & Flags::Error ||
+               flags & Flags::Warn ||
+               flags & Flags::Info);
+    case Level::LevelDebug:
+    case Level::LevelAll:
+      return false;
+    default:
+    case Level::LevelNone:
+      return true;
+  }
+}
+
+void LogImpl::SetHandler(const Logger &handler) {
+  boost::mutex::scoped_lock scopedLock(mutex_);
+  handler_ = handler;
+}
+
+void LogImpl::Append(const char *src, size_t line,
+                     Flags flags, const char *fmt, ...) {
+  if (nullptr == fmt || '\0' == *fmt || NeedAppend(flags)) {
+    return;
+  }
+  va_list args;
+  va_start(args, fmt);
+  AppendVFmt(src, line, flags, fmt, args);
+  va_end(args);
+}
+
+void LogImpl::AppendVFmt(const char *src, size_t line,
+                         Flags flags, const char *fmt, va_list args) {
+  if (nullptr == fmt || '\0' == *fmt || NeedAppend(flags)) {
+    return;
+  }
+
+  const size_t needed = _vsnprintf_c(nullptr, 0, fmt, args);
+  std::string msg;
+  msg.resize(needed + 1);
+  _vsnprintf_c(&msg[0], msg.size(), fmt, args);
+  AppendNoFmt(src, line, flags, msg.c_str());
+}
+
+void LogImpl::AppendNoFmt(const char *src, size_t line,
+                          Flags flags, const char *log) {
+  if (nullptr == log || '\0' == *log || NeedAppend(flags)) {
+    return;
+  }
+  src = GetSrcFilename(src);
+  boost::mutex::scoped_lock scopedLock(mutex_);
+  if (!handler_) {
+    return;
+  }
+  handler_(src, line, flags, log);
+}
 
 _CHEN_BEGIN_
+
+Log::Log(void) {
+  /* NOP */
+}
 
 boost::shared_ptr<Log> Log::GetInstance(void) {
   static boost::shared_ptr<Log> inst = boost::make_shared<LogImpl>();
@@ -16,119 +127,3 @@ boost::shared_ptr<Log> Log::GetInstance(void) {
 }
 
 _CHEN_END_
-
-class LogImpl : public chen::Log {
-private:
-    boost::mutex m_mutex;
-    Level        m_level;
-    Logger       m_handler;
-
-public:
-    LogImpl(void)
-        : Log()
-        , m_level(Level::LEVEL_NONE)
-    {
-        /* NOP */
-    }
-
-    virtual void set_level(Level level = Level::LEVEL_NONE) { m_level = level; }
-    virtual const Level get_level(void) const { return m_level; }
-
-    virtual void write_nofmt(const char *src, const size_t srcLine,
-                             Flags flags, const char *log)
-    {
-        if (is_skip(flags) || nullptr == log || '\0' == *log)
-        {
-            return;
-        }
-        src = get_src_filename(src);
-        boost::mutex::scoped_lock scopedLock(m_mutex);
-        if (!m_handler)
-        {
-            return;
-        }
-        LogItem logItem(src, srcLine, flags, log);
-        m_handler(logItem);
-    }
-
-    virtual void write_vfmt(const char *src, const size_t srcLine,
-                            Flags flags, const char *fmt, va_list args)
-    {
-        if (is_skip(flags) || nullptr == fmt || '\0' == *fmt)
-        {
-            return;
-        }
-        const size_t needed = _vsnprintf_c(nullptr, 0, fmt, args);
-        std::string msg;
-        msg.resize(needed + 1);
-        _vsnprintf_c(&msg[0], msg.size(), fmt, args);
-        write_nofmt(src, srcLine, flags, msg.c_str());
-    }
-
-    virtual void write(const char *src, const size_t srcLine,
-                       Flags flags, const char *fmt, ...)
-    {
-        if (is_skip(flags) || nullptr == fmt || '\0' == *fmt)
-        {
-            return;
-        }
-        va_list args;
-        va_start(args, fmt);
-        write_vfmt(src, srcLine, flags, fmt, args);
-        va_end(args);
-    }
-
-    virtual bool is_skip(Flags flags)
-    {
-        if (!get_handler())
-        {
-            return true;
-        }
-        switch (m_level)
-        {
-        case Level::LEVEL_NONE:
-            return true;
-        case Level::LEVEL_ERR:
-            return !(flags & Flags::FErr);
-        case Level::LEVEL_WARN:
-            return !(flags & Flags::FErr ||
-                     flags & Flags::FWar);
-        case Level::LEVEL_INF:
-            return !(flags & Flags::FErr ||
-                     flags & Flags::FWar ||
-                     flags & Flags::FInf);
-        default:
-        case Level::LEVEL_DBG:
-        case Level::LEVEL_ALL:
-            return false;
-        }
-    }
-
-    virtual void set_handler(const Logger &handler)
-    {
-        boost::mutex::scoped_lock scopedLock(m_mutex);
-        m_handler = handler;
-    }
-
-    virtual const Logger& get_handler(void) const
-    {
-        return m_handler;
-    }
-
-private:
-    const char *get_src_filename(const char *src)
-    {
-        const char *srcRelFName = (nullptr == src ? "" : src);
-        const char *slash = strrchr(srcRelFName, '/');
-        if (nullptr == slash)
-        {
-            slash = strrchr(srcRelFName, '\\');
-        }
-        if (nullptr != slash)
-        {
-            srcRelFName = slash + 1;
-        }
-        return srcRelFName;
-    }
-};
-

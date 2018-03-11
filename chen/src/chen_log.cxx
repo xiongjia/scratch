@@ -32,8 +32,14 @@ public:
   virtual bool NeedAppend(Flags flags);
 
 private:
+  static bool IsEmptyString(const char *str);
+
   static const char *GetSrcFilename(const char *src);
 };
+
+bool LogImpl::IsEmptyString(const char *str) {
+  return (nullptr == str || '\0' == *str);
+}
 
 const char *LogImpl::GetSrcFilename(const char *src) {
   const char *srcRelFName = (nullptr == src ? "" : src);
@@ -80,7 +86,7 @@ void LogImpl::SetHandler(const Logger &handler) {
 
 void LogImpl::Append(const char *src, size_t line,
                      Flags flags, const char *fmt, ...) {
-  if (nullptr == fmt || '\0' == *fmt || NeedAppend(flags)) {
+  if (IsEmptyString(fmt) || NeedAppend(flags)) {
     return;
   }
   va_list args;
@@ -91,7 +97,7 @@ void LogImpl::Append(const char *src, size_t line,
 
 void LogImpl::AppendVFmt(const char *src, size_t line,
                          Flags flags, const char *fmt, va_list args) {
-  if (nullptr == fmt || '\0' == *fmt || NeedAppend(flags)) {
+  if (IsEmptyString(fmt) || NeedAppend(flags)) {
     return;
   }
 
@@ -104,7 +110,7 @@ void LogImpl::AppendVFmt(const char *src, size_t line,
 
 void LogImpl::AppendNoFmt(const char *src, size_t line,
                           Flags flags, const char *log) {
-  if (nullptr == log || '\0' == *log || NeedAppend(flags)) {
+  if (IsEmptyString(log) || NeedAppend(flags)) {
     return;
   }
   src = GetSrcFilename(src);

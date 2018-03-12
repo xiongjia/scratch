@@ -64,12 +64,9 @@ bool LogImpl::NeedAppend(Flags flags) {
     case Level::LevelError:
       return !(flags & Flags::Error);
     case Level::LevelWarn:
-      return !(flags & Flags::Error ||
-               flags & Flags::Warn);
+      return !(flags & (Flags::Error | Flags::Warn));
     case Level::LevelInfo:
-      return !(flags & Flags::Error ||
-               flags & Flags::Warn ||
-               flags & Flags::Info);
+      return !(flags & (Flags::Error | Flags::Warn | Flags::Info));
     case Level::LevelDebug:
     case Level::LevelAll:
       return false;

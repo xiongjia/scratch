@@ -1,6 +1,5 @@
 package scratch.misc;
 
-import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -18,6 +17,8 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class Microbenchmark {
   private static final Logger log = LoggerFactory.getLogger(Microbenchmark.class);

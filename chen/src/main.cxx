@@ -2,46 +2,48 @@
  * Chen - My Network protocol tests
  */
 
-#include <iostream>
-
 #include "boost/asio.hpp"
 #include "boost/bind.hpp"
 #include "boost/utility.hpp"
-
+#include "boost/asio/thread_pool.hpp"
+#include "boost/thread.hpp"
 #include "chen_serv.hxx"
 #include "chen_log.hxx"
 
-static void Logger(const char *src, size_t line,
-                   chen::Log::Flags /* flags */, const char *msg) {
-  std::cout << "[" << src << ":" << line << "] " << msg << std::endl;
-}
-
 class Chen : boost::noncopyable {
 private:
-  boost::asio::io_service io_svc_;
-
-  void OnSignals(const boost::system::error_code &err_code,
+  void OnSignals(const boost::system::error_code &err,
                  const int signal_num) {
-    CHEN_LOG_DEBUG("Recive signale: %d, ErrCode: %d",
-                   signal_num, err_code.value());
+    if (!err) {
+      CHEN_LOG_DEBUG("Recive signale: %d (NO ERR)", signal_num);
+    } else {
+      CHEN_LOG_DEBUG("Recive signale: %d, ErrCode: %d, %s",
+                     signal_num, err.value(), err.message().c_str());
+    }
   }
 
 public:
   Chen(void) {
-    boost::asio::signal_set signals(io_svc_, SIGINT, SIGTERM);
-    signals.async_wait(boost::bind(&Chen::OnSignals, this, _1, _2));
+    // boost::asio::signal_set signals(io_svc_, SIGINT, SIGTERM);
   }
 
   int Run(void) {
     CHEN_LOG_INFO("creating server ...");
-    io_svc_.run();
+
+    boost::asio::io_service io_svc_;
+
+    boost::asio::signal_set signals(io_svc_, SIGINT);
+    signals.async_wait(boost::bind(&Chen::OnSignals, this, _1, _2));
+
+    std::thread work_thread([&io_svc_]() { io_svc_.run(); });
+    work_thread.join();
+
+    /// io_svc_.run();
     return 0;
   }
 };
 
 int main(int /* argc */, char ** /* argv */) {
-
-  chen::Log::GetInstance()->SetHandler(Logger);
   chen::Log::GetInstance()->SetLevel(chen::Log::LevelAll);
   Chen chen;
   return chen.Run();

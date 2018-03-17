@@ -1,6 +1,6 @@
 # CMake build script
 # Chen - My Network protocol tests
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.11)
 
 project(chen)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -19,6 +19,7 @@ if (MSVC)
   set(CMAKE_C_STANDARD_LIBRARIES "")
   set(CMAKE_CXX_STANDARD_LIBRARIES "")
   add_definitions(-D_WIN32_WINNT=0x0501)
+add_definitions(-DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE)
 endif()
 
 if (APPLE)
@@ -32,7 +33,7 @@ set(Boost_USE_STATIC ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost REQUIRED COMPONENTS
+find_package(Boost 1.66.0 REQUIRED COMPONENTS
   unit_test_framework thread date_time system
   chrono filesystem regex)
 

@@ -55,9 +55,6 @@ public:
   virtual const Level GetLevel(void) const = 0;
 
   virtual void SetHandler(const Logger &handler) = 0;
-
-protected:
-  Log(void);
 };
 
 _CHEN_END_

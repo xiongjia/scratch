@@ -2,9 +2,17 @@
  * Chen - My Network protocol tests
  */
 
+#include <iostream>
+#include <sstream>
+
+#include "boost/thread.hpp"
 #include "boost/thread/mutex.hpp"
 #include "boost/make_shared.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
+
 #include "chen_log.hxx"
+
+namespace pt = boost::posix_time;
 
 class LogImpl : public chen::Log {
 private:
@@ -35,7 +43,20 @@ private:
   static bool IsEmptyString(const char *str);
 
   static const char *GetSrcFilename(const char *src);
+
+  static void ConsoleLogHandle(const char *src, size_t line,
+                               chen::Log::Flags flags, const char *msg);
 };
+
+void LogImpl::ConsoleLogHandle(const char *src, size_t line,
+                               chen::Log::Flags flags, const char *msg) {
+  pt::ptime now = pt::microsec_clock::local_time();
+  std::cout
+    << "[" << src << ":" << line << ":" << std::hex << flags << "]("
+    << boost::this_thread::get_id() << ")] "
+    << "[" << pt::to_iso_string(now) << "] "
+    << msg << std::endl;
+}
 
 bool LogImpl::IsEmptyString(const char *str) {
   return (nullptr == str || '\0' == *str);
@@ -55,6 +76,7 @@ const char *LogImpl::GetSrcFilename(const char *src) {
 
 LogImpl::LogImpl(void)
   : Log()
+  , handler_(LogImpl::ConsoleLogHandle)
   , level_(Level::LevelNone) {
   /* NOP */
 }
@@ -119,10 +141,6 @@ void LogImpl::AppendNoFmt(const char *src, size_t line,
 }
 
 _CHEN_BEGIN_
-
-Log::Log(void) {
-  /* NOP */
-}
 
 boost::shared_ptr<Log> Log::GetInstance(void) {
   static boost::shared_ptr<Log> inst = boost::make_shared<LogImpl>();

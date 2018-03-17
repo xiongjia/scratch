@@ -3,7 +3,6 @@
  */
 
 #include <iostream>
-#include <sstream>
 
 #include "boost/thread.hpp"
 #include "boost/thread/mutex.hpp"
@@ -36,6 +35,7 @@ public:
   virtual const Level GetLevel(void) const { return level_; }
 
   virtual void SetHandler(const Logger &handler);
+  virtual const Logger &GetHandler(void) const { return handler_; }
 
   virtual bool NeedAppend(Flags flags);
 
@@ -50,7 +50,7 @@ private:
 
 void LogImpl::ConsoleLogHandle(const char *src, size_t line,
                                chen::Log::Flags flags, const char *msg) {
-  pt::ptime now = pt::microsec_clock::local_time();
+  auto now = pt::microsec_clock::local_time();
   std::cout
     << "[" << src << ":" << line << ":" << std::hex << flags << "]("
     << boost::this_thread::get_id() << ")] "

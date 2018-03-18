@@ -34,7 +34,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost 1.66.0 REQUIRED COMPONENTS
-  unit_test_framework thread date_time system
+  unit_test_framework thread date_time system program_options
   chrono filesystem regex)
 
 include_directories("${Boost_INCLUDE_DIRS}"
@@ -47,6 +47,7 @@ set(chen_dbg_libs
   "${Boost_SYSTEM_LIBRARY_DEBUG}"
   "${Boost_CHRONO_LIBRARY_DEBUG}"
   "${Boost_THREAD_LIBRARY_DEBUG}"
+  "${Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG}"
   "${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG}")
 
 set(chen_opt_libs
@@ -56,6 +57,7 @@ set(chen_opt_libs
   "${Boost_SYSTEM_LIBRARY_RELEASE}"
   "${Boost_CHRONO_LIBRARY_RELEASE}"
   "${Boost_THREAD_LIBRARY_RELEASE}"
+  "${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}"
   "${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE}")
 
 add_library(libchen STATIC
@@ -64,6 +66,8 @@ add_library(libchen STATIC
   "${PROJECT_SOURCE_DIR}/src/chen_misc.cxx"
   "${PROJECT_SOURCE_DIR}/src/chen_log.hxx"
   "${PROJECT_SOURCE_DIR}/src/chen_log.cxx"
+  "${PROJECT_SOURCE_DIR}/src/chen_prog_options.cxx"
+  "${PROJECT_SOURCE_DIR}/src/chen_prog_options.hxx"
   "${PROJECT_SOURCE_DIR}/src/chen_serv.hxx"
   "${PROJECT_SOURCE_DIR}/src/chen_serv.cxx"
   "${PROJECT_SOURCE_DIR}/src/chen.hxx")
@@ -74,6 +78,7 @@ add_executable(chentest
 
 file(GLOB SOURCES_GROUP_MISC
   "src/chen_log.*"
+  "src/chen_prog_options.*"
   "src/chen_misc.*")
 
 file(GLOB SOURCES_GROUP_CORE

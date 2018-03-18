@@ -7,8 +7,10 @@
 #include "boost/utility.hpp"
 #include "boost/asio/thread_pool.hpp"
 #include "boost/thread.hpp"
+
 #include "chen_serv.hxx"
 #include "chen_log.hxx"
+#include "chen_prog_options.hxx"
 
 class Chen : boost::noncopyable {
 private:
@@ -43,8 +45,9 @@ public:
   }
 };
 
-int main(int /* argc */, char ** /* argv */) {
-  chen::Log::GetInstance()->SetLevel(chen::Log::LevelAll);
+int main(int argc, const char **argv) {
+  auto prog_opts = chen::Options::Create(argc, argv);
+  chen::Log::GetInstance()->SetLevel(prog_opts->GetLogLevel());
   Chen chen;
   return chen.Run();
 }

@@ -19,6 +19,11 @@ public:
 
 public:
   virtual const Log::Level GetLogLevel(void) const = 0;
+
+  virtual const char *GetHelpMessage(void) = 0;
+  virtual const char *GetParseErr(void) const = 0;
+  virtual bool IsParseErr(void) const = 0;
+  virtual bool NeedShowHelp(void) const = 0;
 };
 
 _CHEN_END_

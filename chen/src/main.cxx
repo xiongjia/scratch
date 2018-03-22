@@ -2,6 +2,8 @@
  * Chen - My Network protocol tests
  */
 
+#include <iostream>
+
 #include "boost/asio.hpp"
 #include "boost/bind.hpp"
 #include "boost/utility.hpp"
@@ -11,6 +13,8 @@
 #include "chen_serv.hxx"
 #include "chen_log.hxx"
 #include "chen_prog_options.hxx"
+
+static const int CHEN_APP_EXIT_USAGE = 10;
 
 class Chen : boost::noncopyable {
 private:
@@ -47,6 +51,13 @@ public:
 
 int main(int argc, const char **argv) {
   auto prog_opts = chen::Options::Create(argc, argv);
+  if (prog_opts->NeedShowHelp()) {
+    auto parseErr = (prog_opts->IsParseErr() ? prog_opts->GetParseErr() : "");
+    std::cout << parseErr << std::endl
+              << prog_opts->GetHelpMessage() << std::endl;
+    return CHEN_APP_EXIT_USAGE;
+  }
+
   chen::Log::GetInstance()->SetLevel(prog_opts->GetLogLevel());
   Chen chen;
   return chen.Run();

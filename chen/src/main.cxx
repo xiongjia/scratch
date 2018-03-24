@@ -57,7 +57,6 @@ int main(int argc, const char **argv) {
               << prog_opts->GetHelpMessage() << std::endl;
     return CHEN_APP_EXIT_USAGE;
   }
-
   chen::Log::GetInstance()->SetLevel(prog_opts->GetLogLevel());
   Chen chen;
   return chen.Run();

@@ -4,61 +4,35 @@
 
 #include <string>
 #include <sstream>
+#include <map>
 
+#include "boost/algorithm/string/trim.hpp"
+#include "boost/algorithm/string/case_conv.hpp"
 #include "boost/make_shared.hpp"
 #include "boost/program_options.hpp"
+#include "boost/assign/list_of.hpp"
 
 #include "chen_prog_options.hxx"
 
 namespace po = boost::program_options;
 
-class OptionsDesc {
-private:
-  po::options_description options_desc_{ "MainOptions" };
-  std::string parse_err_;
-
-public:
-  static boost::shared_ptr<OptionsDesc> GetInstance(void);
-
-  OptionsDesc(void);
-
-  bool Parse(int argc, const char **argv);
-  const char *GetParseErr(void) const { return parse_err_.c_str(); }
-};
-
-boost::shared_ptr<OptionsDesc> OptionsDesc::GetInstance(void) {
-  static boost::shared_ptr<OptionsDesc> instance = boost::make_shared<OptionsDesc>();
-  return instance;
-}
-
-OptionsDesc::OptionsDesc(void) {
-  options_desc_.add_options()
-    ("help,h", "Print help messages")
-    ("logLevel,l",
-     po::value<std::string>()->default_value("all"),
-     "log level");
-}
-
-bool OptionsDesc::Parse(int argc, const char **argv) {
-  try {
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, options_desc_), vm);
-  } catch (po::error &e) {
-    parse_err_ = e.what();
-    return false;
-  }
-  return true;
-}
+static const std::map<std::string, chen::Log::Level> LEVELS = boost::assign::map_list_of
+  ("none",  chen::Log::LevelNone)
+  ("error", chen::Log::LevelError)
+  ("info",  chen::Log::LevelInfo)
+  ("warn",  chen::Log::LevelWarn)
+  ("debug", chen::Log::LevelDebug)
+  ("all",   chen::Log::LevelAll);
 
 class OptionsImpl : public chen::Options {
 private:
-  po::options_description options_desc_{ "MainOptions" };
-
   chen::Log::Level log_level_ = chen::Log::LevelAll;
   std::string parse_err_;
   std::string help_msg_;
   bool need_show_help_ = false;
   bool is_parse_err_ = true;
+
+  static chen::Log::Level ParseLogLevel(const std::string &level);
 
 public:
   OptionsImpl(int argc, const char **argv);
@@ -67,22 +41,25 @@ public:
   virtual bool IsParseErr(void) const { return is_parse_err_; }
   virtual bool NeedShowHelp(void) const { return need_show_help_; }
 
-  virtual const chen::Log::Level GetLogLevel(void) const {
-    return log_level_;
-  }
-  virtual const char *GetHelpMessage(void);
+  virtual const chen::Log::Level GetLogLevel(void) const { return log_level_; }
+  virtual const char *GetHelpMessage(void) const { return help_msg_.c_str(); };
 };
-\
+
 OptionsImpl::OptionsImpl(int argc, const char **argv) {
-  options_desc_.add_options()
+  po::options_description options_desc{ "MainOptions" };
+  options_desc.add_options()
     ("help,h", "Print help messages")
     ("logLevel,l",
      po::value<std::string>()->default_value("all"),
      "log level");
 
+  std::stringstream ss;
+  ss << options_desc;
+  help_msg_ = ss.str();
+
   po::variables_map vm;
   try {
-    po::store(po::parse_command_line(argc, argv, options_desc_), vm);
+    po::store(po::parse_command_line(argc, argv, options_desc), vm);
   } catch (po::error &e) {
     parse_err_ = e.what();
     need_show_help_ = true;
@@ -92,16 +69,19 @@ OptionsImpl::OptionsImpl(int argc, const char **argv) {
   if (vm.count("help")) {
     need_show_help_ = true;
   }
+
+  std::string log_level = vm["logLevel"].as<std::string>();
+  boost::trim(log_level);
+  boost::to_lower(log_level);
+  log_level_ = ParseLogLevel(log_level);
 }
 
-const char *OptionsImpl::GetHelpMessage(void) {
-  if (!help_msg_.empty()) {
-    return help_msg_.c_str();
+chen::Log::Level OptionsImpl::ParseLogLevel(const std::string &level) {
+  auto item = LEVELS.find(level);
+  if (item == LEVELS.end()) {
+    return chen::Log::LevelNone;
   }
-  std::stringstream ss;
-  ss << options_desc_;
-  help_msg_ = ss.str();
-  return help_msg_.c_str();
+  return item->second;
 }
 
 _CHEN_BEGIN_

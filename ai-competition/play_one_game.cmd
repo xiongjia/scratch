@@ -8,5 +8,5 @@ python "%~dp0engine\playgame.py" ^
   "python ""%~dp0sdk\python\sample_bots\LeftyBot.py"""   ^
   "python ""%~dp0sdk\python\sample_bots\RandomBot.py"""  ^
   "python ""%~dp0sdk\python\sample_bots\HunterBot.py"""  ^
-  "python ""%~dp0sdk\python\sample_bots\GreedyBot.py"""
+  "python ""%~dp0scratch_bot\scratch.py"""
 

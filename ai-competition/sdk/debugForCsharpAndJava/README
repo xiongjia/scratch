@@ -1,0 +1,17 @@
+This built project is for your easy debuging
+
+ant-jar-maven is provided by Gao, Xiang (Shanw xiang.gao3@hpe.com)
+  Built by maven, you can use IntelliJ to import this project
+  Entry point is JavaBot.java
+csharp_starter_package is provided by Peng, Junchen (Eric jpeng@hpe.com)
+  Built by VisualStudio Community 2017, use .sln to open this project
+  Entry point is MyBot.cs
+  
+SocketForwarder is provided by Gao, Xiang (Shanw xiang.gao3@hpe.com)
+  You can fetch the sourcecode from https://github.houston.softwaregrp.net/xiang-gao3/aichallenge-ant/tree/master/ants/dist/starter_bots/java/SocketForwarder
+  The Jar has been provided in root folder directly
+  
+Command used like: 
+    "java -jar SocketForwarder.jar -p 18889" is the fake robot parameter
+The example is like:
+    python "%~dp0engine\playgame.py" --engine_seed 42 --player_seed 42 --end_wait=0.25 --turntime=1000000 --loadtime=30000 --verbose --log_dir game_logs --turns 500 --map_file "%~dp0engine\maps\maze\maze_04p_01.map" %* "java -jar MyBot.jar" "java -jar SixPoolRush.jar" "python ""%~dp0sdk\python\sample_bots\HunterBot.py""" "java -jar SocketForwarder.jar -p 18889"

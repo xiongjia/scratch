@@ -1,0 +1,9 @@
+This starter package zip was published on Tue Nov 29 05:52:19 UTC 2011.
+
+Last change on this starter package was:
+commit 2f9b0bb2e6627107d8786f8189deebe8c38e874a
+Date:   Mon Nov 14 22:05:42 2011 +0100
+
+    Fix: use TimeSpan.TotalMilliseconds instead of TimeSpan.Milliseconds to measure the time in C# starter bot
+
+Check https://github.com/aichallenge/aichallenge/tree/epsilon/ants/dist/starter_bots/csharp for new versions.

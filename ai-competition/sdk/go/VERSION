@@ -1,0 +1,9 @@
+This starter package zip was published on Tue Nov 29 05:52:19 UTC 2011.
+
+Last change on this starter package was:
+commit e35e6485abc7b41b30675218e89c8091dbdfa4ae
+Date:   Sat Oct 22 16:32:45 2011 -0500
+
+    Updated go starter package to pay attention to hills.
+
+Check https://github.com/aichallenge/aichallenge/tree/epsilon/ants/dist/starter_bots/go for new versions.

@@ -1,0 +1,11 @@
+This tools package was published on Thu Dec 22 03:21:43 UTC 2011.
+
+Last change in the ants/ folder was:
+commit 098d46e2cf350b911ccf605b2c2b3ee4172763e8
+Date:   Wed Dec 21 03:39:58 2011 +0100
+
+    Obfuscate document.activeElement in cases document doesn't exist (#390)
+    
+    Should fix the crash with the java visualizer
+
+Check https://github.com/aichallenge/aichallenge/ants/ for new versions.

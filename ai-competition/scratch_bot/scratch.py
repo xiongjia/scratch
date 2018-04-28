@@ -24,7 +24,7 @@ logger = logging.getLogger('main')
 
 class Scratch:
     def do_turn(self, ants):
-        logger.info("scratch bot turn")
+        logger.info('scratch bot turn {0}'.format(ants.my_ants()))
 
         destinations = []
         for a_row, a_col in ants.my_ants():

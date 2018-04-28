@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import sys
-import traceback
-import random
+import sys, traceback, random, logging
+
+logger = logging.getLogger('main')
 
 try:
     from sys import maxint
@@ -257,6 +257,7 @@ class Ants():
         while(True):
             try:
                 current_line = sys.stdin.readline().rstrip('\r\n') # strip new line char
+                logger.debug('line: {0}'.format(current_line))
                 if current_line.lower() == 'ready':
                     ants.setup(map_data)
                     ants.finish_turn()

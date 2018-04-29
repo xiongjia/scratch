@@ -114,3 +114,13 @@ scala-scratch/target
 scala-scratch/project/target
 scala-scratch/project/project
 
+# python projects
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+target/
+.coverage
+.coverage.*
+.cache
+

@@ -21,10 +21,10 @@ private:
   void OnSignals(const boost::system::error_code &err,
                  const int signal_num) {
     if (!err) {
-      CHEN_LOG_DEBUG("Recive signale: %d (NO ERR)", signal_num);
+      LOG_DBG("Recive signale: %d (NO ERR)", signal_num);
     } else {
-      CHEN_LOG_DEBUG("Recive signale: %d, ErrCode: %d, %s",
-                     signal_num, err.value(), err.message().c_str());
+      LOG_DBG("Recive signale: %d, ErrCode: %d, %s",
+        signal_num, err.value(), err.message().c_str());
     }
   }
 
@@ -34,7 +34,7 @@ public:
   }
 
   int Run(void) {
-    CHEN_LOG_INFO("creating server ...");
+    LOG_INF("creating server ...");
 
     boost::asio::io_service io_svc_;
 

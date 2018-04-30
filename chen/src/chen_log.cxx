@@ -120,11 +120,19 @@ void LogImpl::AppendVFmt(const char *src, size_t line,
     return;
   }
 
+#if defined(WIN32)
   const size_t needed = _vsnprintf_c(nullptr, 0, fmt, args);
   std::string msg;
   msg.resize(needed + 1);
   _vsnprintf_c(&msg[0], msg.size(), fmt, args);
   AppendNoFmt(src, line, flags, msg.c_str());
+#else
+  const size_t needed = vsnprintf(nullptr, 0, fmt, args);
+  std::string msg;
+  msg.resize(needed + 1);
+  vsnprintf(&msg[0], msg.size(), fmt, args);
+  AppendNoFmt(src, line, flags, msg.c_str());
+#endif
 }
 
 void LogImpl::AppendNoFmt(const char *src, size_t line,

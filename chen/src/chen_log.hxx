@@ -12,6 +12,16 @@
 #include "boost/function.hpp"
 #include "chen_types.hxx"
 
+#define LOG(_level, _fmt, ...) \
+  chen::Log::GetInstance()->Append(__FILE__, __LINE__, _level, \
+                                   _fmt, ##__VA_ARGS__)
+
+#define LOG_ERR(_fmt, ...) LOG(chen::Log::Error, _fmt, ##__VA_ARGS__)
+#define LOG_WAR(_fmt, ...) LOG(chen::Log::Warn, _fmt, ##__VA_ARGS__)
+#define LOG_INF(_fmt, ...) LOG(chen::Log::Info, _fmt, ##__VA_ARGS__)
+#define LOG_DBG(_fmt, ...) LOG(chen::Log::Debug, _fmt, ##__VA_ARGS__)
+
+
 _CHEN_BEGIN_
 
 class Log : boost::noncopyable {
@@ -59,28 +69,5 @@ public:
 };
 
 _CHEN_END_
-
-#define CHEN_LOG(_flags, _fmt, ...) \
-  chen::Log::GetInstance()->Append(__FILE__, __LINE__, \
-                                   _flags, _fmt, __VA_ARGS__)
-
-#define CHEN_LOG_ERROR(_fmt, ...) \
-  chen::Log::GetInstance()->Append(__FILE__, __LINE__, \
-                                   chen::Log::Error, _fmt, __VA_ARGS__)
-
-#define CHEN_LOG_WARN(_fmt, ...) \
-  chen::Log::GetInstance()->Append(__FILE__, __LINE__, \
-                                   chen::Log::Warn, _fmt, __VA_ARGS__)
-
-#define CHEN_LOG_DEBUG(_fmt, ...) \
-  chen::Log::GetInstance()->Append(__FILE__, __LINE__, \
-                                   chen::Log::Debug, _fmt, __VA_ARGS__)
-
-#define CHEN_LOG_INFO(_fmt, ...) \
-  chen::Log::GetInstance()->Append(__FILE__, __LINE__, \
-                                   chen::Log::Info, _fmt, __VA_ARGS__)
-
-#define CHEN_LOG_NOFMT(_flags, _msg) \
-  chen::Log::GetInstance()->AppendNoFmt(__FILE__, __LINE__, _flags, _msg)
 
 #endif /* !defined(_LIBCHEN_CHEN_LOG_HXX_) */

@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.11)
 
 project(chen)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_EXPORT_COMPILE_COMMAND ON)
 
 if (MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")

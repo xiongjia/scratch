@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(log)
     });
     const char *fmt = "Test Log %d %s";
     log->SetLevel(chen::Log::LevelAll);
-    CHEN_LOG_DEBUG(fmt, 1, "string");
+    LOG_DBG(fmt, 1, "string");
     BOOST_REQUIRE(lastFlags == chen::Log::Debug);
     BOOST_REQUIRE_EQUAL(boost::str(boost::format(fmt) % 1 % "string"),
                         lastLog);

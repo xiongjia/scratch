@@ -8,12 +8,13 @@ ehthumbs.db
 Desktop.ini
 $RECYLE.BIN/
 
-# IDE or Editor generated files
+# dev tools
 *.swp
 tags
 .tern-port
 .tmp
 .sass-cache
+compile_commands.json
 
 # java git ignore
 *.class

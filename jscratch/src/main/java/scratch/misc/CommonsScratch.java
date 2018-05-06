@@ -11,6 +11,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.primitives.UnsignedLong;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,6 +23,15 @@ import java.util.Map;
 
 public class CommonsScratch {
   private static final Logger log = LoggerFactory.getLogger(CommonsScratch.class);
+
+  /** test trove. */
+  public static void testTrove() {
+    final TObjectIntHashMap<String> data = new TObjectIntHashMap(3);
+    data.put("a", 0);
+    data.put("b", 1);
+    data.put("c", 2);
+    log.debug("v = {}", data.get("a"));
+  }
 
   /** test strings. */
   public static void testStrings() {

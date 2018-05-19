@@ -1,0 +1,44 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "jquery": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    }
+  },
+  "plugins": [ "react", "babel" ],
+  "globals": {
+    "APP_BUILD_TS": true,
+    "APP_BUILD_OS": true,
+    "APP_DEBUG": true
+  },
+  "rules": {
+    "indent": [ "error", 2 ],
+    "quotes": [ "error", "single" ],
+    "semi": [ "error", "always" ],
+    "no-console": 0,
+    "no-unused-vars": ["error", { "args": "none" }],
+    "babel/no-invalid-this": 1,
+    "jsx-quotes": ["error", "prefer-single"],
+    "react/jsx-boolean-value": "error",
+    "react/jsx-curly-spacing": ["error", "never"],
+    "react/jsx-equals-spacing": ["error", "never"],
+    "react/jsx-indent": ["error", 2],
+    "react/jsx-indent-props": ["error", 2],
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/jsx-tag-spacing": ["error", { "beforeSelfClosing": "always" }],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/self-closing-comp": "error"
+  }
+}

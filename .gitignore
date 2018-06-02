@@ -80,6 +80,9 @@ chen/build
 .ninja_*
 ninja-build-tests/*.o
 ninja-build-tests/hello
+lex.yy.c
+y.tab.*
+simple-compiler/sc
 
 # node.js projects
 node_modules

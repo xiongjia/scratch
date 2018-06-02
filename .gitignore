@@ -78,6 +78,8 @@ zeratul/build
 gazlowe/build
 chen/build
 .ninja_*
+ninja-build-tests/*.o
+ninja-build-tests/hello
 
 # node.js projects
 node_modules

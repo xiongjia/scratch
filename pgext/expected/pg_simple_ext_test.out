@@ -1,0 +1,7 @@
+CREATE EXTENSION pg_simple_ext;
+SELECT my_simple_ext();
+ my_simple_ext 
+---------------
+ simple ext
+(1 row)
+

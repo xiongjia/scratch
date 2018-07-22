@@ -1,0 +1,4 @@
+comment         = 'A simple PG Ext test'
+default_version = '0.0.1'
+relocatable     = true
+

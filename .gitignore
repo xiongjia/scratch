@@ -131,3 +131,14 @@ target/
 .coverage.*
 .cache
 
+# pg ext
+pgext/**/*.o
+pgext/**/*.so
+pgext/results/
+pgext/regression.diffs
+pgext/regression.out
+pgext/tmp_check/
+pgext/tmp_check_iso/
+pgext/log/
+pgext/output_iso/
+

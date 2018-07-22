@@ -15,6 +15,7 @@ tags
 .tmp
 .sass-cache
 compile_commands.json
+.vscode
 
 # java git ignore
 *.class

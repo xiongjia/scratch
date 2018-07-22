@@ -1,7 +1,7 @@
 # build.ninja
 
 cc      = clang
-cflags  = -Weverything
+cflags  = -Weverything -g
 
 rule compile
   command = $cc $cflags -c $in -o $out

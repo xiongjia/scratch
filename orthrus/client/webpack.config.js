@@ -14,8 +14,8 @@ const buildTM = new Date();
 const conf = {
   debug: process.env.NODE_ENV !== 'production',
   devSrvPort: 9502,
+  apiSrvPort: 9501,
   analyzerReporter: !!process.env.BUILD_ANALYZER,
-  devSrvPort: 3500,
   buildTS: buildTM.valueOf(),
   buildTM: buildTM.toISOString(),
   buildOS: require('os').platform()
@@ -86,7 +86,12 @@ exports = module.exports = {
   devServer: {
     contentBase: dirs.DIST,
     compress: true,
-    port: conf.devSrvPort
+    port: conf.devSrvPort,
+    proxy: {
+      '/api/*': {
+        target: `http://localhost:${conf.apiSrvPort}`
+      }
+    }
   }
 }
 

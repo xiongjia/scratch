@@ -4,6 +4,7 @@
   "description": "Orthrus client",
   "main": "index.js",
   "scripts": {
+    "start": "cross-env NODE_ENV=debug webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack --mode production",
     "buildDebug": "cross-env NODE_ENV=development webpack --mode development",
     "buildAnalyzer": "cross-env BUILD_ANALYZER=true npm run build",
@@ -12,6 +13,8 @@
   "author": "Xiong-jia.Le <lexiongjia@gmail.com> (https://github.com/xiongjia)",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
+    "debug": "^3.1.0",
     "lodash": "^4.17.10",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"

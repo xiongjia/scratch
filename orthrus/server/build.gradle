@@ -1,42 +1,20 @@
 plugins {
-    id 'base'
-    id 'eclipse'
-    id 'idea'
-    id 'java'
-    id 'groovy'
-    id 'net.ltgt.apt'             version '0.8'
-    id 'org.springframework.boot' version '1.5.2.RELEASE'
+  id "base"
+  id "idea"
+  id "java"
+  id "org.springframework.boot" version "2.0.3.RELEASE"
 }
 
 final appMainClassName = 'orthrus.Orthrus'
 final appBaseName      = 'orthrus'
 final appVersion       = '1.0'
 
-jar {
-    baseName = appBaseName
-    version =  appVersion
-    manifest.mainAttributes('Main-Class' : appMainClassName)
-    from('../client/dist') {
-        into 'static'
-    }
-}
-jar.dependsOn(':client:build')
-
-
-eclipse {
-    classpath {
-        downloadSources = true
-        downloadJavadoc = true
-    }
-}
-
 dependencies {
-    apt 'org.projectlombok:lombok:1.16.10'
+  compileOnly "org.projectlombok:lombok:1.18.2"
+  annotationProcessor "org.projectlombok:lombok:1.18.2"
 
-    compile 'org.projectlombok:lombok:1.16.10'
-    compile 'org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE'
-    compile 'org.springframework.boot:spring-boot-starter-undertow:1.5.2.RELEASE'
+  compile "org.springframework.boot:spring-boot-starter-web:2.0.3.RELEASE"
 
-    testCompile 'junit:junit:4.12'
+  testCompile "junit:junit:4.12"
 }
 

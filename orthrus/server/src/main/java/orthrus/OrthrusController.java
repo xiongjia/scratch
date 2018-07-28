@@ -14,12 +14,14 @@ public class OrthrusController {
   @Builder
   @Data
   public static class TestData {
+    @Builder.Default
     private String data = "testdata";
+    @Builder.Default
     private int num = 100;
   }
 
   /** Index request. */
-  @RequestMapping(value = "/api/v1/test-data", method = RequestMethod.GET)
+  @RequestMapping(value = "/api/testdata", method = RequestMethod.GET)
   public ResponseEntity<TestData> index() {
     return new ResponseEntity<TestData>(new TestData.TestDataBuilder()
         .data("SprintTest").num(666).build(),

@@ -1,12 +1,12 @@
 plugins {
-    id 'com.moowork.node' version '1.2.0'
+  id "com.moowork.node" version "1.2.0"
 }
 
-task bundle(type: YarnTask) {
-    args = ['run', 'pack']
+task build(dependsOn: ["npm_install", 'bundle'])
+
+task bundle(type: NpmTask) {
+  args = ['run', 'pack']
 }
 
-bundle.dependsOn(yarn_install)
-
-task build(dependsOn: ['yarn', 'bundle'])
+bundle.dependsOn(npm_install)
 

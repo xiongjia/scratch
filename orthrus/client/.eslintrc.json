@@ -10,7 +10,7 @@
     "APP_LOGLEVEL": true
   },
   "extends": ["eslint:all", "plugin:react/all","eslint:recommended"],
- "parser": "babel-eslint",
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,

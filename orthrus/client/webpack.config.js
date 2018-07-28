@@ -1,102 +1,92 @@
 'use strict';
 
 const path = require('path');
-
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
 
-const prod = (process.env.NODE_ENV === 'production');
+const buildTM = new Date();
+const conf = {
+  debug: process.env.NODE_ENV !== 'production',
+  devSrvPort: 9502,
+  analyzerReporter: !!process.env.BUILD_ANALYZER,
+  devSrvPort: 3500,
+  buildTS: buildTM.valueOf(),
+  buildTM: buildTM.toISOString(),
+  buildOS: require('os').platform()
+};
 
-const plugins = (() => {
-  let webpackPlugins = [];
-  if (prod) {
-    webpackPlugins.push(new UglifyJSPlugin());
-    webpackPlugins.push(new ExtractTextPlugin('style-[contenthash:10].css'));
-  }
-  webpackPlugins.push(new CleanWebpackPlugin([ 'dist' ], {
-    verbose: true,
-    dry: false
-  }));
-  webpackPlugins.push(new HtmlWebpackPlugin({
-    inject: true,
-    minify: (() => {
-      if (prod) {
-        return {
-          collapseWhitespace: true,
-          removeComments: true,
-          removeRedundantAttributes: true
-        };
-      }
-      return {};
-    })(),
-    template: path.join(__dirname, 'public/index-template.html')
-  }));
-  webpackPlugins.push(new webpack.DefinePlugin({
-    APP_PRODUCTION: prod,
-    APP_LOGLEVEL: JSON.stringify(prod ? 'silent' : 'trace')
-  }));
-  return webpackPlugins;
-})();
-
+const dirs = {
+  DIST: path.join(__dirname, 'dist'),
+  SRC_ENTRY_JS: path.join(__dirname, './src/index.jsx'),
+  SRC_ENTRY_PAGE: path.join(__dirname, './src/index-template.html')
+};
+ 
 exports = module.exports = {
-  devtool: 'source-map',
-  entry: './src/index.js',
-  plugins: plugins,
+  devtool: conf.debug ? 'inline-source-map' : undefined,
+  entry: [ dirs.SRC_ENTRY_JS ],
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: prod ? 'bundle.[hash:12].min.js' : 'bundle.js'
+    path: dirs.DIST,
+    filename: conf.debug ? 'js/bundle.js' : 'js/bundle.[hash:6].min.js'
   },
   module: {
-    loaders: [{
-      enforce: 'pre',
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      loader: 'eslint-loader',
-      options: {
-        formatter: require('eslint-friendly-formatter')
-      }
-    }, {
-      test: /\.(js|jsx)$/,
+    rules: [{
+      test: /\.jsx?$/,
       exclude: /node_modules/,
       loader: 'babel-loader',
-      query: {
-        presets: ['es2015', 'stage-0', 'react'],
-        plugins: [
-          'transform-class-properties',
-          'transform-decorators-legacy'
-        ]
-      }
-    }, {
-      test: /\.(png|jpg|gif)$/,
-      loaders: ['url-loader?limit=10000&name=images/[hash:12].[ext]'],
-      exclude: /node_modules/
-    }, {
-      test: /\.css$/,
-      loaders: (() => {
-        if (prod) {
-          return ExtractTextPlugin.extract({
-            loader: 'css-loader?minimize&localIdentName=[hash:base64:10]'
-          });
-        }
-        return [
-          'style-loader',
-          'css-loader?localIdentName=[path][name]---[local]'
-        ];
-      })(),
-      exclude: /node_modules/
+      query: { cacheDirectory: true }
     }]
   },
-  devServer: {
-    compress: true,
-    port: 9090,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:9501/',
-        changeOrigin: true
-      }
+  plugins: (() => {
+    const plugins = [];
+    if (conf.debug) {
+      plugins.push(new webpack.HotModuleReplacementPlugin());
     }
+    plugins.push(new CleanWebpackPlugin([ dirs.DIST ], {
+      verbose: true,
+      dry: false
+    }));
+    plugins.push(new HtmlWebpackPlugin({
+      inject: true,
+      template: dirs.SRC_ENTRY_PAGE,
+      minify: conf.debug ? {} : {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true
+      }
+    }));
+    plugins.push(new ExtractTextPlugin(
+      conf.debug ? 'css/bundle.css' : 'css/bundle.[hash:6].css'));
+    if (!conf.debug) {
+      plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
+      plugins.push(new UglifyJsPlugin({
+        parallel: 8,
+        sourceMap: false,
+        uglifyOptions: {
+          output: {
+            comments: false,
+            beautify: false
+          }
+        }
+      }));
+    }
+    if (conf.analyzerReporter) {
+      plugins.push(new BundleAnalyzerPlugin({
+        openAnalyzer: false,
+        analyzerMode: 'server'
+      }));
+    }
+    return plugins;
+  })(),
+  devServer: {
+    contentBase: dirs.DIST,
+    compress: true,
+    port: conf.devSrvPort
   }
-};
+}
+

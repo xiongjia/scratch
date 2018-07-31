@@ -31,6 +31,15 @@ compile_commands.json
 *.ipr
 out
 
+jblank/.gitignore
+jblank/.apt_generated
+jblank/.factorypath
+jblank/bin
+jblank/build
+jblank/**/*.db
+jblank/test-output
+
+
 jscratch/.gitignore
 jscratch/.apt_generated
 jscratch/.factorypath

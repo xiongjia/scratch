@@ -5,6 +5,17 @@
 - Python v2.7
 - Windows SDK v7.1
 
+## Folders
+```
+~ vim-win-building/
+  + build/
+  + dest/
+  + vim-src/
+```
+- `build` - the building script filesa
+- `vim-src` - vim source ( https://github.com/vim/vim )
+- `dest` - the folder of vim output files
+
 ## Usage:
 - Enable building settings: `.\build\configure.cmd`
 - Building vim via MS nmake: `.\build\build.cmd`

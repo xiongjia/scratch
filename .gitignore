@@ -153,3 +153,7 @@ pgext/tmp_check_iso/
 pgext/log/
 pgext/output_iso/
 
+# vim building
+vim-win-building/dest
+
+

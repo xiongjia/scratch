@@ -1,0 +1,15 @@
+plugins {
+  id "base"
+  id "idea"
+  id "java"
+}
+
+final appMainClassName = 'jinstrument.TestApp'
+final appBaseName      = 'instrument'
+final appVersion       = '1.0'
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+  manifest.mainAttributes('Main-Class' : appMainClassName)
+}

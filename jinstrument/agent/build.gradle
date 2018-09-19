@@ -1,12 +1,6 @@
-plugins {
-  id "base"
-  id "idea"
-  id "java"
-}
-
 final appMainClassName = 'jinstrument.Instrument'
 final appBaseName      = 'jagent'
-final appVersion       = '1.0'
+final appVersion       =  project.property('projectVersion')
 
 jar {
   baseName = appBaseName
@@ -36,11 +30,7 @@ task fatJar(type: Jar) {
 
 build.dependsOn(fatJar)
 
-repositories {
-  mavenLocal()
-  mavenCentral()
-}
-
 dependencies {
   compile group: 'org.javassist', name: 'javassist', version: '3.23.1-GA'
+  compile project(':instrument')
 }

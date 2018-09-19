@@ -1,0 +1,16 @@
+subprojects {
+  apply plugin: "base"
+  apply plugin: "idea"
+  apply plugin: "java"
+
+  projectVersion = "1.01"
+  buildDir = new File(rootProject.projectDir, "build/" + project.name)
+}
+
+allprojects {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+}
+

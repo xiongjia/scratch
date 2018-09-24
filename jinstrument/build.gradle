@@ -2,11 +2,17 @@ subprojects {
   apply plugin: 'base'
   apply plugin: 'idea'
   apply plugin: 'java'
+  apply plugin: 'checkstyle'
 
   buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
   ext {
     jinstrument = ['version': '1.0']
+  }
+
+  checkstyle {
+    toolVersion = '7.3'
+    configFile = file("${rootProject.projectDir}/config/checkstyle/google_checks.xml")
   }
 }
 

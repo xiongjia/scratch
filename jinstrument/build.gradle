@@ -1,10 +1,13 @@
 subprojects {
-  apply plugin: "base"
-  apply plugin: "idea"
-  apply plugin: "java"
+  apply plugin: 'base'
+  apply plugin: 'idea'
+  apply plugin: 'java'
 
-  projectVersion = "1.01"
   buildDir = new File(rootProject.projectDir, "build/" + project.name)
+
+  ext {
+    jinstrument = ['version': '1.0']
+  }
 }
 
 allprojects {

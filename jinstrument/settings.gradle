@@ -1,1 +1,1 @@
-include ':agent', ':instrument'
+include 'agent', 'instrument'

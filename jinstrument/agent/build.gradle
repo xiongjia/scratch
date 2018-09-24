@@ -1,6 +1,6 @@
 final appMainClassName = 'jinstrument.Instrument'
 final appBaseName      = 'jagent'
-final appVersion       =  project.property('projectVersion')
+final appVersion       = jinstrument.version
 
 jar {
   baseName = appBaseName

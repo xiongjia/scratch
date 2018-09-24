@@ -27,7 +27,7 @@ public class TestTransformer implements ClassFileTransformer {
       testMethod.addLocalVariable("startTime", CtClass.longType);
       testMethod.insertBefore("startTime = System.nanoTime();");
       testMethod.insertAfter("System.out.println(\"Execution Duration "
-        + "(nano sec): \"+ (System.nanoTime() - startTime) );");
+          + "(nano sec): \"+ (System.nanoTime() - startTime) );");
       final byte[] newCalssBytecode = testAppClass.toBytecode();
       testAppClass.detach();
       return newCalssBytecode;

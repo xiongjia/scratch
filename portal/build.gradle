@@ -1,0 +1,17 @@
+plugins {
+  id "base"
+  id "idea"
+  id "java"
+  id "org.springframework.boot" version "2.0.5.RELEASE"
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+dependencies {
+  compile "org.springframework.boot:spring-boot-starter:2.0.5.RELEASE"
+  compile "org.springframework.boot:spring-boot-starter-web:2.0.5.RELEASE"
+}
+

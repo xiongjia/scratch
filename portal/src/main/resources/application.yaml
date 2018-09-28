@@ -1,0 +1,9 @@
+# Spring boot app config
+
+server:
+  port: 9501
+
+logging:
+  level:
+    root: ERROR
+

@@ -7,3 +7,5 @@ logging:
   level:
     root: ERROR
 
+swagger:
+  enable: true

@@ -16,7 +16,7 @@ import springfox.documentation.swagger.web.UiConfiguration;
 
 
 @Configuration
-@ConditionalOnProperty(prefix = "swagger", value = {"enable"}, havingValue = "true")
+@ConditionalOnProperty(prefix = "portal.swagger", value = { "enable" }, havingValue = "true")
 @EnableSwagger2
 public class SwaggerConfig {
   @Bean

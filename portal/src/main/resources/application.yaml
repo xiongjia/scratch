@@ -6,7 +6,11 @@ server:
 logging:
   level:
     root: ERROR
+    portal: DEBUG
 
-swagger:
-  enable: true
-
+portal:
+  swagger:
+    enable: true
+  scheduling:
+    enable: true
+    taskPing: '*/10 * * * * *'

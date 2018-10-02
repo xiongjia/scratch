@@ -22,3 +22,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+management:
+  server: { port: 9091 }
+  endpoints:
+    web:
+      base-path: /monitoring
+      exposure: { include: '*' }

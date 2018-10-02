@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 @Configuration
-@ConditionalOnProperty(prefix = "portal.scheduling", value = { "enable" }, havingValue = "true")
+@ConditionalOnProperty(prefix = "portal.scheduling", value = {"enable"}, havingValue = "true")
 @EnableScheduling
 public class Scheduling {
   private static final Logger logger = LoggerFactory.getLogger(Scheduling.class);
@@ -18,5 +18,11 @@ public class Scheduling {
   @Scheduled(cron = "${portal.scheduling.taskPing}")
   public void task() {
     logger.debug("Task # {}", ++taskCnt);
+    logger.debug("Task # {}", ++taskCnt);
+
+    int task1 = 1;
+
+
+
   }
 }

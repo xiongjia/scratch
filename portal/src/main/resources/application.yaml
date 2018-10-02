@@ -4,13 +4,21 @@ server:
   port: 9501
 
 logging:
-  level:
-    root: ERROR
-    portal: DEBUG
+  level: { root: ERROR, portal: DEBUG }
 
 portal:
-  swagger:
-    enable: true
-  scheduling:
-    enable: true
-    taskPing: '*/10 * * * * *'
+  swagger: { enable: true }
+  scheduling: { enable: false, taskPing: '*/10 * * * * *' }
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:D:/dat/db/h2/testdb
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
+    properties:
+      hibernate:
+        format_sql: true

@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Arrays;
 
+
 @SpringBootApplication
 public class Portal implements CommandLineRunner {
   private static final Logger logger = LoggerFactory.getLogger(Portal.class);

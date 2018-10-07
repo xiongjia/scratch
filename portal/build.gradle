@@ -29,4 +29,6 @@ dependencies {
 
   compile "org.hibernate:hibernate-core:5.3.6.Final"
   compile "com.h2database:h2:1.4.197"
+
+  testCompile "org.springframework.boot:spring-boot-starter-test:2.0.5.RELEASE"
 }

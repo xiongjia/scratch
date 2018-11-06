@@ -1,0 +1,25 @@
+@startuml
+
+interface FileInputOutput {
+  {method} readFromFile()
+  {method} writeToFile()
+  {method} setValue()
+  {method} getValue()
+}
+
+class Properties {
+  {method} load()
+  {method} store()
+  {method} setProperty()
+  {method} getProperty()
+}
+
+class FileProperties 
+class Main
+
+FileProperties ..|> Properties
+FileProperties --|> FileInputOutput
+
+Main - FileProperties : Uses >
+
+@enduml

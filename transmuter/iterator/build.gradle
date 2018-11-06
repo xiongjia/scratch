@@ -1,0 +1,13 @@
+final appMainClassName = 'transmuter.Main'
+final appBaseName      = 'transmuter-iterator'
+final appVersion       = transmuter.version
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+  manifest.mainAttributes('Main-Class' : appMainClassName)
+}
+
+dependencies {
+}
+

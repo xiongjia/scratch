@@ -12,5 +12,5 @@
 *.ipr
 out
 build
-
+checkstyleidea.tmp
 

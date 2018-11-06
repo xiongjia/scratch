@@ -17,6 +17,14 @@ subprojects {
     toolVersion = checkstyleVersion
     configFile = new File(rootProject.projectDir, checkstyleRule)
   }
+
+  dependencies {
+    /* logging */
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.apache.logging.log4j:log4j-core:2.8.1'
+    compile 'ch.qos.logback:logback-core:1.1.7'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+  }
 }
 
 allprojects {

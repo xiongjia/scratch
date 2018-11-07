@@ -1,4 +1,4 @@
 include 'iterator'
 include 'adapter'
-
+include 'template-method'
 

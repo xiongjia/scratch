@@ -1,7 +1,7 @@
 package transmuter;
 
 public class BookShelfIterator implements Iterator {
-  private BookShelf bookShelf;
+  private final BookShelf bookShelf;
   private int index;
 
   public BookShelfIterator(BookShelf bookShelf) {

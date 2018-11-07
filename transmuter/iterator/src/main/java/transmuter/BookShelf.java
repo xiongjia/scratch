@@ -3,7 +3,7 @@ package transmuter;
 import java.util.ArrayList;
 
 public class BookShelf implements Aggregate {
-  private ArrayList<Book> books;
+  private final ArrayList<Book> books;
 
   public BookShelf() {
     this(8);

@@ -1,7 +1,7 @@
 package transmuter;
 
 public class Book {
-  private String name;
+  private final String name;
 
   public Book(String name) {
     this.name = name;

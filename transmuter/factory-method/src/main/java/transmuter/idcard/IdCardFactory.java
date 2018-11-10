@@ -17,6 +17,6 @@ public class IdCardFactory extends Factory {
   @Override
   protected void registerProduct(Product product) {
     final IdCard card = (IdCard)product;
-    this.products.put(new Integer(card.getSerial()), card.getOwner());
+    products.put(new Integer(card.getSerial()), card.getOwner());
   }
 }

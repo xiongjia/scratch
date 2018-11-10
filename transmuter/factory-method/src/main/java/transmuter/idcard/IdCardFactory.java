@@ -6,7 +6,7 @@ import transmuter.framework.Factory;
 import transmuter.framework.Product;
 
 public class IdCardFactory extends Factory {
-  private final HashMap products = new HashMap();
+  private final HashMap<Integer, String> products = new HashMap<>();
   private int serialIndex = 10;
 
   @Override

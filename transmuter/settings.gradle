@@ -3,4 +3,5 @@ include 'adapter'
 include 'template-method'
 include 'factory-method'
 include 'singleton'
+include 'prototype'
 

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 public abstract class Factory {
   private static final Logger log = LoggerFactory.getLogger(Factory.class);
 
+  /** Get factory. */
   public static Factory getFactory(String className) {
     try {
       return (Factory)Class.forName(className).newInstance();
@@ -18,8 +19,10 @@ public abstract class Factory {
   }
 
   public abstract Link createLink(String caption, String url);
+
   public abstract Page createPage(String title, String author);
 
+  /** Create test page. */
   public Page createTestPage() {
     final Page page = createPage("test page", "tester");
     page.add(createLink("test", "http://test.com"));

@@ -1,9 +1,9 @@
 package transmuter.listfactory;
 
+import java.util.Iterator;
+
 import transmuter.factory.Item;
 import transmuter.factory.Page;
-
-import java.util.Iterator;
 
 public class ListPage extends Page {
   public ListPage(String title, String author) {

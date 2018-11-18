@@ -6,4 +6,5 @@ include 'singleton'
 include 'prototype'
 include 'builder'
 include 'abstract-factory'
+include 'bridge'
 

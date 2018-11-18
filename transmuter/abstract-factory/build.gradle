@@ -1,0 +1,9 @@
+final appMainClassName = 'transmuter.Main'
+final appBaseName      = 'transmuter-abstract-factory'
+final appVersion       = transmuter.version
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+  manifest.mainAttributes('Main-Class' : appMainClassName)
+}

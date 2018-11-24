@@ -11,4 +11,5 @@ include 'strategy'
 include 'composite'
 include 'decorator'
 include 'visitor'
+include 'chain-of-responsibility'
 

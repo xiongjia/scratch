@@ -9,4 +9,5 @@ include 'abstract-factory'
 include 'bridge'
 include 'strategy'
 include 'composite'
+include 'decorator'
 

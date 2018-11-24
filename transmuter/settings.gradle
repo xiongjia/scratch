@@ -12,4 +12,5 @@ include 'composite'
 include 'decorator'
 include 'visitor'
 include 'chain-of-responsibility'
+include 'facade'
 

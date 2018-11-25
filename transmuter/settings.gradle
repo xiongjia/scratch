@@ -14,4 +14,5 @@ include 'visitor'
 include 'chain-of-responsibility'
 include 'facade'
 include 'mediator'
+include 'observer'
 

@@ -17,4 +17,5 @@ include 'mediator'
 include 'observer'
 include 'memento'
 include 'state'
+include 'flyweight'
 

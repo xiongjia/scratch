@@ -19,4 +19,8 @@ public class Gamer {
     final Memento memenot = new Memento(money);
     return memenot;
   }
+
+  public void restoreMemento(Memento memento) {
+    this.money = memento.getMoney();
+  }
 }

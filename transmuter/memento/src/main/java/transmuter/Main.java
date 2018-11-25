@@ -15,5 +15,8 @@ public class Main {
     gamer.addMoney(100);
     final Memento memento2 = gamer.createMemento();
     log.debug("memento: {}", memento2.getMoney());
+
+    gamer.restoreMemento(memento1);
+    log.debug("restore: {}", gamer.getMoney());
   }
 }

@@ -18,4 +18,5 @@ include 'observer'
 include 'memento'
 include 'state'
 include 'flyweight'
+include 'proxy'
 

@@ -1,0 +1,9 @@
+final appMainClassName = 'ape.Ape'
+final appBaseName      = 'ape'
+final appVersion       = zoo.version
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+  manifest.mainAttributes('Main-Class' : appMainClassName)
+}

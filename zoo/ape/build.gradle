@@ -2,8 +2,17 @@ final appMainClassName = 'ape.Ape'
 final appBaseName      = 'ape'
 final appVersion       = zoo.version
 
+plugin {
+  id "org.springframework.boot" version "2.1.1.RELEASE"
+}
+
 jar {
   baseName = appBaseName
   version =  appVersion
   manifest.mainAttributes('Main-Class' : appMainClassName)
+}
+
+dependencies {
+  compile "org.springframework.boot:spring-boot-starter:2.1.1.RELEASE"
+  compile 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
 }

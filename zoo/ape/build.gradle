@@ -1,10 +1,10 @@
+plugins {
+  id "org.springframework.boot" version "2.1.1.RELEASE"
+}
+
 final appMainClassName = 'ape.Ape'
 final appBaseName      = 'ape'
 final appVersion       = zoo.version
-
-plugin {
-  id "org.springframework.boot" version "2.1.1.RELEASE"
-}
 
 jar {
   baseName = appBaseName

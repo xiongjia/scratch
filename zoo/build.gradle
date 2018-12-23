@@ -5,7 +5,7 @@ final checkstyleVersion = '8.12'
 subprojects {
   apply plugin: 'base'
   apply plugin: 'java'
-  apply plugin: 'checkstyle'
+  // apply plugin: 'checkstyle'
 
   buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
@@ -13,10 +13,10 @@ subprojects {
     zoo = ['version': projectVersion]
   }
 
-  checkstyle {
-    toolVersion = checkstyleVersion
-    configFile = new File(rootProject.projectDir, checkstyleRule)
-  }
+  // checkstyle {
+  //   toolVersion = checkstyleVersion
+  //   configFile = new File(rootProject.projectDir, checkstyleRule)
+  // }
 
   dependencies {
     /* logging */
@@ -33,6 +33,7 @@ allprojects {
   repositories {
     mavenLocal()
     mavenCentral()
+    maven { url "http://repo.spring.io/libs-milestone-local" }
   }
 }
 

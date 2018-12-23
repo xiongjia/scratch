@@ -1,11 +1,19 @@
 <template>
-  <div>
-    <div style="border: 1px solid" :style="infoStyle">
-      <p>info view</p><br />
-      <div @click="toggleDetail()"><p>click</p></div>
+  <div class="row">
+    <div
+      style="border: 1px solid" :style="infoStyle"
+      :class="{'col-md-4': showDetail, 'col-md-12': !showDetail }">
+      <div v-for="item of infoItems" :key="item">
+        <p>item {{item}}</p><br />
+      </div>
+      <div style="border: 1px solid" v-pin="{test: 'option1'}">
+        <div @click="toggleDetail()"><p>click</p></div>
+      </div>
     </div>
 
-    <detail ref="Detail"  :style="detailStyle"/>
+    <div>
+      <detail ref="Detail"  :style="detailStyle"/>
+    </div>
   </div>
 </template>
 
@@ -17,9 +25,10 @@ export default {
   components: { Detail },
   data () {
     return {
-      showDetail: false,
-      detailStyle: { display: 'none' },
-      infoStyle: { paddingRight: '0' }
+      infoItems: [1, 2, 3],
+      showDetail: true,
+      detailStyle: { display: 'block' },
+      infoStyle: { paddingRight: '30px' }
     };
   },
   methods: {
@@ -28,10 +37,8 @@ export default {
       this.$log.debug('show details: ', this.showDetail);
       if (this.showDetail) {
         this.detailStyle.display = 'block';
-        this.infoStyle.paddingRight = '300px';
       } else {
         this.detailStyle.display = 'none';
-        this.infoStyle.paddingRight = '0';
       }
     }
   }

@@ -1,12 +1,12 @@
 spring:
   application:
-    name: elephant
+    name: owl
 
 server:
-  port: 8889
+  port: 8890
 
 logging:
-  level: { root: ERROR, elephant: DEBUG }
+  level: { root: ERROR, owl: DEBUG }
 
 eureka:
   client:

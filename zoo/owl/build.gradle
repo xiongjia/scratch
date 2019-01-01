@@ -3,8 +3,8 @@ plugins {
   id "io.spring.dependency-management" version "1.0.6.RELEASE"
 }
 
-final appMainClassName = 'ape.Ape'
-final appBaseName      = 'ape'
+final appMainClassName = 'owl.Owl'
+final appBaseName      = 'owl'
 final appVersion       = zoo.version
 
 jar {
@@ -22,6 +22,6 @@ dependencyManagement {
 dependencies {
   compile 'org.springframework.boot:spring-boot-starter:2.1.1.RELEASE'
   compile 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
-
-  compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:2.0.2.RELEASE'
+  compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.0.2.RELEASE'
+  compile 'org.springframework.cloud:spring-cloud-starter-openfeign:2.0.2.RELEASE'
 }

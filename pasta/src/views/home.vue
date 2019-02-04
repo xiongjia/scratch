@@ -1,34 +1,32 @@
 <template>
   <div class='home'>
-    <!-- banner -->
-    <div class="banner">
-      <div class="container">
-        <h1 class="logo-font">title</h1>
-        <p>description</p>
-      </div>
-    </div>
-
-    <!-- page -->
-    <div class="container page">
-      <keep-alive>
-        <component ref="component" :is="currentView" />
-      </keep-alive>
-    </div>
+    <Dropdown @on-click="menuClick">
+      <Button type="primary">menu<Icon type="ios-arrow-down"></Icon></Button>
+      <DropdownMenu slot="list">
+        <DropdownItem name="menu1">menu item 1</DropdownItem>
+        <DropdownItem name="menu2" disabled>menu item 2</DropdownItem>
+        <DropdownItem name="menu3" divided>item 3</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   </div>
 </template>
 
 <script>
-import Info from '@/views/info.vue';
-import Detail from '@/views/detail.vue';
-
 export default {
   name: 'home',
-  components: { Info, Detail },
+  components: { },
   data () {
-    return { currentView: Info };
+    return {
+      users: [{name: 'test1'}]
+    };
   },
   created () {
     this.$log.debug('view(home) is created');
+  },
+  methods: {
+    menuClick (name) {
+      console.log('menu clicked', name);
+    }
   }
 };
 </script>

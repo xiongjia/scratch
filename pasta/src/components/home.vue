@@ -1,9 +1,0 @@
-<template>
-  <p>test page</p>
-</template>
-
-<script>
-export default {
-  name: 'Home'
-};
-</script>

@@ -12,11 +12,14 @@
     <ul>
       <li v-for="item in settings" :key="item.id">{{item.name}}<br></li>
     </ul>
+
+    <Items :testItems="testItems"/>
   </div>
 </template>
 
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex';
+import Items from '@/components/items';
 
 const mixin = {
   created () {
@@ -32,10 +35,14 @@ const mixin = {
 export default {
   name: 'home',
   mixins: [mixin],
-  components: { },
+  components: {Items},
   data () {
     return {
-      users: [{name: 'test1'}]
+      users: [{name: 'test1'}],
+      testItems: {
+        k1: 'value1',
+        k2: { k3: 'value3' }
+      }
     };
   },
   created () {

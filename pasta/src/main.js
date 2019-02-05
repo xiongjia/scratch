@@ -10,6 +10,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import App from './app';
 import router from './router';
+import store from './store';
 
 /* TODO loading vue logger config from build arguments */
 Vue.use(VueLogger, {
@@ -26,6 +27,7 @@ Vue.use(iView);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App />'

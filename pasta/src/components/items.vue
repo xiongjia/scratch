@@ -1,12 +1,9 @@
-<template>
-<div>
-  <ul class="item-data">
-    <li v-for="(value, key) in testItems" :key="key">
-      <span v-text="key" />
-      <span v-for="data in value" :key="data" v-text="data" />
-    </li>
-  </ul>
-</div>
+<template lang="pug">
+div
+  ul(class="item-data")
+    li(v-for="(value, key) in testItems" :key="key")
+      span(v-text="key")
+      span(v-for="data in value" :key="data" v-text="data")
 </template>
 
 <script>

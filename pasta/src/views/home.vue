@@ -1,20 +1,19 @@
-<template>
-  <div class='home'>
-    <Dropdown @on-click="menuClick">
-      <Button type="primary">menu<Icon type="ios-arrow-down"></Icon></Button>
-      <DropdownMenu slot="list">
-        <DropdownItem name="menu1">menu item 1</DropdownItem>
-        <DropdownItem name="menu2" disabled>menu item 2</DropdownItem>
-        <DropdownItem name="menu3" divided>item 3</DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+<template lang="pug">
+div(class="home")
+  Dropdown(@on-click="menuClick")
+    Button(type="primary") menu
+      Icon(type="ios-arrow-down")
+    DropdownMenu(slot="list")
+      DropdownItem(name="menu1") menu item 1
+      DropdownItem(name="menu2" disabled) menu item 2
+      DropdownItem(name="menu3" divided) menu item 3
 
-    <ul>
-      <li v-for="item in settings" :key="item.id">{{item.name}}<br></li>
-    </ul>
+  ul
+    li(v-for="item in settings" :key="item.id") {{item.name}}
 
-    <Items :testItems="testItems"/>
-  </div>
+  Items(:testItems="testItems")
+
+  DatePicker(type="datetime" :options="datePickerOpts")
 </template>
 
 <script>
@@ -42,6 +41,13 @@ export default {
       testItems: {
         k1: 'value1',
         k2: { k3: 'value3' }
+      },
+      datePickerOpts: {
+        disabledDate (date) {
+          console.log('date', date);
+          const now = Date.now();
+          return now < date.getTime();
+        }
       }
     };
   },

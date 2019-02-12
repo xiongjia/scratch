@@ -8,7 +8,8 @@ export default {
       console.log('get item...');
       return state.settings[id];
     },
-    getData: (state) => 'test data'
+    getData: (state) => 'test data',
+    getData2: (state) => 'test data2'
   },
   actions: {
     loadConfig ({ commit }, { item }) {

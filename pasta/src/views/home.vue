@@ -55,7 +55,8 @@ export default {
     this.$log.debug('view(home) is created');
   },
   computed: {
-    ...mapState('configData', ['settings'])
+    ...mapState('configData', ['settings']),
+    ...mapGetters('configData', ['getData2'])
   },
   methods: {
     ...mapActions('configData', ['loadConfig']),
@@ -64,7 +65,8 @@ export default {
       this.$log.debug('menu clicked', name);
       this.$log.debug('message is ', this.getMessage());
       this.loadConfig({item: 'dispatch'});
-      console.log(this.getData());
+      console.log('getdata', this.getData());
+      console.log('getdata2', this.getData2);
       console.log('item ', this.getItem()(0));
     }
   }

@@ -14,6 +14,11 @@ div(class="home")
   Items(:testItems="testItems")
 
   DatePicker(type="datetime" :options="datePickerOpts")
+
+  Modal(v-model="modalTest" :closable="false"
+    title="Common Modal dialog box title")
+    p() Content of dialog
+    p() Content of dialog
 </template>
 
 <script>
@@ -37,6 +42,7 @@ export default {
   components: {Items},
   data () {
     return {
+      modalTest: false,
       users: [{name: 'test1'}],
       testItems: {
         k1: 'value1',
@@ -68,6 +74,10 @@ export default {
       console.log('getdata', this.getData());
       console.log('getdata2', this.getData2);
       console.log('item ', this.getItem()(0));
+
+      if (name === 'menu1') {
+        this.modalTest = true;
+      }
     }
   }
 };

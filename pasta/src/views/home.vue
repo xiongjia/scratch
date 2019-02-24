@@ -20,13 +20,15 @@ div(class="home")
     p() Content of dialog
     p() Content of dialog
 
-  Table(:columns="columns" :data="tableData")
+  Table(:columns="columns" :data="tableData" @on-expand="onRowExpanded")
 </template>
 
 <script>
+import _ from 'lodash';
 import {mapState, mapGetters, mapActions} from 'vuex';
 import Items from '@/components/items';
 import expandRow from './table-expand.vue';
+import { setInterval } from 'timers';
 
 const mixin = {
   created () {
@@ -61,15 +63,21 @@ export default {
       columns: [{
         type: 'expand',
         width: 50,
-        render: (h, params) => h(expandRow, { props: { row: params.row } })
+        render: (h, {row}) => {
+          return h(expandRow, { props: { row: row } });
+        }
       }, {
         title: 'Name', key: 'name'
       }, {
-        title: 'Age', key: 'age'
+        title: 'Age',
+        render: (h, {row}) => {
+          return h('span', this.tableData[row.id].age);
+        }
       }, {
         title: 'Address', key: 'address'
       }],
       tableData: [{
+        id: 0,
         name: 'John Brown',
         age: 18,
         address: 'New York No. 1 Lake Park',
@@ -78,12 +86,26 @@ export default {
         birthday: '1991-05-14',
         book: 'Steve Jobs',
         movie: 'The Prestige',
-        music: 'I Cry'
+        music: 'I Cry',
+        rowExpanded: false
+      }, {
+        id: 1,
+        name: 'John Brown 2',
+        age: 22,
+        address: 'New York No. 1 Lake Park',
+        job: 'Data engineer',
+        interest: 'badminton',
+        birthday: '1991-05-14',
+        book: 'Steve Jobs',
+        movie: 'The Prestige',
+        music: 'I Cry',
+        rowExpanded: false
       }]
     };
   },
   created () {
     this.$log.debug('view(home) is created');
+    this.started();
   },
   computed: {
     ...mapState('configData', ['settings']),
@@ -92,6 +114,24 @@ export default {
   methods: {
     ...mapActions('configData', ['loadConfig']),
     ...mapGetters('configData', ['getItem', 'getData']),
+    onRowExpanded (row, status) {
+      this.$log.debug('row expanded: ', row.name, row.music, status);
+      this.tableData[row.id].rowExpanded = status;
+      this.tableData[row.id]._expanded = status;
+      console.log('rows ', this.tableData);
+    },
+    started () {
+      const $this = this;
+      this.$log.debug('started');
+      setInterval(() => {
+        this.$log.debug('on time');
+
+        _.each($this.tableData, (row) => {
+          this.$log.debug('time row = ', row.rowExpanded);
+          row.age++;
+        });
+      }, 1000 * 10);
+    },
     menuClick (name) {
       this.$log.debug('menu clicked', name);
       this.$log.debug('message is ', this.getMessage());

@@ -14,10 +14,11 @@
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
-    "iview": "^3.2.2",
+    "iview": "^2.14.3",
     "lodash": "^4.17.11",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
+    "vuejs-datepicker": "^1.5.4",
     "vuejs-logger": "^1.5.3",
     "vuex": "^3.1.0"
   },

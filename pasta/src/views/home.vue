@@ -13,8 +13,12 @@ div(class="home")
 
   Items(:testItems="testItems")
 
-  DatePicker(type="datetime" :options="datePickerOpts")
+  DatePicker(type="datetime" :options="datePickerOpts" :value="now")
+  br()
 
+  Datepicker2()
+
+  br()
   Modal(v-model="modalTest" :closable="false"
     title="Common Modal dialog box title")
     p() Content of dialog
@@ -28,7 +32,8 @@ import _ from 'lodash';
 import {mapState, mapGetters, mapActions} from 'vuex';
 import Items from '@/components/items';
 import expandRow from './table-expand.vue';
-import { setInterval } from 'timers';
+import {setInterval} from 'timers';
+import Datepicker2 from 'vuejs-datepicker';
 
 const mixin = {
   created () {
@@ -44,9 +49,10 @@ const mixin = {
 export default {
   name: 'home',
   mixins: [mixin],
-  components: {Items, expandRow},
+  components: {Items, expandRow, Datepicker2},
   data () {
     return {
+      now: new Date(),
       modalTest: false,
       users: [{name: 'test1'}],
       testItems: {

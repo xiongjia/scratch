@@ -1,0 +1,12 @@
+final appBaseName      = 'slug'
+final appVersion       = zoo.version
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+}
+
+
+dependencies {
+}
+

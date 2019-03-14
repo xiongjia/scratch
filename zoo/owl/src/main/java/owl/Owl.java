@@ -15,6 +15,7 @@ public class Owl {
   public static void main(String[] args) {
     final Slug slug = new Slug();
     final String version = slug.getVersion();
+    slug.listTag();
 
     log.debug("Owl tests");
     SpringApplication.run(Owl.class, args);

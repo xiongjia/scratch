@@ -25,6 +25,8 @@ compile_commands.json
 .gradle
 .cache-main
 .idea
+.factorypath
+target
 
 *.iml
 *.iws

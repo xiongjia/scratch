@@ -24,6 +24,11 @@ subprojects {
     compile 'org.apache.logging.log4j:log4j-core:2.8.1'
     compile 'ch.qos.logback:logback-core:1.1.7'
     compile 'ch.qos.logback:logback-classic:1.1.7'
+    /* tests */
+    testCompile "junit:junit:4.12"
+    /* checkstyle */
+    checkstyle 'com.google.guava:guava:27.0.1-jre'
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
   }
 }
 

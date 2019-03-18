@@ -37,7 +37,7 @@ public class CommandExecution {
   public String runTest() {
     final CommandLine cmdl = new CommandLine("node");
     cmdl.addArgument("-pe");
-    cmdl.addArgument("process.stderr.write('stdout')");
+    cmdl.addArgument("process.stdout.write('stdout')");
 
     final DefaultExecutor executor = new DefaultExecutor();
     final ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);

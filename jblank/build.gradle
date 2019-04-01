@@ -1,7 +1,7 @@
 plugins {
   id 'java'
-  id 'eclipse'
   id 'idea'
+  id 'nebula.maven-publish' version '9.5.3'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -9,13 +9,6 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 final appMainClassName     = 'scratch.Scratch'
 final appBaseName          = 'scratch'
 final appVersion           = '1.0'
-
-eclipse {
-  classpath {
-    downloadSources = true
-    downloadJavadoc = true
-  }
-}
 
 repositories {
   mavenLocal()
@@ -50,10 +43,20 @@ jar {
   baseName = appBaseName
   version =  appVersion
   manifest.mainAttributes('Main-Class' : appMainClassName)
-  exclude('**/*.db')
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.7'
+publishing {
+  group = 'scratch'
+  publications {
+    mavenJava(MavenPublication) {
+      groupId 'scratch'
+      artifactId 'Scratch'
+      version '1.0'
+      from components.java
+    }
+  }
+  repositories {
+    mavenLocal()
+  }
 }
 

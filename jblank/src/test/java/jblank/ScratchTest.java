@@ -1,4 +1,4 @@
-package scratch;
+package jblank;
 
 import static org.junit.Assert.assertEquals;
 

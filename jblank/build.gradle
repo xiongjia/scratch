@@ -6,9 +6,9 @@ plugins {
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 
-final appMainClassName     = 'scratch.Scratch'
-final appBaseName          = 'scratch'
-final appVersion           = '1.0'
+final appMainClassName     = 'jblank.Scratch'
+final appBaseName          = 'jblank'
+final appVersion           = '1.0.0'
 
 repositories {
   mavenLocal()
@@ -46,12 +46,12 @@ jar {
 }
 
 publishing {
-  group = 'scratch'
+  group = 'jblank'
   publications {
     mavenJava(MavenPublication) {
-      groupId 'scratch'
-      artifactId 'Scratch'
-      version '1.0'
+      groupId = 'jblank'
+      artifactId = 'Scratch'
+      version = '1.0.0'
       from components.java
     }
   }

@@ -8,7 +8,10 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 
 final appMainClassName     = 'jblank.Scratch'
 final appBaseName          = 'jblank'
-final appVersion           = '1.0.0'
+final appVersion           = '1.0.1'
+
+version = appVersion
+group = 'xiongjia'
 
 repositories {
   mavenLocal()
@@ -46,12 +49,8 @@ jar {
 }
 
 publishing {
-  group = 'jblank'
   publications {
     mavenJava(MavenPublication) {
-      groupId = 'jblank'
-      artifactId = 'Scratch'
-      version = '1.0.0'
       from components.java
     }
   }

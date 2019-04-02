@@ -56,6 +56,13 @@ publishing {
   }
   repositories {
     mavenLocal()
+    maven {
+      url 'http://192.168.1.37:8101/repository/home/'
+      credentials {
+        username = 'admin'
+        password = 'admin123'
+      }
+    }
   }
 }
 

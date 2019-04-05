@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "a test vue project",
   "author": "xiongjia <lexiongjia@gmail.com>",
-  "private": true,
+  "private": false,
+  "publishConfig": {
+    "registry": "http://192.168.1.37:8101/repository/npm-home/"
+  },
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",

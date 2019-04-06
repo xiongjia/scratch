@@ -3,7 +3,10 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'cd pasta && npm run publish'
+        nodejs(nodeJSInstallationName: 'node-11',
+          configId: '55fc931c-b830-4386-8059-08e272f2302a') {
+          sh 'cd pasta && npm run publish'
+        }
       }
     }
   }

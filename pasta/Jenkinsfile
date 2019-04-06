@@ -4,8 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         sh 'npm config ls'
-        sh 'cd pasta'
-        sh 'npm run publish'
+        sh 'cd pasta; npm run publish'
       }
     }
   }

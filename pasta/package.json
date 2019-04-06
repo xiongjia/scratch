@@ -5,7 +5,7 @@
   "author": "xiongjia <lexiongjia@gmail.com>",
   "private": false,
   "publishConfig": {
-    "registry": "http://192.168.1.37:8101/repository/npm-home/"
+    "registry": "http://192.168.1.37:8101/repository/npm-host-home/"
   },
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

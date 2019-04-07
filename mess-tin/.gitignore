@@ -1,0 +1,16 @@
+*.pyc
+*.class
+.classpath
+.project
+.settings
+.gradle
+.cache-main
+.idea
+dist
+
+*.iml
+*.iws
+*.ipr
+out
+build
+checkstyleidea.tmp

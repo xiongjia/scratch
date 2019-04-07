@@ -18,11 +18,5 @@ public class Scheduling {
   @Scheduled(cron = "${portal.scheduling.taskPing}")
   public void task() {
     logger.debug("Task # {}", ++taskCnt);
-    logger.debug("Task # {}", ++taskCnt);
-
-    int task1 = 1;
-
-
-
   }
 }

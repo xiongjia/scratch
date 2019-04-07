@@ -12,17 +12,6 @@ portal:
 
 spring:
   thymeleaf: { cache: false }
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:D:/dat/db/h2/testdb
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming-strategy: org.hibernate.cfg.DefaultNamingStrategy
-    properties:
-      hibernate:
-        format_sql: true
 
 management:
   server: { port: 9091 }

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Yahaha
+
+server:
+  port: 8891
+
+logging:
+  level: { root: ERROR, owl: DEBUG }

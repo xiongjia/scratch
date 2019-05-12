@@ -25,6 +25,8 @@ public class Controller {
     final String message = Strings.nullToEmpty(execService.getMessage());
     final String shellSvc = shellService.getMessage();
     log.debug("a testing api: {}, {}", message, shellSvc);
+
+    execService.run();
     return message + ", " + shellSvc;
   }
 }

@@ -1,9 +1,11 @@
-final appBaseName      = 'yahaha'
-final appVersion       = yahaha.version
+final appBaseName       = 'yahaha'
+final appVersion        = yahaha.version
+final appMainClassName  = 'yahaha.Yahaha'
 
 jar {
   baseName = appBaseName
   version =  appVersion
+  manifest.mainAttributes('Main-Class' : appMainClassName)
 }
 
 dependencies {

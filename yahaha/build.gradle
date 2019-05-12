@@ -28,6 +28,7 @@ subprojects {
 
     /* misc */
     compile 'com.google.guava:guava:27.1-jre'
+    compile 'com.jcraft:jsch:0.1.55'
 
     /* spring framework */
     compile "org.springframework.boot:spring-boot-starter:${springVersion}"

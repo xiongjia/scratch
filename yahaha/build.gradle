@@ -33,6 +33,7 @@ subprojects {
     compile "org.springframework.boot:spring-boot-starter:${springVersion}"
     compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
 
+
     /* checkstyle */
     checkstyle 'com.google.guava:guava:27.0.1-jre'
     checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
@@ -40,6 +41,7 @@ subprojects {
     /* test */
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
   }
 }
 

@@ -1,6 +1,7 @@
 final projectVersion = '1.0'
 final checkstyleRule = '/config/checkstyle/google_checks.xml'
 final checkstyleVersion = '8.16'
+final springVersion    = '2.1.3.RELEASE'
 
 subprojects {
   apply plugin: 'base'
@@ -27,6 +28,10 @@ subprojects {
 
     /* misc */
     compile 'com.google.guava:guava:27.1-jre'
+
+    /* spring framework */
+    compile "org.springframework.boot:spring-boot-starter:${springVersion}"
+    compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
 
     /* checkstyle */
     checkstyle 'com.google.guava:guava:27.0.1-jre'

@@ -1,6 +1,5 @@
 final appBaseName      = 'yahaha'
 final appVersion       = yahaha.version
-final springVersion    = '2.1.3.RELEASE'
 
 jar {
   baseName = appBaseName
@@ -8,9 +7,6 @@ jar {
 }
 
 dependencies {
-  compile "org.springframework.boot:spring-boot-starter:${springVersion}"
-  compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
-
   compile 'io.springfox:springfox-swagger2:2.9.2'
   compile 'io.springfox:springfox-swagger-ui:2.9.2'
 

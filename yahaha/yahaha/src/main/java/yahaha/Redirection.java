@@ -19,13 +19,26 @@ import java.net.URISyntaxException;
 public class Redirection {
   private static final Logger log = LoggerFactory.getLogger(Redirection.class);
 
-  @RequestMapping("/**")
-  public String mirror(@RequestBody(required = false) String body,
-                       HttpMethod method, HttpServletRequest request) throws URISyntaxException {
-    log.debug("redirection: {} [{}] - {}", request.getRequestURI(), method.name(), request.getQueryString());
-    final URI uri = new URI("http", null, "localhost", 8891,
-        request.getRequestURI(), request.getQueryString(), null);
+  private static final String prefix = "/redirection";
+  private static final int prefixLength = prefix.length();
+  private static final String mirrorAddr = "localhost";
+  private static final int mirrorPort = 8080;
 
+  private String convertRequestPath(HttpServletRequest request) {
+    final String reqPath = request.getRequestURI();
+    if (!reqPath.startsWith(prefix)) {
+      return reqPath;
+    }
+    return reqPath.substring(prefixLength);
+  }
+
+  @RequestMapping("/**")
+  public String forwarding(@RequestBody(required = false) String body,
+                           HttpMethod method, HttpServletRequest request) throws URISyntaxException {
+    log.debug("redirection: {} [{}] - {}", request.getRequestURI(), method.name(), request.getQueryString());
+
+    final URI uri = new URI("http", null, mirrorAddr, mirrorPort,
+      convertRequestPath(request), request.getQueryString(), null);
     final RestTemplate restTemplate = new RestTemplate();
     final ResponseEntity<String> responseEntity = restTemplate.exchange(uri,
       method, new HttpEntity<String>(body), String.class);

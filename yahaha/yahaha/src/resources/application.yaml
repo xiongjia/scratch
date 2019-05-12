@@ -7,3 +7,6 @@ server:
 
 logging:
   level: { root: ERROR, owl: DEBUG }
+
+yahaha:
+  message: "test message yahaha"

@@ -1,6 +1,15 @@
 package sheikah;
 
-public class Sheikah {
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Documented
+@Import(ModuleConfig.class)
+@Configuration
+public @interface Sheikah {
 
 }
-

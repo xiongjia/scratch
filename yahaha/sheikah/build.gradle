@@ -1,0 +1,10 @@
+final appBaseName      = 'sheikah'
+final appVersion       = yahaha.version
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+}
+
+dependencies {
+}

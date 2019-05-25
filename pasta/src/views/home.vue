@@ -70,7 +70,9 @@ export default {
         type: 'expand',
         width: 50,
         render: (h, {row}) => {
-          return h(expandRow, { props: { row: row } });
+          return (
+            <div> test {row.name} - {row.address} </div>
+          );
         }
       }, {
         title: 'Name', key: 'name'

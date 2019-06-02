@@ -8,5 +8,6 @@ jar {
 
 dependencies {
   compile 'com.jcraft:jsch:0.1.55'
+  compile 'org.apache.httpcomponents:httpclient:4.5.8'
 }
 

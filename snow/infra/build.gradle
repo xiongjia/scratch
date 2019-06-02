@@ -1,0 +1,12 @@
+final appBaseName       = 'snow-infra'
+final appVersion        = snow.version
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+}
+
+dependencies {
+  compile 'com.jcraft:jsch:0.1.55'
+}
+

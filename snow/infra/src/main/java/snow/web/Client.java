@@ -22,6 +22,9 @@ public class Client {
   private final int TIMEOUT_CONNECTION_REQ_MS = (int)TimeUnit.SECONDS.toMillis(10);
   private final int TIMEOUT_SOCK_MS = (int)TimeUnit.SECONDS.toMillis(10);
 
+  public Client() {
+    pool.setDefaultMaxPerRoute(20);
+  }
 
   public String request(String url) {
     final RequestConfig requestConfig = RequestConfig.custom()
@@ -39,6 +42,7 @@ public class Client {
       final HttpEntity entity = response.getEntity();
       String responseContent = EntityUtils.toString(entity, Charsets.UTF_8);
       EntityUtils.consume(entity);
+      response.close();
       return responseContent;
     } catch (IOException e) {
       e.printStackTrace();
@@ -46,6 +50,7 @@ public class Client {
       final Set<HttpRoute> routes = pool.getRoutes();
       for (final HttpRoute route : routes) {
         final PoolStats poolStats = pool.getStats(route);
+        System.out.println(route.toString());
         System.out.println(poolStats.toString());
       }
     }

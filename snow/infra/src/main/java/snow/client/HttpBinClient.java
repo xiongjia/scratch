@@ -1,10 +1,16 @@
 package snow.client;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import javax.ws.rs.core.Response;
 
 import org.apache.http.client.HttpResponseException;
 
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.client.rx.guava.RxListenableFutureInvoker;
 import snow.rpc.RestClient;
 
 /** The REST client for httpbin ( https://httpbin.org/ ) */
@@ -41,5 +47,18 @@ public class HttpBinClient {
           String.format("HTTP Error: %d", responseStatus));
     }
     return response.readEntity(ResponseHttpGet.class);
+  }
+
+  /** HttpBin Get request (Async). */
+  public void asyncRequestGet(FutureCallback<ResponseHttpGet> callback)
+      throws HttpResponseException {
+    final ListenableFuture<ResponseHttpGet> responseFuture = restClient.target(apiRoot)
+        .path("get")
+        .queryParam("test", "abc", "test2", 1, "test3", true)
+        .register(HttpAuthenticationFeature.basic("username", "password"))
+        .request()
+        .rx(RxListenableFutureInvoker.class)
+        .get(ResponseHttpGet.class);
+    Futures.addCallback(responseFuture, callback, MoreExecutors.directExecutor());
   }
 }

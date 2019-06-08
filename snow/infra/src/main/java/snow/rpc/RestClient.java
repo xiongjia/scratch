@@ -12,6 +12,7 @@ import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.rx.guava.RxListenableFutureInvokerProvider;
 import org.glassfish.jersey.logging.LoggingFeature;
 
 public class RestClient {
@@ -43,6 +44,7 @@ public class RestClient {
     final ClientConfig clientConfig = new ClientConfig()
         .connectorProvider(connectorProvider)
         .register(LoggingFeature.class)
+        .register(RxListenableFutureInvokerProvider.class)
         .property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager.getPool())
         .property(ApacheClientProperties.CONNECTION_MANAGER_SHARED, true)
         .property(ClientProperties.CONNECT_TIMEOUT, (int)timeoutMsConnection)

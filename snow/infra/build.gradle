@@ -14,4 +14,7 @@ dependencies {
   compile 'org.glassfish.jersey.inject:jersey-hk2:2.28'
   compile 'org.glassfish.jersey.connectors:jersey-apache-connector:2.28'
   compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.28'
+  compile 'org.glassfish.jersey.ext.rx:jersey-rx-client-rxjava:2.28'
+  compile 'org.glassfish.jersey.ext.rx:jersey-rx-client-rxjava2:2.28'
+  compile 'org.glassfish.jersey.ext.rx:jersey-rx-client-guava:2.28'
 }

@@ -35,6 +35,7 @@ public class HttpBinClientTest {
           System.out.println("err: " + t.toString());
         }
       });
+      System.out.println("call ended");
     } catch (HttpResponseException e) {
       e.printStackTrace();
     }

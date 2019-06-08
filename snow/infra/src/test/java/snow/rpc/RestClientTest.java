@@ -1,17 +1,20 @@
 package snow.rpc;
 
-import org.junit.Test;
-
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.junit.Test;
 
 public class RestClientTest {
   @Test
   public void test() {
     final RestClient client = new RestClient();
-    final WebTarget target = client.makeTarget("http://192.168.1.37:8111", "get");
-    final Response response = client.invokeGet(target);
-    final String test = response.readEntity(String.class);
-    System.out.println(test);
+    final Response response = client.target("http://192.168.1.37:8111/")
+        .path("get")
+        .request(MediaType.APPLICATION_JSON)
+        .get();
+    System.out.println("status: " + response.getStatus());
+    final String result = response.readEntity(String.class);
+    System.out.println("content: " + result);
   }
 }

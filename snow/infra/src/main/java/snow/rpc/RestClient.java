@@ -1,23 +1,22 @@
 package snow.rpc;
 
-import com.google.common.base.Strings;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.concurrent.TimeUnit;
+import org.glassfish.jersey.logging.LoggingFeature;
 
 public class RestClient {
   private static final long TIMEOUT_MS_CONNNECTION = TimeUnit.SECONDS.toMillis(10);
   private static final long TIMEOUT_MS_READ = TimeUnit.SECONDS.toMillis(30);
-  private static final String acceptedResponseType = MediaType.APPLICATION_JSON;
 
   private final RestConnectionManager connectionManager;
   private final long timeoutMsConnection;
@@ -33,6 +32,7 @@ public class RestClient {
   }
 
 
+  /** RestClient construct. */
   public RestClient(RestConnectionManager connectionManager,
                     long timeoutMsConnection, long timeoutMsRead) {
     this.connectionManager = connectionManager;
@@ -41,24 +41,22 @@ public class RestClient {
 
     final ApacheConnectorProvider connectorProvider = new ApacheConnectorProvider();
     final ClientConfig clientConfig = new ClientConfig()
-      .connectorProvider(connectorProvider)
-      .property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager)
-      .property(ClientProperties.CONNECT_TIMEOUT, timeoutMsConnection)
-      .property(ClientProperties.READ_TIMEOUT, timeoutMsRead);
-    this.client = ClientBuilder.newClient();
+        .connectorProvider(connectorProvider)
+        .register(LoggingFeature.class)
+        .property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager.getPool())
+        .property(ApacheClientProperties.CONNECTION_MANAGER_SHARED, true)
+        .property(ClientProperties.CONNECT_TIMEOUT, (int)timeoutMsConnection)
+        .property(ClientProperties.READ_TIMEOUT, (int)timeoutMsRead);
+
+    final LoggingFeature loggingFeature = new LoggingFeature(
+        Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
+        Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, 1000);
+    clientConfig.register(loggingFeature);
+
+    this.client = ClientBuilder.newClient(clientConfig);
   }
 
-  public WebTarget makeTarget(String uri, String path) {
-    final WebTarget webTarget = client.target(uri);
-    if (!Strings.isNullOrEmpty(path)) {
-      return webTarget.path(path);
-    } else {
-      return webTarget;
-    }
-  }
-
-  public Response invokeGet(WebTarget webTarget) {
-    final Invocation.Builder invocationBuilder = webTarget.request(acceptedResponseType);
-    return invocationBuilder.get();
+  public WebTarget target(String uri) {
+    return client.target(uri);
   }
 }

@@ -24,4 +24,8 @@ public class RestConnectionManager {
   public static RestConnectionManager getInstance() {
     return Holder.INSTANCE;
   }
+
+  public PoolingHttpClientConnectionManager getPool() {
+    return pool;
+  }
 }

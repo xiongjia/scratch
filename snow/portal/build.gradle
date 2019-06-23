@@ -1,0 +1,14 @@
+final appBaseName       = 'snow-potal'
+final appVersion        = snow.version
+final appMainClassName  = 'snow.Portal'
+
+jar {
+  baseName = appBaseName
+  version =  appVersion
+  manifest.mainAttributes('Main-Class' : appMainClassName)
+}
+
+dependencies {
+  compile project(':infra')
+}
+

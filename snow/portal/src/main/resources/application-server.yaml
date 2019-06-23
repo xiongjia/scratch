@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: SnowPortal
+
+server:
+  port: 8891
+
+logging:
+  level: { root: ERROR, snow: DEBUG }

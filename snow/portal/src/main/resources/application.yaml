@@ -1,0 +1,18 @@
+spring:
+  profiles: debug
+  profiles.include:
+    - server
+    - snow-debug
+
+name: debug-profile
+environment: debug
+
+---
+
+spring:
+  profiles: production
+  profiles.include:
+    - server
+    - snow-production
+
+

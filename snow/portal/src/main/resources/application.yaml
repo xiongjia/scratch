@@ -4,15 +4,15 @@ spring:
     - server
     - snow-debug
 
-name: debug-profile
-environment: debug
+snow:
+  anotherMessage: "another message debug"
 
 ---
 
 spring:
-  profiles: production
   profiles.include:
     - server
     - snow-production
 
-
+snow:
+  anotherMessage: "another message prod"

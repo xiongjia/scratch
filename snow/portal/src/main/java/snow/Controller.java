@@ -13,4 +13,9 @@ public class Controller {
   public String getConfig() {
     return snowConfiguration.getMessage();
   }
+
+  @GetMapping("/another-config")
+  public String getAnotherConfig() {
+    return snowConfiguration.getAnotherMessage();
+  }
 }

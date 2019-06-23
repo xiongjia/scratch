@@ -1,25 +1,19 @@
 package snow.client;
 
-
 import com.google.common.util.concurrent.FutureCallback;
+
 import org.apache.http.client.HttpResponseException;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HttpBinClientTest {
+  @Ignore
   @Test
   public void testRequestGet() {
     final HttpBinClient httpBinClient = new HttpBinClient("http://192.168.1.37:8111/");
-
-//    try {
-//      final ResponseHttpGet responseHttpGet1 = httpBinClient.requestGet();
-//      System.out.println(responseHttpGet1);
-//      final ResponseHttpGet responseHttpGet2 = httpBinClient.requestGet();
-//      System.out.println(responseHttpGet2);
-//    } catch (HttpResponseException e) {
-//      e.printStackTrace();
-//    }
-
     try {
       httpBinClient.asyncRequestGet(new FutureCallback<ResponseHttpGet>() {
         @Override

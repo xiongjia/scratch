@@ -18,12 +18,12 @@ public class RemoteMethodServer extends UnicastRemoteObject implements RemoteMet
     return "rep: " + message;
   }
 
-  static public void bind(int port) throws RemoteException {
+  public static void bind(int port) throws RemoteException {
     final Registry registry = LocateRegistry.createRegistry(port);
     registry.rebind("echo", new RemoteMethodServer());
   }
 
-  public static void main(String args[]) throws RemoteException {
+  public static void main(String[] args) throws RemoteException {
     bind(1807);
     System.out.println("server ready...");
   }

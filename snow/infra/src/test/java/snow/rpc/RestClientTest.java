@@ -3,9 +3,11 @@ package snow.rpc;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RestClientTest {
+  @Ignore
   @Test
   public void test() {
     final RestClient client = new RestClient();

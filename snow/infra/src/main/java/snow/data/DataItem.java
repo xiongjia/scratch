@@ -1,10 +1,15 @@
 package snow.data;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+
 import java.io.Serializable;
 
+@RedisHash("data-item")
 public class DataItem implements Serializable {
   private static final long serialVersionUID = 946670577457860370L;
 
+  @Id
   private String id;
   private String name;
   private String value;

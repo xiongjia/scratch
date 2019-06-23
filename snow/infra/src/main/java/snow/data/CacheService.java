@@ -1,12 +1,13 @@
 package snow.data;
 
+import java.util.Optional;
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 
 @ConditionalOnProperty(prefix = "snow", name = "data.enableCache")
 @Service
@@ -25,12 +26,13 @@ public class CacheService {
     log.debug("service test");
 
     final DataItem item = new DataItem();
-    item.setId("1");
     item.setName("first");
     item.setValue("first value");
-    dataItemRepository.put(item);
+    dataItemRepository.save(item);
 
-    final DataItem result = dataItemRepository.get("1");
-    log.debug("result: {}", result.toString());
+    final Optional<DataItem> result = dataItemRepository.findById(item.getId());
+    if (result.isPresent()) {
+      log.debug("result: {}", result.get().toString());
+    }
   }
 }

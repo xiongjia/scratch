@@ -1,37 +1,15 @@
 package snow.data;
 
-import javax.annotation.PostConstruct;
+import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class DataItemRepository {
-  private static final Logger log = LoggerFactory.getLogger(DataItemRepository.class);
-  private static final String KEY = "data-item";
-
-  private HashOperations<String, String, DataItem> hashOperations;
-
-  @Autowired
-  private RedisTemplate<String, Object> redisTemplate;
-
-  @PostConstruct
-  public void init() {
-    log.debug("DataItem Repository init");
-    this.hashOperations = this.redisTemplate.opsForHash();
-  }
-
-
-  public void put(DataItem item) {
-    hashOperations.put(KEY, item.getId(), item);
-  }
-
-  public DataItem get(String id) {
-    return hashOperations.get(KEY, id);
-  }
+@CrossOrigin
+@RepositoryRestResource(collectionResourceRel = "datum", path = "datum")
+public interface DataItemRepository extends PagingAndSortingRepository<DataItem, String> {
+  Optional<DataItem> findById(@Param("id") String id);
 }

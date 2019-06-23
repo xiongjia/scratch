@@ -1,6 +1,8 @@
 spring:
   application:
     name: SnowPortal
+  data:
+    rest.basePath: /data-api
   redis:
     host: 192.168.1.37
     port: 6379

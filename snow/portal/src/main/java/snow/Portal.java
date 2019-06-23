@@ -10,14 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @SpringBootApplication
+@EnableRedisRepositories(basePackages = {"snow"})
+@ComponentScan(basePackages = {"snow"})
 public class Portal {
   private static final Logger log = LoggerFactory.getLogger(Portal.class);
 
@@ -42,6 +46,8 @@ public class Portal {
       .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
       .flatMap(Arrays::stream)
       .distinct()
-      .forEach(prop -> log.debug("{}: {}", prop, env.getProperty(prop)));
+      .forEach(prop -> {
+        // log.debug("{}: {}", prop, env.getProperty(prop))
+      });
   }
 }

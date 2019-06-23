@@ -1,11 +1,13 @@
+snow:
+  anotherMessage: "another message for all"
+
+---
 spring:
   profiles: debug
   profiles.include:
     - server
     - snow-debug
 
-snow:
-  anotherMessage: "another message debug"
 
 ---
 
@@ -13,6 +15,3 @@ spring:
   profiles.include:
     - server
     - snow-production
-
-snow:
-  anotherMessage: "another message prod"

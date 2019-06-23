@@ -37,7 +37,13 @@ subprojects {
     compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springVersion}"
     compile "org.springframework.boot:spring-boot-dependencies:${springVersion}"
+    // compile "org.springframework.boot:spring-boot-starter-data-jpa:${springVersion}"
+    compile "org.springframework.boot:spring-boot-starter-data-redis:${springVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
+
+    /* data */
+    compile 'redis.clients:jedis:2.9.3'
+    compile 'org.apache.commons:commons-pool2:2.6.2'
 
     /* misc */
     compile 'com.google.guava:guava:27.1-jre'

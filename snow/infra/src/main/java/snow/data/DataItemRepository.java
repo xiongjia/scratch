@@ -10,5 +10,5 @@ import java.util.Optional;
 @CrossOrigin
 @RepositoryRestResource(collectionResourceRel = "datum", path = "datum")
 public interface DataItemRepository extends PagingAndSortingRepository<DataItem, String> {
-  Optional<DataItem> findById(@Param("id") String id);
+    Optional<DataItem> findById(@Param("name") String name);
 }

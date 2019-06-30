@@ -27,10 +27,10 @@ public class CacheService {
 
     final DataItem item = new DataItem();
     item.setName("first");
-    item.setValue("first value");
+    item.setValue("first value + 1");
     dataItemRepository.save(item);
 
-    final Optional<DataItem> result = dataItemRepository.findById(item.getId());
+    final Optional<DataItem> result = dataItemRepository.findById(item.getName());
     if (result.isPresent()) {
       log.debug("result: {}", result.get().toString());
     }

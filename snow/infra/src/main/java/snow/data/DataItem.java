@@ -10,17 +10,8 @@ public class DataItem implements Serializable {
   private static final long serialVersionUID = 946670577457860370L;
 
   @Id
-  private String id;
   private String name;
   private String value;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public String getName() {
     return name;
@@ -41,8 +32,7 @@ public class DataItem implements Serializable {
   @Override
   public String toString() {
     return "DataItem{"
-        + "id='" + id + '\''
-        + ", name='" + name + '\''
+        + "name='" + name + '\''
         + ", value='" + value + '\''
         + '}';
   }

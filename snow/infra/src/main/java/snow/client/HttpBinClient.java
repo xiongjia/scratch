@@ -13,6 +13,11 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.rx.guava.RxListenableFutureInvoker;
 import snow.rpc.RestClient;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 /** The REST client for httpbin ( https://httpbin.org/ ) */
 public class HttpBinClient {
   private static final String DEFAULT_API_ROOT = "https://httpbin.org/";

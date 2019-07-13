@@ -1,6 +1,9 @@
 final appBaseName       = 'snow-infra'
 final appVersion        = snow.version
 
+sourceSets.main.resources.includes = [ "**/*" ]
+
+
 jar {
   baseName = appBaseName
   version =  appVersion
@@ -8,6 +11,8 @@ jar {
 
 dependencies {
   compile 'com.jcraft:jsch:0.1.55'
+  compile 'org.reflections:reflections:0.9.11'
+
   compile 'org.apache.httpcomponents:httpclient:4.5.8'
 
   compile 'org.glassfish.jersey.core:jersey-client:2.28'

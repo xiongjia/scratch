@@ -6,7 +6,6 @@ import org.reflections.scanners.ResourcesScanner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -14,8 +13,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class JarUtilities {
-  public static Path getCodeLocation(Class source) throws URISyntaxException {
-    return new File(source.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath();
+  public static String getCodeLocation(Class source) throws URISyntaxException {
+    return new File(source.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
   }
 
   public static void dump(String jarFilename) throws IOException {

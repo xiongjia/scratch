@@ -15,7 +15,6 @@ import java.util.Map;
  *  Because nums[0] + nums[1] = 2 + 7 = 9,
  *  return [0, 1].
  */
-@SuppressWarnings("WeakerAccess")
 public class Problem0001TwoSum {
   /** Solution for problem "two sum". */
   public int[] twoSum(int[] nums, int target) {

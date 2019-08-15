@@ -16,20 +16,31 @@ import java.util.Map;
  *  return [0, 1].
  */
 public class Problem0001TwoSum {
-  /** Solution for problem "two sum". */
-  public int[] twoSum(int[] nums, int target) {
+  /** Solution 001 - HashMap to save the numbers. */
+  public int[] solution001(int[] nums, int target) {
     final Map<Integer, Integer> map = new HashMap<>();
 
     for (int i = 0; i < nums.length; i++) {
-      if (!map.containsKey(target - nums[i])) {
+      final int delta = target - nums[i];
+      if (!map.containsKey(delta)) {
         map.put(nums[i], i);
         continue;
       }
+      return new int[] {map.get(delta), i};
+    }
+    return null;
+  }
 
-      final int[] result = new int[2];
-      result[0] = map.get(target - nums[i]);
-      result[1] = i;
-      return result;
+  /** Solution 002 - 2 for loops. */
+  public int[] solution002(int[] nums, int target) {
+    for (int i = 0; i < nums.length; i++) {
+      final int delta = target - nums[i];
+      for (int j = i + 1; j < nums.length; j++) {
+        if (delta != nums[j]) {
+          continue;
+        }
+        return new int[] {i, j};
+      }
     }
     return null;
   }

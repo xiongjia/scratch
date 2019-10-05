@@ -2,7 +2,7 @@ final projectVersion    = '1.0'
 
 final checkstyleRule    = '/config/checkstyle/google_checks.xml'
 final checkstyleVersion = '8.21'
-final springVersion     = '2.1.6.RELEASE'
+final springVersion     = '2.1.9.RELEASE'
 
 subprojects {
   apply plugin: 'base'
@@ -34,12 +34,12 @@ subprojects {
     compile "org.springframework.boot:spring-boot-starter-aop:${springVersion}"
     compile "org.springframework.boot:spring-boot-dependencies:${springVersion}"
     compile "org.springframework.boot:spring-boot-starter-data-rest:${springVersion}"
-    compile "org.springframework.boot:spring-boot-starter-data-redis:${springVersion}"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa:${springVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 
     /* data */
-    compile 'redis.clients:jedis:2.9.3'
-    compile 'org.apache.commons:commons-pool2:2.6.2'
+    compile 'com.h2database:h2:1.4.199'
+    compile 'org.liquibase:liquibase-core:3.8.0'
 
     /* misc */
     compile 'com.google.guava:guava:27.1-jre'

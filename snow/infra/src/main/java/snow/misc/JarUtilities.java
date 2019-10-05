@@ -22,7 +22,7 @@ public class JarUtilities {
     final Enumeration entries = zipFile.entries();
     while (entries.hasMoreElements()) {
       final ZipEntry entry = (ZipEntry)entries.nextElement();
-      String message = String.format("Name = %s: Folder = %s, size = %d， compressed size = %d",
+      String message = String.format("Name = %s: Folder = %s, size = %d, compressed size = %d",
         entry.getName(), entry.isDirectory(), entry.getSize(), entry.getCompressedSize());
       System.out.println(message);
     }

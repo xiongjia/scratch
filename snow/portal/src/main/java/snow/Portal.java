@@ -2,11 +2,8 @@ package snow;
 
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -18,17 +15,12 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @SpringBootApplication
-@EnableRedisRepositories(basePackages = {"snow"})
 @ComponentScan(basePackages = {"snow"})
 @ServletComponentScan(basePackages = {"snow"})
 public class Portal {
   private static final Logger log = LoggerFactory.getLogger(Portal.class);
-
-  @Autowired
-  private SnowConfiguration snowConfiguration;
 
   /** Potal. */
   public static void main(String[] args) {
@@ -44,12 +36,12 @@ public class Portal {
     log.debug("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
     final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
     StreamSupport.stream(sources.spliterator(), false)
-      .filter(ps -> ps instanceof EnumerablePropertySource)
-      .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
-      .flatMap(Arrays::stream)
-      .distinct()
-      .forEach(prop -> {
-        // log.debug("{}: {}", prop, env.getProperty(prop))
-      });
+        .filter(ps -> ps instanceof EnumerablePropertySource)
+        .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+        .flatMap(Arrays::stream)
+        .distinct()
+        .forEach(prop -> {
+          log.debug("{}: {}", prop, env.getProperty(prop));
+        });
   }
 }

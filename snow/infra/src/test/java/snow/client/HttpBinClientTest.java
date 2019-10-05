@@ -8,6 +8,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+
+import javax.sql.DataSource;
 
 public class HttpBinClientTest {
   @Ignore

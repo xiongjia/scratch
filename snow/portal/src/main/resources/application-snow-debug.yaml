@@ -1,4 +1,2 @@
 snow:
-  data:
-    enableCache: true
   message: "a test message in snow-debug.yaml"

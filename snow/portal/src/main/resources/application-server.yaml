@@ -1,11 +1,28 @@
 spring:
   application:
     name: SnowPortal
-  data:
-    rest.basePath: /data-api
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  jpa:
+    hibernate.ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  datasource:
+    validationQuery: SELECT 1
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: sa
+  liquibase:
+    enabled: true
+    change-log: classpath:db/snow-changelog.yaml
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    default-schema: PUBLIC
+    user: sa
+    password: sa
 
-server:
-  port: 8891
+server.port: 8891
 
-logging:
-  level: { root: ERROR, snow: DEBUG }
+logging.level: { root: ERROR, snow: DEBUG }

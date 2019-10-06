@@ -17,8 +17,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"snow"})
-@ServletComponentScan(basePackages = {"snow"})
+//@ComponentScan(basePackages = {"snow"})
+//@ServletComponentScan(basePackages = {"snow"})
 public class Portal {
   private static final Logger log = LoggerFactory.getLogger(Portal.class);
 

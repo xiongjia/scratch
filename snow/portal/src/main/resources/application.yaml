@@ -1,5 +1,7 @@
-snow:
-  anotherMessage: "another message for all"
+spring:
+  profiles.include:
+    - server
+    - snow-production
 
 ---
 spring:
@@ -7,10 +9,3 @@ spring:
   profiles.include:
     - server
     - snow-debug
-
----
-
-spring:
-  profiles.include:
-    - server
-    - snow-production

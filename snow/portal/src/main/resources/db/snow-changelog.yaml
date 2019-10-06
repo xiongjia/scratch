@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 001-init-schema.yaml
+      relativeToChangelogFile: true

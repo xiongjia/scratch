@@ -44,6 +44,7 @@ subprojects {
     /* data */
     compile 'com.h2database:h2:1.4.199'
     compile 'org.liquibase:liquibase-core:3.8.0'
+    compile 'com.opencsv:opencsv:4.6'
 
     /* misc */
     compile 'com.google.guava:guava:27.1-jre'

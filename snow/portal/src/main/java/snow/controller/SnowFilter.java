@@ -1,4 +1,4 @@
-package snow;
+package snow.controller;
 
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// @WebFilter(urlPatterns = { "/filter/*" })
+@WebFilter(urlPatterns = { "/filter/*" })
 public class SnowFilter implements Filter {
   private static final Logger log = LoggerFactory.getLogger(SnowFilter.class);
 

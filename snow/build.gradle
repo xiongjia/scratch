@@ -28,6 +28,10 @@ subprojects {
     compile 'ch.qos.logback:logback-core:1.2.3'
     compile 'ch.qos.logback:logback-classic:1.2.3'
 
+    /* commons */
+    compile 'org.apache.commons:commons-lang3:3.9'
+    compile 'org.apache.commons:commons-collections4:4.4'
+
     /* spring framework */
     compile "org.springframework.boot:spring-boot-starter:${springVersion}"
     compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"

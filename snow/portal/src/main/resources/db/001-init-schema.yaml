@@ -4,14 +4,20 @@ databaseChangeLog:
       author: xiong.jia-le
       changes:
         - rollback:
-          - dropTable.tableName: snow-users
+          - dropTable.tableName: snow_users
+          - dropSequence.sequenceName: seq_snow_user_id
+        - createSequence:
+            startValue: 1
+            incrementBy: 1
+            ordered: true
+            sequenceName: seq_snow_user_id
         - createTable:
-            tableName: snow-users
+            tableName: snow_users
             remarks: Users info
             columns:
               - column:
                   name: id
-                  type: int
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     nullable: false
@@ -29,10 +35,10 @@ databaseChangeLog:
       changes:
         - rollback:
             - delete:
-                tableName: snow-users
+                tableName: snow_users
                 where: name='admin'
         - insert:
-            tableName: snow-users
+            tableName: snow_users
             columns:
               - column:
                   name: name

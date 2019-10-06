@@ -6,8 +6,8 @@ spring:
       enabled: true
       path: /h2
   jpa:
-    hibernate.ddl-auto: none
-    show-sql: true
+    hibernate.ddl-auto: validate
+    show-sql: false
     database-platform: org.hibernate.dialect.H2Dialect
   datasource:
     validationQuery: SELECT 1
@@ -26,3 +26,6 @@ spring:
 server.port: 8891
 
 logging.level: { root: ERROR, snow: DEBUG }
+
+snow:
+  apiPrefix: /api/v1

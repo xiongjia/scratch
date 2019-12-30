@@ -1,0 +1,15 @@
+# java git ignore
+*.class
+.classpath
+.project
+.settings
+.gradle
+.cache-main
+.idea
+
+*.iml
+*.iws
+*.ipr
+out
+build
+checkstyleidea.tmp

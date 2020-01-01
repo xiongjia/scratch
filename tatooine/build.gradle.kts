@@ -8,6 +8,8 @@ java {
 }
 
 allprojects {
+  apply(plugin = "idea")
+
   repositories {
     mavenLocal()
     mavenCentral()
@@ -16,5 +18,10 @@ allprojects {
 
 subprojects {
   buildDir = file("${rootProject.projectDir}/build/${project.name}")
+  project.version = "1.0"
+}
+
+dependencies {
+  testCompile("org.junit.jupiter:junit-jupiter-api:5.5.2")
 }
 

@@ -13,3 +13,6 @@
 out
 build
 checkstyleidea.tmp
+gradle
+gradlew
+gradlew.*

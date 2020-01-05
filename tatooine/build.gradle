@@ -1,0 +1,45 @@
+plugins {
+  id 'java'
+  id 'idea'
+  id 'checkstyle'
+}
+
+apply from: './config/gradle/environment.gradle'
+
+final checkstyleRule    = '/config/checkstyle/google_checks.xml'
+final checkstyleVersion = '8.21'
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+checkstyle {
+  toolVersion = checkstyleVersion
+  configFile = new File(rootProject.projectDir, checkstyleRule)
+}
+
+allprojects {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+}
+
+subprojects {
+  apply plugin: 'java'
+
+  buildDir = file("${rootProject.projectDir}/build/${project.name}")
+  project.version = "1.0"
+
+  dependencies {
+    /* logging */
+    compile('org.slf4j:slf4j-api:1.7.30')
+    compile('org.apache.logging.log4j:log4j-core:2.13.0')
+    compile('ch.qos.logback:logback-core:1.2.3')
+    compile('ch.qos.logback:logback-classic:1.2.3')
+
+    testCompile('org.junit.jupiter:junit-jupiter-engine:5.5.2')
+  }
+}
+

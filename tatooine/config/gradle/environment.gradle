@@ -13,23 +13,12 @@ idea.project {
 idea.project.ipr {
   withXml { xmlProvider ->
     def iprNode = xmlProvider.asNode()
-    ideaActivateGradle(iprNode)
     ideaActivateGit(iprNode)
     ideaActivateCheckstyle(iprNode)
   }
 }
 
 ext {
-  ideaActivateGradle = { Node iprNode ->
-    // Activate 'Gradle' plugin
-    def settings = iprNode.component.find { it.'@name' == 'GradleSettings' }
-    if (settings == null) {
-      settings = iprNode.appendNode('component', [name: 'GradleSettings'])
-      settings.appendNode('option',
-        [name: 'linkedProjectPath', value: '$PROJECT_DIR$/build.gradle'])
-    }
-  }
-
   ideaActivateGit = { Node iprNode ->
     // Activate 'git' as VCS
     def vcsMappings = iprNode.component.find { it.'@name' == 'VcsDirectoryMappings' }
@@ -40,17 +29,22 @@ ext {
     // Activate and config 'Checkstyle' plugin
     def checkstyle = iprNode.component.find { it.'@name' == 'CheckStyle-IDEA' }
     if (checkstyle == null) {
+      def localRule = 'PROJECT_RELATIVE:$PROJECT_DIR$' + '/config/checkstyle/google_checks.xml' +
+        ':tatooine'
+      def defaultRule = 'CLASSPATH:/sun_checks.xml:The default CheckStyle rules'
       checkstyle = iprNode.appendNode('component', [name: 'CheckStyle-IDEA'])
       def builder = new NodeBuilder()
       def option = builder.option(name: 'configuration') {
         map {
-          entry(key: 'active-configuration',
-                value: 'PROJECT_RELATIVE:$PROJECT_DIR$/config/checkstyle/checkstyle.xml:tatooine')
+          entry(key: 'checkstyle-version', value: '8.21')
+          entry(key: 'active-configuration', value: localRule)
           entry(key: 'check-nonjava-files', value: false)
           entry(key: 'check-test-classes', value: true)
-          entry(key: 'property-1.samedir', value: 'config/checkstyle')
           entry(key: 'suppress-errors', value: false)
           entry(key: 'thirdparty-classpath', value: '')
+          entry(key: 'property-1.samedir', value: 'config/checkstyle')
+          entry(key: 'location-0', value: localRule)
+          entry(key: 'location-1', value: defaultRule)
         }
       }
       checkstyle.append option

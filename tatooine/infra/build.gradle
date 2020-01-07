@@ -6,3 +6,6 @@ application {
   mainClassName = "tatooine.misc.Test"
 }
 
+dependencies {
+  compile('org.apache.shiro:shiro-core:1.4.2')
+}

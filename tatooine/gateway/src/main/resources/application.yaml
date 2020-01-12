@@ -9,3 +9,5 @@ spring:
           uri: http://172.24.12.217:8888/
           predicates:
             - Path=/api/**
+          filters:
+            - TokenRelay=

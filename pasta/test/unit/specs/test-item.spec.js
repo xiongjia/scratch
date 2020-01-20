@@ -1,7 +1,6 @@
 
-
-describe('test cases', () => {
-  test('test item 1', async () => {
+describe('pool ', () => {
+  test('create pool', async () => {
     await browser.get('https://cn.bing.com/');
 
     // inputting
@@ -15,9 +14,7 @@ describe('test cases', () => {
     const searchSubmit = await browser.findElement(by.id('sb_form_go'));
     await searchSubmit.click();
 
-
-    const item = await browser.findElement(by.id('b_results'));
-
+    await browser.findElement(by.id('b_results'));
 
     // questionInput.setText('webdriver');
     await new Promise((resolve, reject) => setTimeout(resolve, 3000));

@@ -1,7 +1,9 @@
 {
-  "env": { 
+  "env": {
     "jest": true
   },
-  "globals": { 
+  "globals": {
+    "browser": true,
+    "by": true
   }
 }

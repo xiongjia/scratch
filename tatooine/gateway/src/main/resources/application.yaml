@@ -5,7 +5,9 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: test
-          uri: http://172.24.12.217:8888/
+        - id: api
+          uri: http://172.24.8.193:8888/
           predicates:
-            - Path=/local/**
+            - Path=/api/**
+          filters:
+            - LocalFilter

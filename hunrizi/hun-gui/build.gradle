@@ -1,0 +1,9 @@
+jar {
+  baseName = 'hun-gui'
+  version =  '1.0'
+  manifest.mainAttributes('Main-Class' : 'hun.HunGui')
+}
+
+dependencies {
+}
+

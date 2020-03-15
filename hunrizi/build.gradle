@@ -1,0 +1,49 @@
+plugins {
+  id 'idea'
+  id 'checkstyle'
+}
+
+apply from: './config/gradle/environment.gradle'
+
+final checkstyleRule    = '/config/checkstyle/google_checks.xml'
+final checkstyleVersion = '8.21'
+
+wrapper {
+  distributionType = Wrapper.DistributionType.ALL
+}
+
+checkstyle {
+  toolVersion = checkstyleVersion
+  configFile = new File(rootProject.projectDir, checkstyleRule)
+}
+
+
+allprojects {
+  repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url 'https://repo.spring.io/libs-milestone' }
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+  }
+}
+
+subprojects {
+  apply plugin: 'java'
+
+  buildDir = file("${rootProject.projectDir}/build/${project.name}")
+
+  java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+
+  dependencies {
+    /* logging */
+    compile('org.apache.logging.log4j:log4j-core:2.11.1')
+    compile('ch.qos.logback:logback-core:1.2.3')
+    compile('ch.qos.logback:logback-classic:1.2.3')
+  }
+}
+

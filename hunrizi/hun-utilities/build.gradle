@@ -1,0 +1,7 @@
+jar {
+  manifest.mainAttributes('Main-Class' : 'hun.HunUtilities')
+}
+
+dependencies {
+  compile ('org.zeroturnaround:zt-exec:1.11')
+}

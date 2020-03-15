@@ -34,6 +34,12 @@ subprojects {
 
   buildDir = file("${rootProject.projectDir}/build/${project.name}")
 
+  java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+  }
+
+
   dependencies {
     /* logging */
     compile('org.apache.logging.log4j:log4j-core:2.11.1')

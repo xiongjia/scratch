@@ -1,11 +1,10 @@
 package hun;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import io.reactivex.disposables.Disposable;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
 import org.zeroturnaround.exec.stream.LogOutputStream;

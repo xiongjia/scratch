@@ -3,6 +3,8 @@ package hun.core;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import hun.aop.ProxyFactoryBean;
 import org.apache.commons.beanutils.BeanUtils;
 
 public class ClassPathXmlApplicationContext implements BeanFactory {
@@ -43,6 +45,10 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
           params.put(prop.getName(), ref);
           BeanUtils.populate(beanObj, params);
         }
+      }
+      if (clazz.equals(ProxyFactoryBean.class)) {
+        final ProxyFactoryBean factoryBean = (ProxyFactoryBean) beanObj;
+        return factoryBean.createProxy();
       }
       return beanObj;
     } catch (Exception error) {

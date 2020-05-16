@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+  <bean name="BeanOne" class="hun.beans.BeanOne">
+    <property name="name" value="one"/>
+    <property name="beanTwo" ref="BeanTwo"/>
+  </bean>
+
+  <bean name="BeanTwo" class="hun.beans.BeanTwo" scope="prototype">
+    <property name="num" value="88"/>
+  </bean>
+</beans>

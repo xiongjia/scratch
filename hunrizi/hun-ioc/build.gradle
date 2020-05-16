@@ -1,0 +1,7 @@
+jar {
+  manifest.mainAttributes('Main-Class' : 'hun.HunIoc')
+}
+
+dependencies {
+  compile ('com.google.guava:guava:28.2-jre')
+}

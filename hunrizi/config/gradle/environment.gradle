@@ -5,8 +5,6 @@ idea.module {
 }
 
 idea.project {
-  jdkName = "13"
-  languageLevel = 'JDK_18'
   vcs = "Git"
 }
 

@@ -13,6 +13,8 @@
 out
 build
 checkstyleidea.tmp
+
 gradle
-gradlew
+!config/gradle
 gradlew.*
+gradlew

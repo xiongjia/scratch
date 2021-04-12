@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(tachi)
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
 find_package(Boost REQUIRED)
 
 include_directories(
@@ -11,5 +12,5 @@ add_executable(
   ${PROJECT_NAME}
   "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-target_link_libraries(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::sqlite3::sqlite3)
 

@@ -9,8 +9,7 @@ set(Boost_USE_STATIC ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost REQUIRED COMPONENTS
-  log log_setup system filesystem date_time thread chrono)
+find_package(Boost REQUIRED)
 
 include_directories(
   "${Boost_INCLUDE_DIR}"
@@ -39,3 +38,10 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   debug "${debug_libs}" optimized "${optimized_libs}")
+
+set_target_properties(${PROJECT_NAME}
+  PROPERTIES
+      CXX_STANDARD 11
+      CXX_STANDARD_REQUIRED YES
+      CXX_EXTENSIONS NO
+)

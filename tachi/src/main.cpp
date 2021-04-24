@@ -2,9 +2,11 @@
  * 
  */
 
+
 #include <stdio.h>
 
-#include <boost/log/trivial.hpp>
+#include "tachi-log.hxx"
+
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sources/logger.hpp>
@@ -15,7 +17,7 @@
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
-#include <boost/log/attributes/named_scope.hpp>
+
 
 static void init_log(void) {
   boost::log::add_common_attributes();
@@ -38,13 +40,15 @@ static void init_log(void) {
 
 static void Test(void)
 {
-  BOOST_LOG_FUNCTION();
-  BOOST_LOG_TRIVIAL(info) << "Info Log in Test()";
+  TACHI_LOG_FUNCTION();
+  TACHI_LOG(info) << "Info Log in Test()";
 }
 
 int main(const int argc, const char **argv) {
-  BOOST_LOG_NAMED_SCOPE("main");
-  BOOST_LOG_TRIVIAL(info) << "Info Log";
+  TACHI_LOG_NAMED_SCOPE("main");
+  TACHI_LOG(info) << "Info Log";
+  TACHI_LOG(error) << "Info Log";
+
   Test();
   return 0;
 }

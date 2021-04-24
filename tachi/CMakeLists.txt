@@ -44,12 +44,13 @@ set(optimized_libs
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 file(GLOB SOURCES_GROUP_CORE
-  ${PROJECT_SOURCE_DIR}/src/tachi-log.*)
+  ${PROJECT_SOURCE_DIR}/src/tachi-*.*)
 source_group("core" FILES ${SOURCES_GROUP_CORE})
 
 
 add_executable(${PROJECT_NAME}
-  "${PROJECT_SOURCE_DIR}/src/tachi-log.h"
+  "${PROJECT_SOURCE_DIR}/src/tachi-general.hxx"
+  "${PROJECT_SOURCE_DIR}/src/tachi-log.hxx"
   "${PROJECT_SOURCE_DIR}/src/tachi-log.cpp"
   "${PROJECT_SOURCE_DIR}/src/main.cpp")
 

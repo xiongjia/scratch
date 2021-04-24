@@ -42,9 +42,16 @@ set(optimized_libs
   "${Boost_FILESYSTEM_LIBRARY_RELEASE}"
   "${Boost_SYSTEM_LIBRARY_RELEASE}")
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+file(GLOB SOURCES_GROUP_CORE
+  ${PROJECT_SOURCE_DIR}/src/tachi-log.*)
+source_group("core" FILES ${SOURCES_GROUP_CORE})
+
+
 add_executable(${PROJECT_NAME}
+  "${PROJECT_SOURCE_DIR}/src/tachi-log.h"
+  "${PROJECT_SOURCE_DIR}/src/tachi-log.cpp"
   "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
 target_link_libraries(${PROJECT_NAME}
   debug "${debug_libs}" optimized "${optimized_libs}")
-

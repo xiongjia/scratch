@@ -1,0 +1,6 @@
+/**
+ * 
+ */
+
+#include "tachi-log.h"
+

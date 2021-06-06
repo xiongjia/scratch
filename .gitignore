@@ -155,6 +155,9 @@ pgext/tmp_check_iso/
 pgext/log/
 pgext/output_iso/
 
+# tachi
+tachi/build
+
 # vim building
 vim-win-building/dest
 

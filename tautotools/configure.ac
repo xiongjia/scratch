@@ -4,7 +4,7 @@
 AC_PREREQ([2.71])
 AC_INIT(tautotools, 1.0, lexiongjia@gmail.com)
 AC_CONFIG_SRCDIR([src/main.cpp])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([src/tautotools_config.h])
 
 AM_INIT_AUTOMAKE()
 

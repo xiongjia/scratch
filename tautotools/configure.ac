@@ -6,6 +6,15 @@ AC_INIT(tautotools, 1.0, lexiongjia@gmail.com)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([src/tautotools_config.h])
 
+AH_TOP([
+#ifndef _TAUTOTOOLS_H_
+#define _TAUTOTOOLS_H_ 1
+])
+
+AH_BOTTOM([
+#endif
+])
+
 AM_INIT_AUTOMAKE()
 
 # Checks for programs.

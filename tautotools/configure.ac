@@ -17,6 +17,13 @@ AH_BOTTOM([
 
 AM_INIT_AUTOMAKE()
 
+
+AC_ARG_ENABLE(examples, 
+              AS_HELP_STRING([--disable-examples],[disable building of examples]),
+              [],[enable_examples=yes])
+
+AM_CONDITIONAL(BUILD_EXAMPLES,[test $enable_examples != no])
+
 # Checks for programs.
 AC_PROG_CXX
 
@@ -33,3 +40,12 @@ AC_CHECK_HEADERS([stdio.h stdlib.h])
 AC_CONFIG_FILES(Makefile src/Makefile)
 
 AC_OUTPUT
+
+
+echo 
+echo "----------------------------------------------------------------"
+echo " Config is DONE: "
+echo
+echo "        Build examples: $enable_examples"
+echo "----------------------------------------------------------------"
+echo

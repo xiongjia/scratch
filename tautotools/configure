@@ -674,6 +674,8 @@ CPPFLAGS
 LDFLAGS
 CXXFLAGS
 CXX
+BUILD_EXAMPLES_FALSE
+BUILD_EXAMPLES_TRUE
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
@@ -745,6 +747,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_silent_rules
+enable_examples
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1383,6 +1386,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
+  --disable-examples      disable building of examples
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -3194,6 +3198,25 @@ to "yes", and re-run configure.
 END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
+fi
+
+
+
+# Check whether --enable-examples was given.
+if test ${enable_examples+y}
+then :
+  enableval=$enable_examples;
+else $as_nop
+  enable_examples=yes
+fi
+
+
+ if test $enable_examples != no; then
+  BUILD_EXAMPLES_TRUE=
+  BUILD_EXAMPLES_FALSE='#'
+else
+  BUILD_EXAMPLES_TRUE='#'
+  BUILD_EXAMPLES_FALSE=
 fi
 
 
@@ -5132,6 +5155,10 @@ else
   am__EXEEXT_FALSE=
 fi
 
+if test -z "${BUILD_EXAMPLES_TRUE}" && test -z "${BUILD_EXAMPLES_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_EXAMPLES\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
   as_fn_error $? "conditional \"AMDEP\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -6464,4 +6491,13 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 printf "%s\n" "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+
+echo
+echo "----------------------------------------------------------------"
+echo " Config is DONE"
+echo
+echo "        Build examples: $enable_examples"
+echo "----------------------------------------------------------------"
+echo
 

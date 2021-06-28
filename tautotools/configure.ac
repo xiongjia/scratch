@@ -35,10 +35,10 @@ AC_CHECK_HEADERS([stdio.h stdlib.h])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
+AC_CHECK_FUNCS(opendir readdir chdir chroot)
 
 
 AC_CONFIG_FILES(Makefile src/Makefile)
-
 AC_OUTPUT
 
 

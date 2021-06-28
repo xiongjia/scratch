@@ -5,8 +5,20 @@
 #define _TAUTOTOOLS_H_ 1
 
 
+/* Define to 1 if you have the `chdir' function. */
+#undef HAVE_CHDIR
+
+/* Define to 1 if you have the `chroot' function. */
+#undef HAVE_CHROOT
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `opendir' function. */
+#undef HAVE_OPENDIR
+
+/* Define to 1 if you have the `readdir' function. */
+#undef HAVE_READDIR
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H

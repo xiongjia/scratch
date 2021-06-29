@@ -23,6 +23,9 @@ AC_ARG_ENABLE(examples,
               [],[enable_examples=yes])
 
 AM_CONDITIONAL(BUILD_EXAMPLES,[test $enable_examples != no])
+if test x"$enable_examples" = xyes; then
+  AC_DEFINE(HAVE_EXAMPLES, 1, [have examples])
+fi
 
 # Checks for programs.
 AC_PROG_CXX

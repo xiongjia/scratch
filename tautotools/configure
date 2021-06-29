@@ -3328,6 +3328,11 @@ else
   BUILD_EXAMPLES_FALSE=
 fi
 
+if test x"$enable_examples" = xyes; then
+
+printf "%s\n" "#define HAVE_EXAMPLES 1" >>confdefs.h
+
+fi
 
 # Checks for programs.
 

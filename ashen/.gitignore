@@ -1,3 +1,7 @@
 
-/autom4te.cache/
+*.log
 *~
+
+configure.scan
+/autom4te.cache/
+

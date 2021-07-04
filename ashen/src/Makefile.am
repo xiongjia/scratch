@@ -1,5 +1,5 @@
 
 bin_PROGRAMS = ashen
 
-ashen_SOURCES = ash_alloc.c ash_main.c
+ashen_SOURCES = ash_main.c ash_log.c ash_alloc.c
 

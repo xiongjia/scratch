@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT(ashen, 1.0, lexiongjia@gmail.com)
+AC_INIT([ashen],[1.0],[lexiongjia@gmail.com])
 
 AC_CONFIG_HEADERS([src/ash_config.h])
 
@@ -18,6 +18,7 @@ AM_INIT_AUTOMAKE()
 
 # Checks for programs.
 AC_PROG_CC
+CFLAGS+=" -std=c11 "
 
 # Checks for libraries.
 

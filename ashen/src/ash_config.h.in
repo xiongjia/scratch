@@ -5,6 +5,9 @@
 #define _ASH_CONFIGURE_H_ 1
 
 
+/* "OS type" */
+#undef ASH_OS_TYPE
+
 /* Name of package */
 #undef PACKAGE
 

@@ -15,6 +15,20 @@ AH_TOP([
 AH_BOTTOM([
 #endif /* !defined(_ASH_CONFIGURE_H_) */
 ])
+
+# parse host os 
+case "${host_os}" in
+  linux*)
+    AC_DEFINE([ASH_OS_TYPE], ["Linux"], ["OS type"])
+    ;;
+  darwin*)
+    AC_DEFINE([ASH_OS_TYPE], ["Darwin"], ["OS type"])
+    ;;
+  *)
+    AC_MSG_ERROR(["OS $host_os is not supported"])
+    ;;
+esac
+
 AM_INIT_AUTOMAKE()
 
 # Checks for programs.

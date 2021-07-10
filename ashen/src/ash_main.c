@@ -9,7 +9,7 @@
 int main(const int argc, const char **argv) {
   ash_log_context_t *log_context = ASH_NULL;
 
-  printf("test\n");
+  printf("test, os type %s\n", ASH_OS_TYPE);
 
   log_context = ash_log_create();
   ash_log_destroy(log_context);

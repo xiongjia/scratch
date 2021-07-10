@@ -2339,6 +2339,24 @@ ac_config_headers="$ac_config_headers src/ash_config.h"
 
 
 
+
+# parse host os
+case "${host_os}" in
+  linux*)
+
+printf "%s\n" "#define ASH_OS_TYPE \"Linux\"" >>confdefs.h
+
+    ;;
+  darwin*)
+
+printf "%s\n" "#define ASH_OS_TYPE \"Darwin\"" >>confdefs.h
+
+    ;;
+  *)
+    as_fn_error $? "\"OS $host_os is not supported\"" "$LINENO" 5
+    ;;
+esac
+
 am__api_version='1.16'
 
 

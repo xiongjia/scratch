@@ -4,6 +4,7 @@
 AC_PREREQ([2.71])
 AC_INIT([ashen],[1.0],[lexiongjia@gmail.com])
 
+AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([src/ash_config.h])
 
 AH_TOP([

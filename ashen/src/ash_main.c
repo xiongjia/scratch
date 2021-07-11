@@ -8,6 +8,7 @@
 #endif
 
 #include <stdio.h>
+#include "ash_alloc.h"
 
 int main(const int argc, const char **argv) {
 #if 0
@@ -17,6 +18,7 @@ int main(const int argc, const char **argv) {
   ash_log_destroy(log_context);
 #endif
   printf("test\n");
+  test_alloc();
   return 0;
 }
 

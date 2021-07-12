@@ -8,3 +8,8 @@ void test_alloc(void) {
   printf("lib alloc\n");
 }
 
+
+const char* test_gtest(void) {
+  return "test3";
+}
+

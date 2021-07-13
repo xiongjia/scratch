@@ -16,7 +16,7 @@ FetchContent_MakeAvailable(googletest)
 set(ash_test_src test_main.cxx test_alloc.cxx)
 
 add_executable(ash_test ${ash_test_src})
-include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src)
 target_link_libraries(ash_test gtest_main libash)
 
 include(GoogleTest)

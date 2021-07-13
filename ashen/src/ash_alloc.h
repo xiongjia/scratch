@@ -4,6 +4,8 @@
 #ifndef _ASH_ALLOC_H_
 #define _ASH_ALLOC_H_ 1
 
+#include "ash_config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

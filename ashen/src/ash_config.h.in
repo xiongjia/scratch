@@ -1,0 +1,13 @@
+/**
+ *
+ */
+
+#ifndef _ASH_CONFIG_H_
+#define _ASH_CONFIG_H_ 1
+
+
+#define EXAMPLE "${EXAMPLE}"
+
+
+#endif /* !defined(_ASH_CONFIG_H_) */
+

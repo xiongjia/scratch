@@ -1,15 +1,29 @@
 /*
  */
 
+#include "ash_config.h"
+#include "ash_general.h"
 #include "ash_alloc.h"
-#include <stdio.h>
 
-void test_alloc(void) {
-  printf("lib alloc\n");
+#include <stdlib.h>
+#include <string.h>
+
+void * ash_alloc(size_t size) {
+  return malloc(size);
 }
 
+void * ash_calloc(size_t size) {
+  void *mem = ash_alloc(size);
+  if (NULL == mem) {
+    return NULL;
+  }
+  memset(mem, 0, size);
+  return mem;
+}
 
-const char* test_gtest(void) {
-  return "test3";
+void ash_free(void *mem) {
+  if (NULL != mem) {
+    free(mem);
+  }
 }
 

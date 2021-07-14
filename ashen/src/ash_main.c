@@ -18,7 +18,6 @@ int main(const int argc, const char **argv) {
   ash_log_destroy(log_context);
 #endif
   printf("test\n");
-  test_alloc();
   return 0;
 }
 

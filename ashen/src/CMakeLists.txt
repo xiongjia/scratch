@@ -1,6 +1,7 @@
 
 set(main_src ash_main.c)
-set(libash_src ash_alloc.c ash_alloc.h)
+set(libash_src 
+  ash_alloc.c ash_alloc.h ash_string.c ash_string.h)
 
 
 include_directories(${CMAKE_BINARY_DIR}/src)

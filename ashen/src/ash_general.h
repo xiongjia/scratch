@@ -5,8 +5,7 @@
 #define _ASH_GENERAL_H_ 1
 
 #include <stddef.h>
-
-typedef unsigned int  ash_uint_t;
+#include <string.h>
 
 #define ASH_OK        0
 #define ASH_ERROR    -1

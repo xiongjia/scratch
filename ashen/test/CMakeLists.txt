@@ -13,7 +13,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 
-set(ash_test_src test_main.cxx test_alloc.cxx)
+set(ash_test_src test_main.cxx
+  test_alloc.cxx test_string.cxx)
 
 add_executable(ash_test ${ash_test_src})
 include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src)

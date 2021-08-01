@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void * ash_alloc(size_t size) {
+ASH_DECLARE(void *) ash_alloc(size_t size) {
   return malloc(size);
 }
 
-void * ash_calloc(size_t size) {
+ASH_DECLARE(void *) ash_calloc(size_t size) {
   void *mem = ash_alloc(size);
   if (NULL == mem) {
     return NULL;
@@ -21,7 +21,7 @@ void * ash_calloc(size_t size) {
   return mem;
 }
 
-void ash_free(void *mem) {
+ASH_DECLARE(void) ash_free(void *mem) {
   if (NULL != mem) {
     free(mem);
   }

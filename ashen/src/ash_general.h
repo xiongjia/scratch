@@ -13,6 +13,9 @@
 #  define ASH_DECLARE(_type)  _type
 #endif /* defined(__cplusplus) */
 
+#define ASH_MAX(_x, _y) ((_x) > (_y) ? _x : _y)
+#define ASH_MIN(_x, _y) ((_x) < (_y) ? _x : _y)
+
 #define ASH_OK        0
 #define ASH_ERROR    -1
 

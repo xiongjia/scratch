@@ -111,6 +111,13 @@ ASH_DECLARE(void *) ash_pool_alloc(ash_pool_t *pool, size_t size) {
   return mem;
 }
 
+ASH_DECLARE(void *) ash_pool_calloc(ash_pool_t *pool, size_t size) {
+  void *mem = ash_pool_alloc(pool, size);
+  if (mem != NULL) {
+    memset(mem, 0, size);
+  }
+  return mem;
+}
 
 ASH_DECLARE(void) ash_pool_free(ash_pool_t *pool, void *mem) {
   ash_pool_data_large_t *current;

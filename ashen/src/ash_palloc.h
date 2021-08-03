@@ -16,6 +16,8 @@ ASH_DECLARE(void) ash_pool_destroy(ash_pool_t *pool);
 
 ASH_DECLARE(void *) ash_pool_alloc(ash_pool_t *pool, size_t size);
 
+ASH_DECLARE(void *) ash_pool_calloc(ash_pool_t *pool, size_t size);
+
 ASH_DECLARE(void) ash_pool_free(ash_pool_t *pool, void *mem);
 
 

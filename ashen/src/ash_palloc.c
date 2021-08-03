@@ -8,7 +8,7 @@
 typedef struct _ash_pool_data_t ash_pool_data_t;
 typedef struct _ash_pool_data_large_t ash_pool_data_large_t;
 
-#define ASH_POOL_MIN_SIZE  (1024 * 4)
+#define ASH_POOL_MIN_SIZE  (1024 * 8)
 
 struct _ash_pool_data_t {
   unsigned char *last;
@@ -29,9 +29,9 @@ struct _ash_pool_t {
 
 ASH_DECLARE(ash_pool_t *) ash_pool_create(size_t size) {
   const size_t data_max_size = ASH_MIN(ASH_POOL_MIN_SIZE, size);
-  const size_t alloc_sz = data_max_size + sizeof(ash_pool_t);
+  const size_t alloc_size = data_max_size + sizeof(ash_pool_t);
   ash_pool_t *pool = NULL;
-  const unsigned char *mem = ash_alloc(alloc_sz);
+  const unsigned char *mem = ash_alloc(alloc_size);
   if (mem == NULL) {
     return NULL;
   }
@@ -42,7 +42,7 @@ ASH_DECLARE(ash_pool_t *) ash_pool_create(size_t size) {
 
   pool->data.next = NULL;
   pool->data.last = (unsigned char *)(mem + sizeof(ash_pool_t));
-  pool->data.end = (unsigned char *)(mem + alloc_sz);
+  pool->data.end = (unsigned char *)(mem + alloc_size);
   return pool;
 }
 
@@ -75,13 +75,16 @@ ASH_DECLARE(void) ash_pool_destroy(ash_pool_t *pool) {
 ASH_DECLARE(void *) ash_pool_alloc(ash_pool_t *pool, size_t size) {
   ash_pool_data_large_t *large; 
   ash_pool_data_t *data;
+  void *mem;
+  const size_t alloc_size = ASH_MAX(size, 1);
 
   if (pool == NULL) {
     return NULL;
   }
 
   if (size > pool->data_max_size) {
-    large = ash_alloc(size + sizeof(ash_pool_data_large_t));
+    /* alloc large mem */
+    large = ash_alloc(alloc_size + sizeof(ash_pool_data_large_t));
     if (large == NULL) {
       return NULL;
     }
@@ -91,12 +94,21 @@ ASH_DECLARE(void *) ash_pool_alloc(ash_pool_t *pool, size_t size) {
     return large->alloc;
   }
 
-  /* XXX  TODO ALLOC from data
-   * for (data = pool->data; 
-   */ 
+  for (data = &(pool->data); data != NULL; data = data->next) {
+    if ((data->end - data->last) > alloc_size) {
+      mem = data->last;
+      data->last += alloc_size;
+      return mem;
+    }
+  }
 
- 
-  return NULL;
+  data = ash_alloc(sizeof(ash_pool_data_t) + pool->data_max_size);
+  mem = data + sizeof(ash_pool_data_t);
+  data->last = (unsigned char *)(data + sizeof(ash_pool_data_t) + alloc_size);
+  data->end = (unsigned char *)(data + sizeof(ash_pool_data_t) + pool->data_max_size);
+  data->next = pool->data.next;
+  pool->data.next = data;
+  return mem;
 }
 
 

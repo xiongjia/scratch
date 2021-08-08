@@ -9,6 +9,9 @@ TEST(AshenString, Basic) {
 
   char *dup = ash_str_duplicate(pool, "test data");
   EXPECT_STREQ(dup, "test data");
+
+  char *data = ash_str_sprintf(pool, "data %s", "abc");
+  EXPECT_STREQ(data, "data abc");
   ash_pool_destroy(pool);
 }
 

@@ -12,5 +12,8 @@
 
 ASH_DECLARE(char *) ash_str_duplicate(ash_pool_t *pool, const char *src);
 
+ASH_DECLARE_CDECL(char *) ash_str_sprintf(ash_pool_t *pool,
+    const char *fmt, ...);
+
 #endif /* !defined(_ASH_STRING_H_) */
 

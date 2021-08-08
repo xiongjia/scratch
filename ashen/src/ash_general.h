@@ -8,9 +8,11 @@
 #include <string.h>
 
 #ifdef __cplusplus
-#  define ASH_DECLARE(_type)  extern "C" _type
+#  define ASH_DECLARE(_type) extern "C" _type
+#  define ASH_DECLARE_CDECL(_type) extern "C" _type __cdecl
 #else 
-#  define ASH_DECLARE(_type)  _type
+#  define ASH_DECLARE(_type) _type
+#  define ASH_DECLARE_CDECL(_type) _type __cdecl
 #endif /* defined(__cplusplus) */
 
 #define ASH_MAX(_x, _y) ((_x) > (_y) ? _x : _y)

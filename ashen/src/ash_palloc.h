@@ -20,6 +20,5 @@ ASH_DECLARE(void *) ash_pool_calloc(ash_pool_t *pool, size_t size);
 
 ASH_DECLARE(void) ash_pool_free(ash_pool_t *pool, void *mem);
 
-
 #endif /* !defined(_ASH_PALLOC_H_) */
 

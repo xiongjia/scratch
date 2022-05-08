@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.11)
 
 # Project settings
 project(tachi)
-set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
   add_compile_options(
     $<$<CONFIG:>:/MT>
@@ -11,48 +10,15 @@ if(MSVC)
   )
 endif()
 
-# boost
-unset(Boost_LIBRARIES)
-set(Boost_USE_STATIC ON)
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost REQUIRED COMPONENTS
-  log log_setup thread date_time chrono filesystem system)
+file(GLOB SRC_GROUP_MAIN 
+  ".editorconfig"
+  "src/main.*")
 
-include_directories(
-  "${Boost_INCLUDE_DIRS}"
-  "${PROJECT_SOURCE_DIR}/src")
+source_group("main" FILES ${SRC_GROUP_MAIN})
 
-set(debug_libs
-  "${Boost_LOG_LIBRARY_DEBUG}"
-  "${Boost_LOG_SETUP_LIBRARY_DEBUG}"
-  "${Boost_THREAD_LIBRARY_DEBUG}"
-  "${Boost_DATE_TIME_LIBRARY_DEBUG}"
-  "${Boost_CHRONO_LIBRARY_DEBUG}"
-  "${Boost_FILESYSTEM_LIBRARY_DEBUG}"
-  "${Boost_SYSTEM_LIBRARY_DEBUG}")
-
-set(optimized_libs
-  "${Boost_LOG_LIBRARY_RELEASE}"
-  "${Boost_LOG_SETUP_LIBRARY_RELEASE}"
-  "${Boost_THREAD_LIBRARY_RELEASE}"
-  "${Boost_DATE_TIME_LIBRARY_RELEASE}"
-  "${Boost_CHRONO_LIBRARY_RELEASE}"
-  "${Boost_FILESYSTEM_LIBRARY_RELEASE}"
-  "${Boost_SYSTEM_LIBRARY_RELEASE}")
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-file(GLOB SOURCES_GROUP_CORE
-  ${PROJECT_SOURCE_DIR}/src/tachi-*.*)
-source_group("core" FILES ${SOURCES_GROUP_CORE})
-
+include_directories("${PROJECT_SOURCE_DIR}/src")
 
 add_executable(${PROJECT_NAME}
-  "${PROJECT_SOURCE_DIR}/src/tachi-general.hxx"
-  "${PROJECT_SOURCE_DIR}/src/tachi-log.hxx"
-  "${PROJECT_SOURCE_DIR}/src/tachi-log.cpp"
-  "${PROJECT_SOURCE_DIR}/src/main.cpp")
+  "${PROJECT_SOURCE_DIR}/src/main.c")
 
-target_link_libraries(${PROJECT_NAME}
-  debug "${debug_libs}" optimized "${optimized_libs}")
+target_link_libraries(${PROJECT_NAME})

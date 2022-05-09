@@ -8,6 +8,9 @@ if(MSVC)
     $<$<CONFIG:Debug>:/MTd>
     $<$<CONFIG:Release>:/MT>
   )
+
+  set(CMAKE_C_STANDARD_LIBRARIES "ws2_32.lib")
+  set(CMAKE_CXX_STANDARD_LIBRARIES "ws2_32.lib")
 endif()
 
 file(GLOB SRC_GROUP_MAIN 

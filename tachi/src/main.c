@@ -46,17 +46,32 @@ int main(const int argc, const char **argv) {
 
   listen(servSock, 32);
 
-  for (;;) {
+  int nonBlock = 1;
+  ioctlsocket(servSock, FIONBIO, &nonBlock);
+
+  FD_SET writeSet;
+  FD_SET readSet;
+
+  FD_ZERO(&readSet);
+  FD_ZERO(&writeSet);
+
+  FD_SET(servSock, &readSet);
+  int total = select(0, &readSet, &writeSet, NULL, NULL);
+  if (SOCKET_ERROR == total) {
+    printf("Select error\n");
+    return 1;
+  }
+
+  if (FD_ISSET(servSock, &readSet)) {
     SOCKADDR_IN addrClient;
     int nLenAddrClient = sizeof(SOCKADDR);
     SOCKET sockClient = accept(servSock, (SOCKADDR*)&addrClient, &nLenAddrClient);
-    if (sockClient == INVALID_SOCKET) {
-      printf("invalid socket\n");
-      continue;
-    }
 
+    int nonBlock = 1;
+    ioctlsocket(sockClient, FIONBIO, &nonBlock);
 
   }
+
   closesocket(servSock);
   WSACleanup();
   return 0;

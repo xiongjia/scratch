@@ -3,15 +3,12 @@
  */
 
 
+#include "tachi-proc.h"
+#include "tachi-config.h"
+
 #include <stdio.h>
 #include <winsock2.h>
 #include <ws2def.h>
-
-
-static void proc_init() {
-  WSADATA wsaData;
-  WSAStartup(MAKEWORD(2, 2), &wsaData);
-}
 
 void wrk() {
   FD_SET fd_read;
@@ -29,9 +26,10 @@ void wrk() {
 }
 
 int main(const int argc, const char **argv) {
-  proc_init();
+  tachi_proc_startup();
 
-  const u_short port = 8893;
+  tachi_config config;
+  config.port = 8893;
 
   // create socket 
   SOCKET servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -41,7 +39,7 @@ int main(const int argc, const char **argv) {
   memset(&sockAddr, 0, sizeof(sockAddr));
   sockAddr.sin_family = PF_INET;
   sockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-  sockAddr.sin_port = htons(port);
+  sockAddr.sin_port = htons(config.port);
   bind(servSock, &sockAddr, sizeof(struct sockaddr_in));
 
   listen(servSock, 32);
@@ -73,6 +71,7 @@ int main(const int argc, const char **argv) {
   }
 
   closesocket(servSock);
-  WSACleanup();
+
+  tachi_proc_cleanup();
   return 0;
 }

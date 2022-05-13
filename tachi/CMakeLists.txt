@@ -17,6 +17,7 @@ file(GLOB SRC_GROUP_MAIN
   ".editorconfig"
   "src/main.*"
   "src/tachi-proc.*"
+  "src/tachi-misc.*"
   "src/tachi-config.*")
 
 source_group("main" FILES ${SRC_GROUP_MAIN})
@@ -26,6 +27,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 add_executable(${PROJECT_NAME}
   "${PROJECT_SOURCE_DIR}/src/main.c"
   "${PROJECT_SOURCE_DIR}/src/tachi-proc.c" "${PROJECT_SOURCE_DIR}/src/tachi-proc.h"
+  "${PROJECT_SOURCE_DIR}/src/tachi-misc.c" "${PROJECT_SOURCE_DIR}/src/tachi-misc.h"
   "${PROJECT_SOURCE_DIR}/src/tachi-config.c" "${PROJECT_SOURCE_DIR}/src/tachi-config.h")
 
 target_link_libraries(${PROJECT_NAME})

@@ -5,6 +5,7 @@
 #define _TACHI_CONFIG_H_ 1
 
 typedef struct _tachi_config {
+  char *addr;
   unsigned short port;
 } tachi_config;
 

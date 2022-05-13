@@ -5,72 +5,67 @@
 
 #include "tachi-proc.h"
 #include "tachi-config.h"
+#include "tachi-misc.h"
 
 #include <stdio.h>
 #include <winsock2.h>
 #include <ws2def.h>
 
-void wrk() {
-  FD_SET fd_read;
+static void do_accept(SOCKET serv_sock) {
+  SOCKADDR_IN client_addr;
+  int addr_len = sizeof(SOCKADDR);
+  SOCKET sock_client;
 
+  sock_client = accept(serv_sock, (SOCKADDR*)&client_addr, &addr_len);
+  if (INVALID_SOCKET  == sock_client) {
+    printf("Invalid input connection\n");
+    return;
+  }
+  printf("new connection\n");
+  shutdown(sock_client, SD_BOTH);
+}
+
+static void main_loop(tachi_config* config, SOCKET serv_sock) {
   TIMEVAL tv;
-  tv.tv_sec = 10;
-  tv.tv_usec = 0;
+  fd_set rd_set;
+  int rs;
 
   for (;;) {
-    FD_ZERO(&fd_read);
+    FD_ZERO(&rd_set);
+    FD_SET(serv_sock, &rd_set);
+    tv.tv_sec = 30;
+    tv.tv_usec = 0;
 
-    // nRet = select(0, &fdRead, NULL, NULL, &tv);
+    printf("waiting ...\n");
+    rs = select(0, &rd_set, NULL, NULL, &tv);
+    if (SOCKET_ERROR == rs) {
+      continue;
+    }
 
+    if (FD_ISSET(serv_sock, &rd_set)) {
+      do_accept(serv_sock);
+    }
   }
+}
+
+static void work(tachi_config *config) {
+  SOCKET serv_sock;
+
+  serv_sock = create_listening(config->addr, config->port, 32);
+  if (INVALID_SOCKET == serv_sock) {
+    return;
+  }
+  main_loop(config, serv_sock);
+  closesocket(serv_sock);
 }
 
 int main(const int argc, const char **argv) {
   tachi_proc_startup();
 
   tachi_config config;
+  config.addr = "127.0.0.1";
   config.port = 8893;
-
-  // create socket 
-  SOCKET servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-  // bind
-  struct sockaddr_in sockAddr;
-  memset(&sockAddr, 0, sizeof(sockAddr));
-  sockAddr.sin_family = PF_INET;
-  sockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-  sockAddr.sin_port = htons(config.port);
-  bind(servSock, &sockAddr, sizeof(struct sockaddr_in));
-
-  listen(servSock, 32);
-
-  int nonBlock = 1;
-  ioctlsocket(servSock, FIONBIO, &nonBlock);
-
-  FD_SET writeSet;
-  FD_SET readSet;
-
-  FD_ZERO(&readSet);
-  FD_ZERO(&writeSet);
-
-  FD_SET(servSock, &readSet);
-  int total = select(0, &readSet, &writeSet, NULL, NULL);
-  if (SOCKET_ERROR == total) {
-    printf("Select error\n");
-    return 1;
-  }
-
-  if (FD_ISSET(servSock, &readSet)) {
-    SOCKADDR_IN addrClient;
-    int nLenAddrClient = sizeof(SOCKADDR);
-    SOCKET sockClient = accept(servSock, (SOCKADDR*)&addrClient, &nLenAddrClient);
-
-    int nonBlock = 1;
-    ioctlsocket(sockClient, FIONBIO, &nonBlock);
-
-  }
-
-  closesocket(servSock);
+  work(&config);
 
   tachi_proc_cleanup();
   return 0;

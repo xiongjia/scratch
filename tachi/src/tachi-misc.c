@@ -20,9 +20,10 @@ SOCKET create_listening(const char *addr,
   }
 
   opt_val = 1;
-  rs = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val));
+  rs = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
+    (const char *)&opt_val, sizeof(opt_val));
   if (SOCKET_ERROR == rs) {
-    printf("setsockopt error");
+    printf("setsockopt error\n");
     closesocket(sock);
     return INVALID_SOCKET;
   }

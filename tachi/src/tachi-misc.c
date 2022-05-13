@@ -9,12 +9,21 @@ SOCKET create_listening(const char *addr,
                         int backlog) {
   struct sockaddr_in sock_addr;
   SOCKET sock;
-  u_long non_blocking = 1;
+  u_long non_blocking;
+  int opt_val;
   int rs;
 
   sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (INVALID_SOCKET == sock) {
     // xxx add logs
+    return INVALID_SOCKET;
+  }
+
+  opt_val = 1;
+  rs = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val));
+  if (SOCKET_ERROR == rs) {
+    printf("setsockopt error");
+    closesocket(sock);
     return INVALID_SOCKET;
   }
 
@@ -25,24 +34,27 @@ SOCKET create_listening(const char *addr,
 
   rs = bind(sock, &sock_addr, sizeof(struct sockaddr_in));
   if (SOCKET_ERROR == rs) {
-    // xxx add logs
+    printf("bind error");
     closesocket(sock);
     return INVALID_SOCKET;
   }
 
   rs = listen(sock, backlog);
   if (SOCKET_ERROR == rs) {
-    // xxx add logs
+    printf("listen error");
     closesocket(sock);
     return INVALID_SOCKET;
   }
 
+#if 0
+  non_blocking = 1;
   rs = ioctlsocket(sock, FIONBIO, &non_blocking);
   if (SOCKET_ERROR == rs) {
-    // xxx add logs
+    printf("ioctlsocket error");
     closesocket(sock);
     return INVALID_SOCKET;
   }
+#endif
 
   return sock;
 }

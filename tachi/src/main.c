@@ -11,21 +11,26 @@
 #include <winsock2.h>
 #include <ws2def.h>
 
-static void do_accept(SOCKET serv_sock) {
+static int connection_count = 0;
+
+static void do_accept(tachi_config* config, SOCKET serv_sock) {
   SOCKADDR_IN client_addr;
   int addr_len = sizeof(SOCKADDR);
   SOCKET sock_client;
 
   sock_client = accept(serv_sock, (SOCKADDR*)&client_addr, &addr_len);
   if (INVALID_SOCKET  == sock_client) {
-    printf("Invalid input connection\n");
+    printf("[%d] Invalid input connection\n", config->pid);
     return;
   }
-  printf("new connection\n");
+
+  printf("[%d] new connection (%u)\n", config->pid, ++connection_count);
+
+  // Sleep(1000 * 30);
   shutdown(sock_client, SD_BOTH);
 }
 
-static void main_loop(tachi_config* config, SOCKET serv_sock) {
+static void main_loop(tachi_config *config, SOCKET serv_sock) {
   TIMEVAL tv;
   fd_set rd_set;
   int rs;
@@ -36,14 +41,14 @@ static void main_loop(tachi_config* config, SOCKET serv_sock) {
     tv.tv_sec = 30;
     tv.tv_usec = 0;
 
-    printf("waiting ...\n");
+    printf("[%d] waiting ...\n", config->pid);
     rs = select(0, &rd_set, NULL, NULL, &tv);
     if (SOCKET_ERROR == rs) {
       continue;
     }
 
     if (FD_ISSET(serv_sock, &rd_set)) {
-      do_accept(serv_sock);
+      do_accept(config, serv_sock);
     }
   }
 }
@@ -65,6 +70,7 @@ int main(const int argc, const char **argv) {
   tachi_config config;
   config.addr = "127.0.0.1";
   config.port = 8893;
+  config.pid = GetCurrentProcessId();
   work(&config);
 
   tachi_proc_cleanup();

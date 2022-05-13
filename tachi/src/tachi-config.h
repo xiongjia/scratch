@@ -7,6 +7,7 @@
 typedef struct _tachi_config {
   char *addr;
   unsigned short port;
+  int pid;
 } tachi_config;
 
 

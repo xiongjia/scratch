@@ -13,11 +13,14 @@ if(MSVC)
 endif()
 
 file(GLOB SRC_GROUP_CORE_LIB
+  "src/tachi-general.*"
+  "src/tachi-str.*"
   "src/tachi-proc.*"
   "src/tachi-misc.*"
   "src/tachi-config.*")
 
 file(GLOB SRC_GROUP_TEST
+  "src/tachi-test-str.*"
   "src/tachi-test.*")
 
 file(GLOB SRC_GROUP_MAIN ".editorconfig" "mian.c")
@@ -27,6 +30,9 @@ source_group("main" FILES ${SRC_GROUP_MAIN})
 source_group("test" FILES ${SRC_GROUP_TEST})
 
 add_library(libtachi STATIC
+  "${PROJECT_SOURCE_DIR}/src/tachi-general.h"
+  "${PROJECT_SOURCE_DIR}/src/tachi-str.c"
+  "${PROJECT_SOURCE_DIR}/src/tachi-str.h"
   "${PROJECT_SOURCE_DIR}/src/tachi-proc.c"
   "${PROJECT_SOURCE_DIR}/src/tachi-proc.h"
   "${PROJECT_SOURCE_DIR}/src/tachi-misc.c"
@@ -40,6 +46,8 @@ add_executable(${PROJECT_NAME}
   "${PROJECT_SOURCE_DIR}/src/main.c")
 
 add_executable(tachitest
+  "${PROJECT_SOURCE_DIR}/src/tachi-test-str.c"
+  "${PROJECT_SOURCE_DIR}/src/tachi-test.h"
   "${PROJECT_SOURCE_DIR}/src/tachi-test.c")
 
 target_link_libraries(${PROJECT_NAME} libtachi)

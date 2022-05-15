@@ -17,6 +17,7 @@ file(GLOB SRC_GROUP_CORE_LIB
   "src/tachi-str.*"
   "src/tachi-proc.*"
   "src/tachi-misc.*"
+  "src/tachi-mm.*"
   "src/tachi-config.*")
 
 file(GLOB SRC_GROUP_TEST
@@ -31,6 +32,8 @@ source_group("test" FILES ${SRC_GROUP_TEST})
 
 add_library(libtachi STATIC
   "${PROJECT_SOURCE_DIR}/src/tachi-general.h"
+  "${PROJECT_SOURCE_DIR}/src/tachi-mm.c"
+  "${PROJECT_SOURCE_DIR}/src/tachi-mm.h"
   "${PROJECT_SOURCE_DIR}/src/tachi-str.c"
   "${PROJECT_SOURCE_DIR}/src/tachi-str.h"
   "${PROJECT_SOURCE_DIR}/src/tachi-proc.c"

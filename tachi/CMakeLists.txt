@@ -54,7 +54,7 @@ add_executable(tachitest
   "${PROJECT_SOURCE_DIR}/src/tachi-test.c")
 
 target_link_libraries(${PROJECT_NAME} libtachi)
-
+target_link_libraries(tachitest libtachi)
 
 enable_testing()
 add_test(NAME tachitest_test1 COMMAND tachitest all)

@@ -40,7 +40,17 @@ tachi_pool_t* tachi_pool_create(size_t size) {
 }
 
 void tachi_pool_destroy(tachi_pool_t *pool) {
-  /* TODO free pool */
+  tachi_bucket_t *bucket;
+  if (pool == NULL || pool->bucket == NULL) {
+    return;
+  }
+  bucket = pool->bucket->next;
+  for (; bucket != NULL;) {
+    pool->bucket->next = bucket->next;
+    tachi_free(bucket);
+    bucket = pool->bucket->next;
+  }
+  tachi_free(pool);
 }
 
 void* tachi_pool_alloc(tachi_pool_t *pool, size_t size) {
@@ -50,11 +60,11 @@ void* tachi_pool_alloc(tachi_pool_t *pool, size_t size) {
   size_t allcate_sz;
   uchar_t *mm;
 
-  if (pool == NULL) {
+  if (pool == NULL || pool->bucket == NULL) {
     return NULL;
   }
 
-  bucket = pool == NULL ? NULL : pool->bucket;
+  bucket = pool->bucket;
   for (; bucket != NULL; bucket = bucket->next) {
     free_sz = bucket->last - bucket->current;
     if (free_sz < size) {
@@ -75,7 +85,7 @@ void* tachi_pool_alloc(tachi_pool_t *pool, size_t size) {
   bucket->current = mm + sizeof(tachi_bucket_t) + size;
   bucket->hdr = mm + sizeof(tachi_bucket_t);
   bucket->last = mm + allcate_sz;
-  bucket->next = pool->bucket;
-  pool->bucket = bucket;
+  bucket->next = pool->bucket->next;
+  pool->bucket->next = bucket;
   return bucket->hdr;
 }

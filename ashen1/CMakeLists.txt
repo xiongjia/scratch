@@ -12,8 +12,17 @@ if(MSVC)
   set(CMAKE_CXX_STANDARD_LIBRARIES "ws2_32.lib")
 endif()
 
+include_directories("${PROJECT_SOURCE_DIR}/src")
+
+add_library(libashen1 STATIC
+  "${PROJECT_SOURCE_DIR}/src/ash_misc.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_misc.h")
+
 add_executable(${PROJECT_NAME}
   "${PROJECT_SOURCE_DIR}/src/main.c")
 
-target_link_libraries(${PROJECT_NAME})
+add_executable(ashen1-tests
+  "${PROJECT_SOURCE_DIR}/src/ash_tests.c")
 
+target_link_libraries(${PROJECT_NAME} libashen1)
+target_link_libraries(ashen1-tests libashen1)

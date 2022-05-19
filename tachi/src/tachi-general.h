@@ -12,6 +12,7 @@ typedef unsigned char uchar_t;
 typedef char          char_t;
 typedef unsigned long uint32_t;
 typedef long          int32_t;
-
+typedef unsigned long ulong_t;
+typedef long          long_t;
 
 #endif /* !defined(_TACHI_GENERAL_H_) */

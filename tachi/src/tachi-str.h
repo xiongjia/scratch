@@ -14,6 +14,8 @@ typedef struct _tachi_str {
 
 #define tachi_string(_str)  { sizeof(_str) - 1, (uchar_t*) _str }
 
+#define tachi_str_is_empty(_str) (_str == NULL || _str[0] = '\0')
+
 char* tachi_pstrdup(tachi_pool_t *pool, const char *src);
 
 #endif /* !defined(_TACHI_STR_H_) */

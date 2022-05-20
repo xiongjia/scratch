@@ -15,6 +15,9 @@ endif()
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
 add_library(libashen1 STATIC
+  "${PROJECT_SOURCE_DIR}/src/ash_types.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_mm.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_mm.h"
   "${PROJECT_SOURCE_DIR}/src/ash_misc.c"
   "${PROJECT_SOURCE_DIR}/src/ash_misc.h")
 

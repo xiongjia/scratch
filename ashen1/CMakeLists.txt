@@ -16,6 +16,12 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 
 add_library(libashen1 STATIC
   "${PROJECT_SOURCE_DIR}/src/ash_types.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_time.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_time.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_errno.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_errno.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_log.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_log.h"
   "${PROJECT_SOURCE_DIR}/src/ash_mm.c"
   "${PROJECT_SOURCE_DIR}/src/ash_mm.h"
   "${PROJECT_SOURCE_DIR}/src/ash_str.c"
@@ -28,6 +34,7 @@ add_executable(${PROJECT_NAME}
 
 add_executable(ashen1-tests
   "${PROJECT_SOURCE_DIR}/src/ash_test_str.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_test_time.c"
   "${PROJECT_SOURCE_DIR}/src/ash_tests.h"
   "${PROJECT_SOURCE_DIR}/src/ash_tests.c")
 

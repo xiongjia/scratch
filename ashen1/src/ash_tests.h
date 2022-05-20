@@ -10,5 +10,6 @@ typedef struct _ash_unit_test_s {
 } ash_unit_test_t;
 
 extern ash_unit_test_t unittest_simple_str;
+extern ash_unit_test_t unittest_simple_time;
 
 #endif /* !defined(_ASH_TESTS_H_) */

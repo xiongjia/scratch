@@ -1,6 +1,7 @@
 /*
  */
 
+#include <stdio.h>
 #include "ash_mm.h"
 #include "ash_str.h"
 #include "ash_tests.h"

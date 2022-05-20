@@ -5,6 +5,7 @@
 #include <string.h>
 #include "ash_types.h"
 #include "ash_tests.h"
+#include "ash_log.h"
 
 static ash_unit_test_t *ALL_TESTS[] = {
   &unittest_simple_str,
@@ -32,7 +33,18 @@ static void run_tests(const char *match) {
   }
 }
 
+static void log_write(ash_log_t* log, time_t ts, const char* msg) {
+  printf("%s\n", msg);
+}
+
+ash_log_t LOG = {
+  NULL, "unit-tests", ASH_LOG_ALL, log_write
+};
+
 int main(const int argc, const char **argv) {
+
+  ASH_LOG_WRITE(&LOG, ASH_LOG_DBG, "test %s", "data");
+
   run_tests(argc <= 1 ? NULL : argv[1]);
   return 0;
 }

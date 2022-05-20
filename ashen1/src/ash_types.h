@@ -12,6 +12,10 @@ typedef char char_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;
 
+typedef char boolean_t;
+#define  ASH_FALSE   ((boolean_t)0)
+#define  ASH_TRUE    ((boolean_t)1)
+
 #ifndef NULL
 # define NULL   ((void *)0)
 #endif

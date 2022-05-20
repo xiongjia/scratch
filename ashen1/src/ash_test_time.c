@@ -1,6 +1,7 @@
 /*
  */
 
+#include <stdio.h>
 #include "ash_tests.h"
 #include "ash_time.h"
 

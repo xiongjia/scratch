@@ -21,7 +21,7 @@ static void run_tests(ash_unit_test_context_t *ctx) {
   ash_unit_test_t* unit_test;
   int32_t i;
 
-  for (i = 0; i < sizeof(ALL_TESTS) / sizeof(ALL_TESTS[0]); ++i) {
+  for (i = 0; i < ASH_ARRAY_COUNT(ALL_TESTS); ++i) {
     unit_test = ALL_TESTS[i];
     if (ctx->test_filter == NULL) {
       run_test(ctx, unit_test);

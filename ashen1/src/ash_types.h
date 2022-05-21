@@ -20,5 +20,7 @@ typedef long int32_t;
 # define NULL   ((void *)0)
 #endif
 
+#define ASH_ARRAY_COUNT(_src) (sizeof(_src) / sizeof(_src[0]))
+
 #endif /* !defined(_ASH_TYPES_H_) */
 

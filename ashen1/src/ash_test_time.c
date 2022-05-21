@@ -5,7 +5,7 @@
 #include "ash_tests.h"
 #include "ash_time.h"
 
-void test_simple_time(void) {
+static void test_simple_time(ash_unit_test_context_t* ctx) {
   time_t now = ash_time_now();
   char buf[512];
 

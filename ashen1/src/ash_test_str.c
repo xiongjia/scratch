@@ -6,7 +6,7 @@
 #include "ash_str.h"
 #include "ash_tests.h"
 
-void test_simple_str(void) {
+static void test_simple_str(ash_unit_test_context_t* ctx) {
   ash_pool_t *pool;
   char *dup;
 

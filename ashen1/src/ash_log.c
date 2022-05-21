@@ -4,6 +4,7 @@
 #include <string.h>
 #include <wtypes.h>
 #include "ash_log.h"
+#include "ash_file.h"
 
 #define ASH_LOG_BUF_SIZE   (1024 * 2)
 
@@ -21,18 +22,19 @@ void ash_log_write_nofmt(const char* src, const size_t line,
                          ash_log_t* log, ash_log_opt_t mask,
                          const char* msg) {
   time_t now;
+  const char *src_filename;
   if (ash_log_skip(log, mask)) {
     return;
   }
+  src_filename = ash_file_get_filename(src);
   now = time(&now);
-  log->append(log, now, msg == NULL ? "" : msg);
+  log->append(log, src_filename, line, now, msg == NULL ? "" : msg);
 }
 
 void ash_log_write(const char* src, const size_t line,
                    ash_log_t* log, ash_log_opt_t mask,
                    const char* fmt, ...) {
   va_list args;
-
   if (ash_log_skip(log, mask)) {
     return;
   }
@@ -45,7 +47,6 @@ void ash_log_write_vfmt(const char* src, const size_t line,
                         ash_log_t* log, ash_log_opt_t mask,
                         const char* fmt, va_list args) {
   char buf[ASH_LOG_BUF_SIZE];
-
   if (ash_log_skip(log, mask)) {
     return;
   }

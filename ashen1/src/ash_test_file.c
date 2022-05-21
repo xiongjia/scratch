@@ -4,9 +4,11 @@
 #include "ash_tests.h"
 #include "ash_file.h"
 
-void test_filename(void) {
+#include <stdio.h>
+
+static void test_filename(ash_unit_test_context_t* ctx) {
   const char *src = __FILE__;
-  char *name;
+  const char *name;
    
   name = ash_file_get_filename(src);
   printf("file name %s\n", name);

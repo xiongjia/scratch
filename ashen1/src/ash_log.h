@@ -21,7 +21,8 @@ struct _ash_log_s {
   void *context;
   const char *name;
   ash_log_opt_t level_filter;
-  void (*append)(ash_log_t *log, time_t ts, const char *msg);
+  void (*append)(ash_log_t *log, const char *src, size_t line, time_t ts,
+                 const char *msg);
 };
 
 void ash_log_write_nofmt(const char *src, const size_t line,

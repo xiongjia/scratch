@@ -11,5 +11,6 @@ typedef struct _ash_unit_test_s {
 
 extern ash_unit_test_t unittest_simple_str;
 extern ash_unit_test_t unittest_simple_time;
+extern ash_unit_test_t unittest_filename;
 
 #endif /* !defined(_ASH_TESTS_H_) */

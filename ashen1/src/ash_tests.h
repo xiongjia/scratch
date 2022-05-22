@@ -16,7 +16,7 @@ typedef struct _ash_unit_test_context_s {
 
 typedef struct _ash_unit_test_s {
   const char *test_name;
-  void (*invoke_test)(ash_unit_test_context_t *ctx);
+  void (*invoke)(ash_unit_test_context_t *ctx);
 } ash_unit_test_t;
 
 extern ash_unit_test_t unittest_simple_str;

@@ -12,13 +12,14 @@ static ash_unit_test_t *ALL_TESTS[] = {
   &unittest_filename
 };
 
-static void run_test(ash_unit_test_context_t* ctx, ash_unit_test_t* unit_test) {
+static void run_test(ash_unit_test_context_t *ctx,
+                     ash_unit_test_t *unit_test) {
   printf("Running unit test %s\n", unit_test->test_name);
-  unit_test->invoke_test(ctx);
+  unit_test->invoke(ctx);
 }
 
 static void run_tests(ash_unit_test_context_t *ctx) {
-  ash_unit_test_t* unit_test;
+  ash_unit_test_t *unit_test;
   int32_t i;
 
   for (i = 0; i < ASH_ARRAY_COUNT(ALL_TESTS); ++i) {
@@ -33,8 +34,8 @@ static void run_tests(ash_unit_test_context_t *ctx) {
   }
 }
 
-static void log_write(ash_log_t* log, const char* src, size_t line, time_t ts,
-                      const char* msg) {
+static void log_write(ash_log_t *log, const char *src, size_t line, time_t ts,
+                      const char *msg) {
   printf("%s\n", msg);
 }
 

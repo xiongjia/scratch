@@ -17,6 +17,6 @@ static void test_simple_str(ash_unit_test_context_t* ctx) {
 }
 
 ash_unit_test_t unittest_simple_str = {
-  "simple-string",
-  test_simple_str
+  .test_name = "simple-string",
+  .invoke = test_simple_str
 };

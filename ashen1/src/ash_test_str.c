@@ -19,6 +19,9 @@ static void test_simple_str(ash_unit_test_context_t *ctx) {
 
   sz = ash_snprintf(buf, sizeof(buf), "test");
   printf("d: %s, sz %d\n", buf, sz);
+
+  sz = ash_snprintf(buf, sizeof(buf), "str: %% %s", "abc");
+  printf("d: %s, sz %d\n", buf, sz);
 }
 
 ash_unit_test_t unittest_simple_str = {

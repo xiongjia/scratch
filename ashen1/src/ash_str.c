@@ -20,14 +20,37 @@ static void ash_vformatter_inst_char(ash_vformatter_buff_t *vbuf, char ch) {
   vbuf->count++;
 }
 
+static void ash_vformatter_inst_str(ash_vformatter_buff_t *vbuf, uchar_t *val) {
+  size_t idx;
+  for (idx = 0; val[idx] != '\0'; ++idx) {
+    ash_vformatter_inst_char(vbuf, val[idx]);
+  }
+}
+
 static size_t ash_vformatter(ash_vformatter_buff_t *vbuf, const char *fmt, va_list ap) {
+  uchar_t *val_str;
+
   while (*fmt) {
     if (*fmt != '%') {
       ash_vformatter_inst_char(vbuf, *fmt);
       fmt++;
       continue;
     }
-    // TODO
+
+    fmt++;
+    switch (*fmt) {
+    case '%':
+      ash_vformatter_inst_char(vbuf, '%');
+      fmt++;
+      break;
+    case 's':
+      val_str = va_arg(ap, uchar_t*);
+      ash_vformatter_inst_str(vbuf, val_str);
+      fmt++;
+      break;
+    default:
+      break;
+    }
   }
   ash_vformatter_inst_char(vbuf, '\0');
   return vbuf->count;

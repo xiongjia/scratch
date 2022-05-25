@@ -14,7 +14,7 @@ static void test_filename(ash_unit_test_context_t* ctx) {
   printf("file name %s\n", name);
 }
 
-ash_unit_test_t unittest_filename = {
+ash_unit_test_case_t unittest_filename = {
   "simple-filename",
   test_filename
 };

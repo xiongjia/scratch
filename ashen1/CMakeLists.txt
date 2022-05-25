@@ -38,6 +38,8 @@ add_executable(ashen1-tests
   "${PROJECT_SOURCE_DIR}/src/ash_test_str.c"
   "${PROJECT_SOURCE_DIR}/src/ash_test_time.c"
   "${PROJECT_SOURCE_DIR}/src/ash_test_file.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_tests_util.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_tests_util.c"
   "${PROJECT_SOURCE_DIR}/src/ash_tests.h"
   "${PROJECT_SOURCE_DIR}/src/ash_tests.c")
 

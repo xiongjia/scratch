@@ -24,7 +24,7 @@ static void test_simple_str(ash_unit_test_context_t *ctx) {
   printf("d: %s, sz %d\n", buf, sz);
 }
 
-ash_unit_test_t unittest_simple_str = {
+ash_unit_test_case_t unittest_simple_str = {
   .test_name = "simple-string",
   .invoke = test_simple_str
 };

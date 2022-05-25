@@ -6,20 +6,20 @@
 #include "ash_tests.h"
 #include "ash_time.h"
 
-static ash_unit_test_t *ALL_TESTS[] = {
+static ash_unit_test_case_t *ALL_TESTS[] = {
   &unittest_simple_str,
   &unittest_simple_time,
   &unittest_filename
 };
 
 static void run_test(ash_unit_test_context_t *ctx,
-                     ash_unit_test_t *unit_test) {
+                     ash_unit_test_case_t *unit_test) {
   printf("Running unit test %s\n", unit_test->test_name);
   unit_test->invoke(ctx);
 }
 
 static void run_tests(ash_unit_test_context_t *ctx) {
-  ash_unit_test_t *unit_test;
+  ash_unit_test_case_t *unit_test;
   int32_t i;
 
   for (i = 0; i < ASH_ARRAY_COUNT(ALL_TESTS); ++i) {

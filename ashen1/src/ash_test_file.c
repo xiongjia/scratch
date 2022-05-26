@@ -6,7 +6,8 @@
 
 #include <stdio.h>
 
-static void test_filename(ash_unit_test_context_t* ctx) {
+static void test_filename(ash_unit_test_context_t* ctx,
+                          ash_unit_test_case_context_t *test_case) {
   const char *src = __FILE__;
   const char *name;
    

@@ -16,6 +16,8 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 
 add_library(libashen1 STATIC
   "${PROJECT_SOURCE_DIR}/src/ash_types.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_vfmt.c"
+  "${PROJECT_SOURCE_DIR}/src/ash_vfmt.h"
   "${PROJECT_SOURCE_DIR}/src/ash_time.c"
   "${PROJECT_SOURCE_DIR}/src/ash_time.h"
   "${PROJECT_SOURCE_DIR}/src/ash_errno.c"

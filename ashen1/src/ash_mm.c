@@ -18,6 +18,10 @@ struct _ash_pool_s {
   ash_bucket_t *buckets;
 };
 
+ash_pool_t* ash_pool_create_default(void) {
+  return ash_pool_create(0);
+}
+
 ash_pool_t* ash_pool_create(size_t size) {
   const size_t req_sz = size + sizeof(ash_pool_t) + sizeof(ash_bucket_t);
   size_t allcate_sz; 

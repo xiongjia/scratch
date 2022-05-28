@@ -16,10 +16,12 @@ static void run_test(ash_unit_test_context_t *ctx,
                      ash_unit_test_case_t *unit_test) {
   ash_unit_test_case_context_t test_case = {
     .failed = ASH_FALSE,
-    .verbose = ASH_TRUE
+    .verbose = ASH_TRUE,
+    .pool = ash_pool_create_default()
   };
   printf("Running unit test %s\n", unit_test->test_name);
   unit_test->invoke(ctx, &test_case);
+  ash_pool_destroy(test_case.pool);
 }
 
 static void run_tests(ash_unit_test_context_t *ctx) {

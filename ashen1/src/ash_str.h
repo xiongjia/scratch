@@ -10,9 +10,10 @@
 
 char *ash_pstrdup(ash_pool_t *pool, const char *src);
 
-size_t ash_vsnprintf(char *buf, size_t buf_size, const char *fmt, va_list ap);
+char *ash_pstrcat(ash_pool_t *pool, ...);
 
-size_t ash_snprintf(char *buf, size_t buf_size, const char *fmt, ...);
+size_t ash_vsnprintf(char *buf, size_t buf_sz, const char *fmt, va_list ap);
 
+size_t ash_snprintf(char *buf, size_t buf_sz, const char *fmt, ...);
 
 #endif /* !defined(_ASH_STR_H_) */

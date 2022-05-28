@@ -34,9 +34,6 @@ size_t ash_vformatter(ash_vfmt_buff_t *vbuf, const char *fmt, va_list ap) {
   char ch;
 
   while (ch = *fmt++) {
-    if ('\\' == ch) {
-      continue;
-    }
     if ('%' != ch) {
       ash_vfmt_append_char(vbuf, ch);
       continue;
@@ -49,8 +46,14 @@ size_t ash_vformatter(ash_vfmt_buff_t *vbuf, const char *fmt, va_list ap) {
     case '%':
       ash_vfmt_append_char(vbuf, '%');
       break;
+    case 'c':
+      ash_vfmt_append_char(vbuf, (char)va_arg(ap, int));
+      break;
     case 's':
       ash_vfmt_append_str(vbuf, va_arg(ap, uchar_t*));
+      break;
+    case 'd':
+
       break;
     default:
       break;

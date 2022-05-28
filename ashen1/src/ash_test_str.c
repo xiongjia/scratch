@@ -25,8 +25,10 @@ static void test_simple_str(ash_unit_test_context_t *ctx,
   sz = ash_snprintf(buf, 1, "test");
   ASHTU_SIZE_EQU(tc, (size_t)-1, sz);
 
-  ash_snprintf(buf, sizeof(buf), "str: %% %s%", "abc");
-  ASHTU_STR_EQU(tc, "str: % abc", buf);
+  ash_snprintf(buf, sizeof(buf), "str: %% %c %s%", '1', "abc");
+  ASHTU_STR_EQU(tc, "str: % 1 abc", buf);
+  ash_snprintf(buf, sizeof(buf), "test\\ - \n");
+  ASHTU_STR_EQU(tc, "test\\ - \n", buf);
 }
 
 ash_unit_test_case_t unittest_simple_str = {

@@ -3,8 +3,10 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "ash_tests.h"
 #include "ash_time.h"
+#include "ash_file.h"
 
 static ash_unit_test_case_t *ALL_TESTS[] = {
   &unittest_simple_str,
@@ -19,7 +21,9 @@ static void run_test(ash_unit_test_context_t *ctx,
     .verbose = ASH_TRUE,
     .pool = ash_pool_create_default()
   };
-  printf("Running unit test %s\n", unit_test->test_name);
+
+  ASH_LOG_WRITE(ctx->log, ASH_LOG_INFO,
+    "Test case = %s", unit_test->test_name);
   unit_test->invoke(ctx, &test_case);
   ash_pool_destroy(test_case.pool);
 }
@@ -40,9 +44,9 @@ static void run_tests(ash_unit_test_context_t *ctx) {
   }
 }
 
-static void log_write(ash_log_t *log, const char *src, size_t line, time_t ts,
-                      const char *msg) {
-  printf("%s\n", msg);
+static void log_write(ash_log_t *log, const char *src, size_t line,
+                      time_t ts, const char *msg) {
+  ash_file_write_stdout("%s\n", msg);
 }
 
 int main(const int argc, const char **argv) {

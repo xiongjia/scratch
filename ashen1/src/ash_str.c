@@ -49,15 +49,15 @@ char *ash_pstrcat(ash_pool_t *pool, ...) {
   return rt;
 }
 
-size_t ash_vsnprintf(char *buf, size_t buf_sz, const char *fmt, va_list ap) {
+int32_t ash_vsnprintf(char *buf, size_t buf_sz, const char *fmt, va_list ap) {
   ash_vfmt_buff_t vbuf;
   ASH_VFMT_BUFF_INIT(&vbuf, buf, buf_sz)
   return ash_vformatter(&vbuf, fmt, ap);
 }
 
-size_t ash_snprintf(char *buf, size_t buf_sz, const char *fmt, ...) {
+int32_t ash_snprintf(char *buf, size_t buf_sz, const char *fmt, ...) {
   va_list args;
-  size_t res;
+  int32_t res;
 
   va_start(args, fmt);
   res = ash_vsnprintf(buf, buf_sz, fmt, args);

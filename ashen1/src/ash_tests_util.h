@@ -35,10 +35,17 @@ void ash_testutil_size_equal(ash_unit_test_case_context_t *tc,
                              const size_t expected, const size_t actual,
                              const char *src, const int line);
 
+void ash_testutil_int32_equal(ash_unit_test_case_context_t *tc,
+                              const int32_t expected, const int32_t actual,
+                              const char *src, const int line);
+
 #define ASHTU_STR_EQU(_tc, _expected, _actual) \
   ash_testutil_str_equal(_tc, _expected, _actual, __FILE__, __LINE__)
 
 #define ASHTU_SIZE_EQU(_tc, _expected, _actual) \
   ash_testutil_size_equal(_tc, _expected, _actual, __FILE__, __LINE__)
+
+#define ASHTU_INT32_EQU(_tc, _expected, _actual) \
+  ash_testutil_int32_equal(_tc, _expected, _actual, __FILE__, __LINE__)
 
 #endif /* !defined(_ASH_TESTS_UTIL_H_) */

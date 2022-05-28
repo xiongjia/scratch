@@ -98,7 +98,7 @@ static void ash_vfmt_append_num(ash_vfmt_buff_t *vbuf, uint64_t num,
   }
 }
 
-size_t ash_vformatter(ash_vfmt_buff_t *vbuf, const char *fmt, va_list ap) {
+int32_t ash_vformatter(ash_vfmt_buff_t *vbuf, const char *fmt, va_list ap) {
   uchar_t zero;
   uint32_t width;
   uint64_t ui64;
@@ -171,8 +171,8 @@ size_t ash_vformatter(ash_vfmt_buff_t *vbuf, const char *fmt, va_list ap) {
     vbuf->flush(vbuf->context, vbuf->buf, (vbuf->cur - vbuf->buf), ASH_TRUE);
   }
   if (NULL == vbuf->buf || 0 == vbuf->buf_sz) {
-    return vbuf->count;
+    return (int32_t)vbuf->count;
   } else {
-    return vbuf->failed ? (size_t)-1 : vbuf->count;
+    return vbuf->failed ? -1 : (int32_t)vbuf->count;
   }
 }

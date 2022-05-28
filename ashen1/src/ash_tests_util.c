@@ -39,3 +39,18 @@ void ash_testutil_size_equal(ash_unit_test_case_context_t *tc,
   ash_file_write_stderr("[%s:%d]: expected <%llu>, but saw <%llu>\n",
     ash_file_get_filename(src), line, expected, actual);
 }
+
+void ash_testutil_int32_equal(ash_unit_test_case_context_t *tc,
+                              const int32_t expected, const int32_t actual,
+                              const char *src, const int line) {
+  if (expected == actual) {
+    return;
+  }
+
+  tc->failed = ASH_TRUE;
+  if (!tc->verbose) {
+    return;
+  }
+  ash_file_write_stderr("[%s:%d]: expected <%d>, but saw <%d>\n",
+    ash_file_get_filename(src), line, expected, actual);
+}

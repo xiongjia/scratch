@@ -8,7 +8,7 @@
 
 static void test_simple_str(ash_unit_test_context_t *ctx,
                             ash_unit_test_case_context_t *tc) {
-  size_t sz;
+  int32_t sz;
   char buf[1024];
   char *dup;
 
@@ -19,11 +19,11 @@ static void test_simple_str(ash_unit_test_context_t *ctx,
 
   sz = ash_snprintf(buf, sizeof(buf), "test");
   ASHTU_STR_EQU(tc, "test", buf);
-  ASHTU_SIZE_EQU(tc, 5, sz);
+  ASHTU_INT32_EQU(tc, 5, sz);
   sz = ash_snprintf(NULL, 0, "test");
-  ASHTU_SIZE_EQU(tc, 5, sz);
+  ASHTU_INT32_EQU(tc, 5, sz);
   sz = ash_snprintf(buf, 1, "test");
-  ASHTU_SIZE_EQU(tc, (size_t)-1, sz);
+  ASHTU_INT32_EQU(tc, -1, sz);
 
   ash_snprintf(buf, sizeof(buf), "str: %% %c %s%", '1', "abc");
   ASHTU_STR_EQU(tc, "str: % 1 abc", buf);

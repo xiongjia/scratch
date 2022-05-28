@@ -31,7 +31,7 @@ typedef struct _ash_vfmt_buff_s {
 #define ASH_VFMT_BUFF_INIT(_vbuf, _buf, _buf_sz) \
   ASH_VFMT_BUFF_INIT_WITH_FLUSH(_vbuf, _buf, _buf_sz, NULL, NULL);
 
-size_t ash_vformatter(ash_vfmt_buff_t *vbuf,
-                      const char *fmt, va_list ap);
+int32_t ash_vformatter(ash_vfmt_buff_t *vbuf,
+                       const char *fmt, va_list ap);
 
 #endif /* !defined(_ASH_VFMT_H_) */

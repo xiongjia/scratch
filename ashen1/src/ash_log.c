@@ -1,12 +1,11 @@
 /**
  */
 
-#include <string.h>
-#include <wtypes.h>
+#include "ash_str.h"
 #include "ash_log.h"
 #include "ash_file.h"
 
-#define ASH_LOG_BUF_SIZE   (1024 * 2)
+#define ASH_LOG_BUF_SIZE   1024
 
 boolean_t ash_log_skip(ash_log_t* log, ash_log_opt_t mask) {
   if (log == NULL || log->append == NULL) {
@@ -46,10 +45,15 @@ void ash_log_write(const char* src, const size_t line,
 void ash_log_write_vfmt(const char* src, const size_t line,
                         ash_log_t* log, ash_log_opt_t mask,
                         const char* fmt, va_list args) {
+  int32_t sz;
   char buf[ASH_LOG_BUF_SIZE];
+
   if (ash_log_skip(log, mask)) {
     return;
   }
-  vsnprintf_s(buf, _countof(buf), _TRUNCATE, fmt, args);
+  sz = ash_vsnprintf(buf, sizeof(buf), fmt, args);
+  if (0 >= sz) {
+    return;
+  }
   ash_log_write_nofmt(src, line, log, mask, buf);
 }

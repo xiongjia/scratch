@@ -21,11 +21,8 @@ void ash_testutil_str_equal(ash_unit_test_case_context_t *tc,
   if (!tc->verbose) {
     return;
   }
-  fprintf(stderr, "[%s:%d]: expected <%s>, but saw <%s>\n",
-    ash_file_get_filename(src), line,
-    expected == NULL ? "<null>" : expected,
-    actual == NULL ? "<null>" : actual);
-  fflush(stderr);
+  ash_file_write_stderr("[%s:%d]: expected <%s>, but saw <%s>\n",
+    ash_file_get_filename(src), line,  expected, actual);
 }
 
 void ash_testutil_size_equal(ash_unit_test_case_context_t *tc,
@@ -39,7 +36,6 @@ void ash_testutil_size_equal(ash_unit_test_case_context_t *tc,
   if (!tc->verbose) {
     return;
   }
-  fprintf(stderr, "[%s:%d]: expected <%llu>, but saw <%llu>\n",
+  ash_file_write_stderr("[%s:%d]: expected <%llu>, but saw <%llu>\n",
     ash_file_get_filename(src), line, expected, actual);
-  fflush(stderr);
 }

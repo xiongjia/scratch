@@ -10,6 +10,7 @@ typedef unsigned char uchar_t;
 typedef char char_t;
 
 typedef unsigned __int64 uint64_t;
+typedef __int64 int64_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;
 

@@ -43,6 +43,13 @@ static void test_simple_str(ash_unit_test_context_t *ctx,
   ASHTU_STR_EQU(tc, "00123", buf);
   ash_snprintf(buf, sizeof(buf), "%03d", 123);
   ASHTU_STR_EQU(tc, "123", buf);
+  ash_snprintf(buf, sizeof(buf), "%03u", 123);
+  ASHTU_STR_EQU(tc, "123", buf);
+  ash_snprintf(buf, sizeof(buf), "%d", -123);
+  ASHTU_STR_EQU(tc, "-123", buf);
+
+  ash_snprintf(buf, sizeof(buf), "%lld", (int64_t)123);
+  ASHTU_STR_EQU(tc, "123", buf);
 }
 
 ash_unit_test_case_t unittest_simple_str = {

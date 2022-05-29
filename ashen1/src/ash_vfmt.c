@@ -59,7 +59,8 @@ static void ash_vfmt_append_str(ash_vfmt_buff_t *vbuf, char *val) {
 }
 
 static void ash_vfmt_append_num(ash_vfmt_buff_t *vbuf, uint64_t num,
-                                uint32_t hexadecimal, uchar_t zero, uint32_t width) {
+                                uint32_t hexadecimal, uchar_t zero,
+                                uint32_t width) {
   static char_t hex_l[] = "0123456789abcdef";
   static char_t hex_u[] = "0123456789ABCDEF";
   uint32_t ui32;

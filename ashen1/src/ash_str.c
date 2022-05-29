@@ -49,7 +49,8 @@ char *ash_pstrcat(ash_pool_t *pool, ...) {
   return rt;
 }
 
-int32_t ash_vsnprintf(char *buf, size_t buf_sz, const char *fmt, va_list ap) {
+int32_t ash_vsnprintf(char *buf, size_t buf_sz,
+                      const char *fmt, va_list ap) {
   ash_vfmt_buff_t vbuf;
   ASH_VFMT_BUFF_INIT(&vbuf, buf, buf_sz)
   return ash_vformatter(&vbuf, fmt, ap);

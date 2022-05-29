@@ -11,7 +11,8 @@
 static ash_unit_test_case_t *ALL_TESTS[] = {
   &unittest_simple_str,
   &unittest_simple_time,
-  &unittest_filename
+  &unittest_filename,
+  &unittest_simple_hash
 };
 
 static void run_test(ash_unit_test_context_t *ctx,

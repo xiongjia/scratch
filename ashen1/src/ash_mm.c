@@ -1,6 +1,7 @@
 /*
  */
 
+#include <memory.h>
 #include "ash_mm.h"
 
 #define ASH_BUCKET_SIZE  (1024 * 4)
@@ -94,4 +95,12 @@ void* ash_pool_alloc(ash_pool_t* pool, size_t size) {
   bucket->next = pool->buckets;
   pool->buckets = bucket;
   return mm;
+}
+
+void* ash_pool_calloc(ash_pool_t *pool, size_t size) {
+  void *mem = ash_pool_alloc(pool, size);
+  if (mem != NULL) {
+    memset(mem, 0, size);
+  }
+  return mem;
 }

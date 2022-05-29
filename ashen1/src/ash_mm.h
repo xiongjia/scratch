@@ -20,4 +20,6 @@ void ash_pool_destroy(ash_pool_t *pool);
 
 void* ash_pool_alloc(ash_pool_t *pool, size_t size);
 
+void* ash_pool_calloc(ash_pool_t *pool, size_t size);
+
 #endif /* !defined(_ASH_MM_H_) */

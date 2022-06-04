@@ -8,6 +8,8 @@
 
 static void test_simple_str(ash_unit_test_context_t *ctx,
                             ash_unit_test_case_context_t *tc) {
+  ash_list_t *expected_lines;
+  ash_list_t *lines;
   int32_t sz;
   char buf[1024];
   char *dup;
@@ -50,6 +52,10 @@ static void test_simple_str(ash_unit_test_context_t *ctx,
 
   ash_snprintf(buf, sizeof(buf), "%lld", (int64_t)123);
   ASHTU_STR_EQU(tc, "123", buf);
+
+  expected_lines = ash_slist_create(tc->pool, "123", "456", "789", NULL);
+  lines = ash_parse_lines(tc->pool, "123\n456\r\n789", 512);
+  ASHTU_SLIST_EQU(tc, expected_lines, lines);
 }
 
 ash_unit_test_case_t unittest_simple_str = {

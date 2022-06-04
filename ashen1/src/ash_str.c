@@ -4,6 +4,28 @@
 #include <string.h>
 #include "ash_str.h"
 #include "ash_vfmt.h"
+#include "ash_vbuf.h"
+#include "ash_mm.h"
+
+static boolean_t ash_str_node_compare(ash_list_node_t *n1,
+                                      ash_list_node_t *n2) {
+  const char *s1;
+  const char *s2;
+
+  if (NULL == n1 && NULL == n2) {
+    return ASH_TRUE;
+  }
+  if (NULL == n1 || NULL == n2) {
+    return ASH_FALSE;
+  }
+  s1 = (const char*)(NULL == n1->element ? "" : n1->element);
+  s2 = (const char*)(NULL == n2->element ? "" : n2->element);
+  if (strcmp(s1, s2) == 0) {
+    return ASH_TRUE;
+  } else {
+    return ASH_FALSE;
+  }
+}
 
 char* ash_pstrdup(ash_pool_t *pool, const char *src) {
   size_t alloc_sz;
@@ -49,6 +71,33 @@ char *ash_pstrcat(ash_pool_t *pool, ...) {
   return rt;
 }
 
+ash_list_t *ash_slist_create(ash_pool_t *pool, ...) {
+  ash_list_t *list;
+  va_list args;
+
+  va_start(args, pool);
+  list = ash_slist_vcreate(pool, args);
+  va_end(args);
+  return list;
+}
+
+ash_list_t *ash_slist_vcreate(ash_pool_t *pool, va_list ap) {
+  ash_list_t *list;
+  char *val;
+
+  list = ash_list_create(pool);
+  if (NULL == list) {
+    return NULL;
+  }
+
+  while ((val = va_arg(ap, char *)) != NULL) {
+    if (!ash_list_push(list, ash_pstrdup(pool, val))) {
+      return NULL;
+    }
+  }
+  return list;
+}
+
 int32_t ash_vsnprintf(char *buf, size_t buf_sz,
                       const char *fmt, va_list ap) {
   ash_vfmt_buff_t vbuf;
@@ -64,4 +113,45 @@ int32_t ash_snprintf(char *buf, size_t buf_sz, const char *fmt, ...) {
   res = ash_vsnprintf(buf, buf_sz, fmt, args);
   va_end(args);
   return res;
+}
+
+ash_list_t *ash_parse_lines(ash_pool_t *pool, const char *src,
+                            uint32_t max_line_sz) {
+  ash_vbuf_str_ctx_t ctx;
+  ash_list_t *lines;
+  ash_vbuf_t vbuf;
+  boolean_t rs;
+  boolean_t finish = ASH_FALSE;
+  char *buf;
+
+
+  if (NULL == pool || NULL == src || 0 >= max_line_sz) {
+    return NULL;
+  }
+  buf = (char*)ash_pool_alloc(pool, max_line_sz + 1);
+  if (NULL == buf) {
+    return NULL;
+  }
+  lines = ash_list_create(pool);
+  if (NULL == lines) {
+    return NULL;
+  }
+  ASH_VBUF_STR_RD_LINE_INIT(&vbuf, &ctx, src, buf, max_line_sz);
+  for (;;) {
+    rs = ash_vbuf_rdline(&vbuf, &finish);
+    if (!rs) {
+      return NULL;
+    }
+    if (!ash_list_push(lines, ash_pstrdup(pool, buf))) {
+      return NULL;
+    }
+    if (finish) {
+      break;
+    }
+  }
+  return lines;
+}
+
+boolean_t ash_slist_compare(ash_list_t *l1, ash_list_t *l2) {
+  return ash_list_compare(l1, l2, ash_str_node_compare);
 }

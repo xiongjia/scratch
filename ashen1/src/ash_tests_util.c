@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
+
 #include "ash_file.h"
 #include "ash_tests_util.h"
 
@@ -53,4 +55,16 @@ void ash_testutil_int32_equal(ash_unit_test_case_context_t *tc,
   }
   ash_file_write_stderr("[%s:%d]: expected <%d>, but saw <%d>\n",
     ash_file_get_filename(src), line, expected, actual);
+}
+
+void ash_testutil_slist_equal(ash_unit_test_case_context_t *tc,
+                              const ash_list_t *expected,
+                              const ash_list_t *actual,
+                              const char *src, const int line) {
+  if (ash_slist_compare(actual, expected)) {
+    return;
+  }
+  tc->failed = ASH_TRUE;
+  ash_file_write_stderr("[%s:%d]: string lists are not equal\n",
+    ash_file_get_filename(src), line);
 }

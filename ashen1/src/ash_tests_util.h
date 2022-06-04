@@ -7,6 +7,7 @@
 #include "ash_types.h"
 #include "ash_log.h"
 #include "ash_mm.h"
+#include "ash_list.h"
 
 typedef struct _ash_unit_test_context_s {
   time_t tm_start;
@@ -39,6 +40,11 @@ void ash_testutil_int32_equal(ash_unit_test_case_context_t *tc,
                               const int32_t expected, const int32_t actual,
                               const char *src, const int line);
 
+void ash_testutil_slist_equal(ash_unit_test_case_context_t *tc,
+                              const ash_list_t *expected,
+                              const ash_list_t *actual,
+                              const char *src, const int line);
+
 #define ASHTU_STR_EQU(_tc, _expected, _actual) \
   ash_testutil_str_equal(_tc, _expected, _actual, __FILE__, __LINE__)
 
@@ -47,5 +53,8 @@ void ash_testutil_int32_equal(ash_unit_test_case_context_t *tc,
 
 #define ASHTU_INT32_EQU(_tc, _expected, _actual) \
   ash_testutil_int32_equal(_tc, _expected, _actual, __FILE__, __LINE__)
+
+#define ASHTU_SLIST_EQU(_tc, _expected, _actual) \
+  ash_testutil_slist_equal(_tc, _expected, _actual, __FILE__, __LINE__)
 
 #endif /* !defined(_ASH_TESTS_UTIL_H_) */

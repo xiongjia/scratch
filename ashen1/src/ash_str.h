@@ -5,6 +5,7 @@
 #define _ASH_STR_H_ 1
 
 #include <stdarg.h>
+
 #include "ash_types.h"
 #include "ash_mm.h"
 

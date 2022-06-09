@@ -152,6 +152,6 @@ ash_list_t *ash_parse_lines(ash_pool_t *pool, const char *src,
   return lines;
 }
 
-boolean_t ash_slist_compare(ash_list_t *l1, ash_list_t *l2) {
+boolean_t ash_slist_compare(const ash_list_t *l1, const ash_list_t *l2) {
   return ash_list_compare(l1, l2, ash_str_node_compare);
 }

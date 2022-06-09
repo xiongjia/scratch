@@ -12,6 +12,7 @@ static ash_unit_test_case_t *ALL_TESTS[] = {
   &unittest_simple_str,
   &unittest_simple_time,
   &unittest_filename,
+  &unittest_file_io,
   &unittest_simple_hash
 };
 

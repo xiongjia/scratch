@@ -6,7 +6,7 @@
 
 #include "ash_file.h"
 
-const char* ash_file_get_filename(const char* full_filename) {
+const char* ash_file_get_filename(const char *full_filename) {
   char *rs;
 
   if (full_filename == NULL || full_filename[0] == '\0') {

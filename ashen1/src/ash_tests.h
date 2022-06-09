@@ -9,6 +9,7 @@
 extern ash_unit_test_case_t unittest_simple_str;
 extern ash_unit_test_case_t unittest_simple_time;
 extern ash_unit_test_case_t unittest_filename;
+extern ash_unit_test_case_t unittest_file_io;
 extern ash_unit_test_case_t unittest_simple_hash;
 
 #endif /* !defined(_ASH_TESTS_H_) */

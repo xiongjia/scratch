@@ -49,7 +49,7 @@ boolean_t ash_list_push(ash_list_t *list, void *data) {
   return ASH_TRUE;
 }
 
-boolean_t ash_list_compare(ash_list_t *l1, ash_list_t *l2,
+boolean_t ash_list_compare(const ash_list_t *l1, const ash_list_t *l2,
     boolean_t (*compare)(ash_list_node_t *n1, ash_list_node_t *n2)) {
   ash_list_node_t *n1;
   ash_list_node_t *n2;

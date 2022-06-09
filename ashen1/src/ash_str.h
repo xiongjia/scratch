@@ -18,7 +18,7 @@ ash_list_t *ash_slist_create(ash_pool_t *pool, ...);
 
 ash_list_t *ash_slist_vcreate(ash_pool_t *pool, va_list ap);
 
-boolean_t ash_slist_compare(ash_list_t *l1, ash_list_t *l2);
+boolean_t ash_slist_compare(const ash_list_t *l1, const ash_list_t *l2);
 
 int32_t ash_vsnprintf(char *buf, size_t buf_sz, const char *fmt, va_list ap);
 

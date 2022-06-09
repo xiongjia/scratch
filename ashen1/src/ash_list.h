@@ -24,7 +24,7 @@ ash_list_t* ash_list_create(ash_pool_t *pool);
 
 boolean_t ash_list_push(ash_list_t *list, void *data);
 
-boolean_t ash_list_compare(ash_list_t *l1, ash_list_t *l2,
-      boolean_t (*compare)(ash_list_node_t *n1, ash_list_node_t *n2));
+boolean_t ash_list_compare(const ash_list_t *l1, const ash_list_t *l2,
+    boolean_t (*compare)(ash_list_node_t *n1, ash_list_node_t *n2));
 
 #endif /* !defined(_ASH_LIST_H_) */

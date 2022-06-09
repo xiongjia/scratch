@@ -39,3 +39,18 @@ void ash_file_vwrite_stderr(const char *fmt, va_list ap)  {
   ASH_VFMT_BUFF_INIT_WITH_FLUSH(&vbuf, buf, sizeof(buf), &ctx, ash_vfmt_flush);
   ash_vformatter(&vbuf, fmt, ap);
 }
+
+ash_fd_t ash_open_file(char_t *name, uint32_t mode,
+                       uint32_t create, uint32_t access) {
+  return CreateFileA(name, mode,
+    FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
+    NULL, create,
+    FILE_FLAG_BACKUP_SEMANTICS, NULL);
+}
+
+int32_t ash_read_fd(ash_fd_t fd, uchar_t *buf, int32_t buf_size) {
+  DWORD rd_sz = 0;
+  BOOL rt = ReadFile(fd, buf, buf_size,
+    &rd_sz, NULL);
+  return rt ? rd_sz : -1;
+}

@@ -6,6 +6,7 @@
 #include <stdarg.h>
 
 #include "ash_file.h"
+#include "ash_str.h"
 #include "ash_tests_util.h"
 
 void ash_testutil_str_equal(ash_unit_test_case_context_t *tc,

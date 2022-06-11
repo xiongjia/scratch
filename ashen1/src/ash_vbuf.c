@@ -3,34 +3,6 @@
 
 #include "ash_vbuf.h"
 
-typedef struct _ash_vbuf_dist_s {
-  char *dist_buf;
-  uint32_t dist_buf_size;
-  uint32_t dist_buf_pos;
-} ash_vbuf_dist_t;
-
-static boolean_t ash_vbuf_writ_dist(ash_vbuf_dist_t *dist_buf, char *buf,
-                                    uint32_t buf_size) {
-  uint32_t remain_sz = dist_buf->dist_buf_size - dist_buf->dist_buf_pos - 1;
-  uint32_t idx;
-  uint32_t write_sz;
-  char *dist;
-
-  if (buf_size > remain_sz) {
-    return ASH_FALSE;
-  }
-  dist = dist_buf->dist_buf + dist_buf->dist_buf_pos;
-  for (idx = 0, write_sz = 0; idx < buf_size; ++idx) {
-    if ('\r' == buf[idx]) {
-      continue;
-    }
-    dist[write_sz++] = buf[idx];
-  }
-  dist_buf->dist_buf_pos += write_sz;
-  dist_buf->dist_buf[dist_buf->dist_buf_pos] = '\0';
-  return ASH_TRUE;
-}
-
 static boolean_t ash_vbuf_reload(ash_vbuf_t *vbuf) {
   boolean_t read_rs;
   uint32_t reload_size;
@@ -140,45 +112,24 @@ boolean_t ash_vbuf_rdline(ash_vbuf_t *vbuf, boolean_t *finish) {
   return ASH_TRUE;
 }
 
-boolean_t ash_vbuf_rdline_rd_from_buf(void *context,
-                                      char *buf, uint32_t buf_size,
-                                      uint32_t *read_sz) {
-  ash_vbuf_str_ctx_t *buf_ctx = (ash_vbuf_str_ctx_t *)context;
-  uint32_t rd_sz = 0;
+boolean_t ash_vbuf_writ_dist(ash_vbuf_dist_t *dist_buf, char *buf,
+                             uint32_t buf_size) {
+  uint32_t remain_sz = dist_buf->dist_buf_size - dist_buf->dist_buf_pos - 1;
+  uint32_t idx;
+  uint32_t write_sz;
+  char *dist;
 
-  if (0 >= buf_size) {
+  if (buf_size > remain_sz) {
     return ASH_FALSE;
   }
-
-  for (;;) {
-    if ('\0' == buf_ctx->src[buf_ctx->pos]) {
-      break;
+  dist = dist_buf->dist_buf + dist_buf->dist_buf_pos;
+  for (idx = 0, write_sz = 0; idx < buf_size; ++idx) {
+    if ('\r' == buf[idx]) {
+      continue;
     }
-
-    buf[rd_sz++] = buf_ctx->src[buf_ctx->pos++];
-    if (rd_sz >= buf_size) {
-      break;
-    }
+    dist[write_sz++] = buf[idx];
   }
-  *read_sz = rd_sz;
+  dist_buf->dist_buf_pos += write_sz;
+  dist_buf->dist_buf[dist_buf->dist_buf_pos] = '\0';
   return ASH_TRUE;
-}
-
-boolean_t ash_vbuf_rdline_wr_from_buf(void *context, char *buf,
-                                      uint32_t buf_size) {
-  ash_vbuf_str_ctx_t *buf_ctx = (ash_vbuf_str_ctx_t *)context;
-  ash_vbuf_dist_t dist_buf;
-  dist_buf.dist_buf = buf_ctx->dist_buf;
-  dist_buf.dist_buf_size = buf_ctx->dist_buf_size;
-  dist_buf.dist_buf_pos = buf_ctx->dist_buf_pos;
-  if (!ash_vbuf_writ_dist(&dist_buf, buf, buf_size)) {
-    return ASH_FALSE;
-  }
-  buf_ctx->dist_buf_pos = dist_buf.dist_buf_pos;
-  return ASH_TRUE;
-}
-
-void ash_vbuf_rdline_lineend_from_buf(void *context) {
-  ash_vbuf_str_ctx_t *buf_ctx = (ash_vbuf_str_ctx_t *)context;
-  buf_ctx->dist_buf_pos = 0;
 }

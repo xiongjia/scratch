@@ -9,6 +9,7 @@
 #endif /* defined(WIN32) */
 
 #include "ash_types.h"
+#include "ash_vbuf.h"
 
 typedef HANDLE ash_fd_t;
 
@@ -46,5 +47,33 @@ void ash_file_vwrite_stdout(const char *fmt, va_list ap);
 void ash_file_write_stderr(const char *fmt, ...);
 
 void ash_file_vwrite_stderr(const char *fmt, va_list ap);
+
+typedef struct _ash_vbuf_fd_ctx_s {
+  ash_fd_t fd;
+
+  char *dist_buf;
+  uint32_t dist_buf_size;
+  uint32_t dist_buf_pos;
+} ash_vbuf_fd_ctx_t;
+
+boolean_t ash_vbuf_rdline_rd_from_fd(void *context,
+                                     char *buf, uint32_t buf_size,
+                                     uint32_t *read_sz);
+
+boolean_t ash_vbuf_rdline_wr_from_fd(void *context, char *buf,
+                                     uint32_t buf_size);
+
+void ash_vbuf_rdline_lineend_from_fd(void *context);
+
+#define ASH_VBUF_FD_RD_LINE_INIT(_vbuf, _ctx, _fd, _buf, _buf_sz) \
+  ((ash_vbuf_fd_ctx_t*)_ctx)->fd = _fd; \
+  ((ash_vbuf_fd_ctx_t*)_ctx)->dist_buf = _buf; \
+  ((ash_vbuf_fd_ctx_t*)_ctx)->dist_buf_size = _buf_sz; \
+  ((ash_vbuf_fd_ctx_t*)_ctx)->dist_buf_pos = 0; \
+  ASH_VBUF_INIT(_vbuf, _ctx, \
+    ash_vbuf_rdline_rd_from_fd, \
+    ash_vbuf_rdline_wr_from_fd, \
+    ash_vbuf_rdline_lineend_from_fd);
+
 
 #endif /* !defined(_ASH_FILE_H_) */

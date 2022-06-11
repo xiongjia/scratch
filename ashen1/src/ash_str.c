@@ -155,3 +155,46 @@ ash_list_t *ash_parse_lines(ash_pool_t *pool, const char *src,
 boolean_t ash_slist_compare(const ash_list_t *l1, const ash_list_t *l2) {
   return ash_list_compare(l1, l2, ash_str_node_compare);
 }
+
+void ash_vbuf_rdline_lineend_from_buf(void *context) {
+  ash_vbuf_str_ctx_t *buf_ctx = (ash_vbuf_str_ctx_t *)context;
+  buf_ctx->dist_buf_pos = 0;
+}
+
+boolean_t ash_vbuf_rdline_wr_from_buf(void *context, char *buf,
+                                      uint32_t buf_size) {
+  ash_vbuf_str_ctx_t *buf_ctx = (ash_vbuf_str_ctx_t *)context;
+  ash_vbuf_dist_t dist_buf;
+  dist_buf.dist_buf = buf_ctx->dist_buf;
+  dist_buf.dist_buf_size = buf_ctx->dist_buf_size;
+  dist_buf.dist_buf_pos = buf_ctx->dist_buf_pos;
+  if (!ash_vbuf_writ_dist(&dist_buf, buf, buf_size)) {
+    return ASH_FALSE;
+  }
+  buf_ctx->dist_buf_pos = dist_buf.dist_buf_pos;
+  return ASH_TRUE;
+}
+
+boolean_t ash_vbuf_rdline_rd_from_buf(void *context,
+                                      char *buf, uint32_t buf_size,
+                                      uint32_t *read_sz) {
+  ash_vbuf_str_ctx_t *buf_ctx = (ash_vbuf_str_ctx_t *)context;
+  uint32_t rd_sz = 0;
+
+  if (0 >= buf_size) {
+    return ASH_FALSE;
+  }
+
+  for (;;) {
+    if ('\0' == buf_ctx->src[buf_ctx->pos]) {
+      break;
+    }
+
+    buf[rd_sz++] = buf_ctx->src[buf_ctx->pos++];
+    if (rd_sz >= buf_size) {
+      break;
+    }
+  }
+  *read_sz = rd_sz;
+  return ASH_TRUE;
+}

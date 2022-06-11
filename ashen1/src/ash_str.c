@@ -198,3 +198,44 @@ boolean_t ash_vbuf_rdline_rd_from_buf(void *context,
   *read_sz = rd_sz;
   return ASH_TRUE;
 }
+
+char *ash_str_rtrim(char *src, const char *seps) {
+  size_t n;
+
+  if (NULL == seps) {
+    seps = "\t\n\v\f\r ";
+  }
+
+  n = strlen(src) - 1;
+  while (n >= 0 && strchr(seps, src[n]) != NULL) {
+    src[n] = '\0';
+    n--;
+  }
+  return src;
+}
+
+char *ash_str_ltrim(char *src, const char *seps) {
+  size_t to_trim;
+  size_t len;
+
+  if (seps == NULL) {
+    seps = "\t\n\v\f\r ";
+  }
+
+  to_trim = strspn(src, seps);
+  if (0 >= to_trim) {
+    return src;
+  }
+
+  len = strlen(src);
+  if (to_trim == len) {
+    src[0] = '\0';
+  } else {
+    memmove(src, src + to_trim, len + 1 - to_trim);
+  }
+  return src;
+}
+
+char *ash_str_trim(char *src, const char *seps) {
+  return ash_str_ltrim(ash_str_rtrim(src, seps), seps);
+}

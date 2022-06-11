@@ -57,4 +57,11 @@ void ash_vbuf_rdline_lineend_from_buf(void *context);
     ash_vbuf_rdline_wr_from_buf, \
     ash_vbuf_rdline_lineend_from_buf);
 
+char *ash_str_rtrim(char *src, const char *seps);
+
+char *ash_str_ltrim(char *src, const char *seps);
+
+char *ash_str_trim(char *src, const char *seps);
+
+
 #endif /* !defined(_ASH_STR_H_) */

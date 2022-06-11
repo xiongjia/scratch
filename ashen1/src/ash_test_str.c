@@ -1,6 +1,7 @@
 /*
  */
 
+#include <string.h>
 #include <stdio.h>
 #include "ash_mm.h"
 #include "ash_str.h"
@@ -56,6 +57,10 @@ static void test_simple_str(ash_unit_test_context_t *ctx,
   expected_lines = ash_slist_create(tc->pool, "123", "456", "789", NULL);
   lines = ash_parse_lines(tc->pool, "123\n456\r\n789", 512);
   ASHTU_SLIST_EQU(tc, expected_lines, lines);
+
+  dup = ash_pstrdup(tc->pool, "  123  \t  \v ");
+  ash_str_trim(dup, NULL);
+  ASHTU_STR_EQU(tc, "123", dup);
 }
 
 ash_unit_test_case_t unittest_simple_str = {

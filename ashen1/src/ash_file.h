@@ -10,7 +10,9 @@
 
 #include "ash_types.h"
 
-typedef HANDLE  ash_fd_t;
+typedef HANDLE ash_fd_t;
+
+#define ASH_FILE_BUFF_SIZE  512
 
 #define ash_close_file      CloseHandle
 #define ASH_INVALID_FILE    INVALID_HANDLE_VALUE
@@ -28,10 +30,12 @@ typedef HANDLE  ash_fd_t;
 #define ASH_FILE_DEFAULT_ACCESS     0
 #define ASH_FILE_OWNER_ACCESS       0
 
-ash_fd_t ash_open_file(char_t *name, uint32_t mode,
+ash_fd_t ash_open_file(const char_t *name, uint32_t mode,
                        uint32_t create, uint32_t access);
 
 int32_t ash_read_fd(ash_fd_t fd, uchar_t *buf, int32_t buf_size);
+
+int32_t ash_write_fd(ash_fd_t fd, uchar_t *buf, int32_t buf_size);
 
 const char *ash_file_get_filename(const char *full_filename);
 

@@ -40,7 +40,7 @@ void ash_file_vwrite_stderr(const char *fmt, va_list ap)  {
   ash_vformatter(&vbuf, fmt, ap);
 }
 
-ash_fd_t ash_open_file(char_t *name, uint32_t mode,
+ash_fd_t ash_open_file(const char_t *name, uint32_t mode,
                        uint32_t create, uint32_t access) {
   return CreateFileA(name, mode,
     FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
@@ -50,7 +50,12 @@ ash_fd_t ash_open_file(char_t *name, uint32_t mode,
 
 int32_t ash_read_fd(ash_fd_t fd, uchar_t *buf, int32_t buf_size) {
   DWORD rd_sz = 0;
-  BOOL rt = ReadFile(fd, buf, buf_size,
-    &rd_sz, NULL);
+  BOOL rt = ReadFile(fd, buf, buf_size, &rd_sz, NULL);
   return rt ? rd_sz : -1;
+}
+
+int32_t ash_write_fd(ash_fd_t fd, uchar_t *buf, int32_t buf_size) {
+  DWORD wr_sz = 0;
+  BOOL rt = WriteFile(fd, buf, buf_size, &wr_sz, NULL);
+  return rt ? wr_sz : -1;
 }

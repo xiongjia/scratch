@@ -32,6 +32,7 @@ static void test_file_io(ash_unit_test_context_t* ctx,
   }
 
    rd_sz = ash_read_fd(fd, buf, sizeof(buf));
+   ash_close_file(fd);
 }
 
 ash_unit_test_case_t unittest_filename = {

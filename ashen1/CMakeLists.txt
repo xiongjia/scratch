@@ -14,6 +14,29 @@ endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
+file(GLOB SRC_LIB
+  "${PROJECT_SOURCE_DIR}/src/ash_types.h"
+  "${PROJECT_SOURCE_DIR}/src/ash_cfg.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_hash.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_vfmt.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_list.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_vbuf.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_time.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_errno.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_file.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_log.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_mm.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_str.*"
+  "${PROJECT_SOURCE_DIR}/src/ash_misc.*")
+
+file(GLOB SRC_LIB_UNIX
+  "${PROJECT_SOURCE_DIR}/src/ash_file_unix.*")
+
+file(GLOB SRC_LIB_WIN
+  "${PROJECT_SOURCE_DIR}/src/ash_file_win.*")
+
+source_group("lib" FILES ${SRC_LIB} ${SRC_LIB_UNIX})
+
 add_library(libashen1 STATIC
   "${PROJECT_SOURCE_DIR}/src/ash_types.h"
   "${PROJECT_SOURCE_DIR}/src/ash_cfg.c"

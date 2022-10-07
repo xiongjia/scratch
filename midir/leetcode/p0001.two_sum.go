@@ -1,6 +1,11 @@
+/*
+   LeetCode tests
+*/
 package leetcode
 
-func twoSum(nums []int, target int) []int {
+// Problem 001 - Two Sum
+//  Test document
+func TwoSum(nums []int, target int) []int {
 	m := make(map[int]int)
 	for k, v := range nums {
 		if idx, ok := m[target-v]; ok {

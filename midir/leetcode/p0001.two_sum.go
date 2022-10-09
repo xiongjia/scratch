@@ -1,6 +1,3 @@
-/*
-   LeetCode tests
-*/
 package leetcode
 
 // Problem 001 - Two Sum

@@ -5,10 +5,21 @@ import (
 	"testing"
 )
 
+func updateTest(a []int) {
+	a[1] = 100
+	fmt.Printf("Debug a = %v\n", a)
+}
+
 func Test_p0001(t *testing.T) {
-	u := [5]int{1, 2, 3, 4, 5}
+	u := []int{1, 2, 3, 4, 5}
 	fmt.Printf("Debug u = %v\n", u)
-	u[1] = 10
+
+	updateTest(u)
+	for i, v := range u {
+		fmt.Println(i, v)
+	}
+
+	_ = append(u[:3], u[4:]...)
 	fmt.Printf("Debug u = %v\n", u)
 
 	s2 := u[1:3]

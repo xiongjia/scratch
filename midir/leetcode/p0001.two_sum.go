@@ -1,14 +1,13 @@
 package leetcode
 
-// Problem 001 - Two Sum
-//  Test document
-func TwoSum(nums []int, target int) []int {
-	m := make(map[int]int)
-	for k, v := range nums {
-		if idx, ok := m[target-v]; ok {
-			return []int{idx, k}
+// Problem 001 - Two Sum , Solution #1
+func TwoSumSolution1(nums []int, target int) []int {
+	for i := 0; i < len(nums); i++ {
+		for j := i + 1; j < len(nums); j++ {
+			if nums[i]+nums[j] == target {
+				return []int{i, j}
+			}
 		}
-		m[v] = k
 	}
 	return nil
 }

@@ -11,3 +11,15 @@ func TwoSumSolution1(nums []int, target int) []int {
 	}
 	return nil
 }
+
+// Problem 001 - Two Sum , Solution #2
+func TwoSumSolution2(nums []int, target int) []int {
+	m := make(map[int]int)
+	for k, v := range nums {
+		if idx, ok := m[target-v]; ok {
+			return []int{idx, k}
+		}
+		m[v] = k
+	}
+	return nil
+}

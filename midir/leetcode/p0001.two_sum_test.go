@@ -18,9 +18,14 @@ func Test_p0001(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		r := TwoSumSolution1(c.nums, c.target)
-		t.Logf("Source = %v, Target = %v. Result = %v, Expected = %v",
-			c.nums, c.target, r, c.expected)
-		assert.ElementsMatch(t, r, c.expected)
+		s1 := TwoSumSolution1(c.nums, c.target)
+		t.Logf("Solution#1: src = %v, target = %v. ret = %v, expected = %v",
+			c.nums, c.target, s1, c.expected)
+		assert.ElementsMatch(t, s1, c.expected)
+
+		s2 := TwoSumSolution1(c.nums, c.target)
+		t.Logf("Solution#2: src = %v, target = %v. ret = %v, expected = %v",
+			c.nums, c.target, s2, c.expected)
+		assert.ElementsMatch(t, s2, c.expected)
 	}
 }

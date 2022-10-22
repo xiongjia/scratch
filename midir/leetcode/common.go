@@ -14,3 +14,12 @@ func MakeListNodes(values []int) *ListNode {
 	}
 	return r.Next
 }
+
+func MakeArray(l *ListNode) []int {
+	r := make([]int, 0)
+	for l != nil {
+		r = append(r, l.Val)
+		l = l.Next
+	}
+	return r
+}

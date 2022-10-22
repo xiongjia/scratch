@@ -5,17 +5,17 @@ import (
 )
 
 func Test_p0002(t *testing.T) {
-	l := &ListNode{}
-	temp := l
-	nums := []int{1, 25, 3}
-	for _, v := range nums {
-		temp.Next = &ListNode{Val: v}
-		temp = temp.Next
+	cases := []struct {
+		l1, l2, e []int
+	}{
+		{
+			l1: []int{2, 4, 3}, l2: []int{5, 6, 4}, e: []int{7, 0, 8},
+		}, {
+			l1: []int{0}, l2: []int{0}, e: []int{0},
+		},
 	}
 
-	n := l.Next
-	for n != nil {
-		t.Logf("value = %v", n.Val)
-		n = n.Next
+	for _, c := range cases {
+		t.Logf("l1 = %v, l2 = %v, e = %v", c.l1, c.l2, c.e)
 	}
 }

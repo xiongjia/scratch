@@ -12,11 +12,14 @@ func Test_p0003(t *testing.T) {
 		expected int
 	}{
 		{input: "abcabcbb", expected: 3},
+		{input: "bbbbb", expected: 1},
+		{input: "pwwkew", expected: 3},
+		{input: "", expected: 0},
 	}
 
 	for _, c := range cases {
 		r := LengthOfLongestSubstringSolution1(c.input)
-		t.Logf("input = %s, expected = %d; r = %d\n", c.input, c.expected, r)
+		t.Logf("Solution1: I = %s, E = %d; R = %d\n", c.input, c.expected, r)
 		assert.Equal(t, r, c.expected)
 	}
 }

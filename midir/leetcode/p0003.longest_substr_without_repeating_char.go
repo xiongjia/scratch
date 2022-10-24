@@ -24,3 +24,28 @@ func LengthOfLongestSubstringSolution1(s string) int {
 	}
 	return r
 }
+
+func LengthOfLongestSubstringSolution2(s string) int {
+	srcLen := len(s)
+	if srcLen == 0 {
+		return 0
+	}
+	bitMap := make(map[byte]bool, 256)
+	r, left, right := 0, 0, 0
+	for left < srcLen {
+		if val, ok := bitMap[s[right]]; ok && val {
+			bitMap[s[left]] = false
+			left++
+		} else {
+			bitMap[s[right]] = true
+			right++
+		}
+		if r < right-left {
+			r = right - left
+		}
+		if right >= srcLen || left+r >= srcLen {
+			break
+		}
+	}
+	return r
+}

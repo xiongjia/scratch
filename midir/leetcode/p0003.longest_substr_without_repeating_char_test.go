@@ -18,8 +18,12 @@ func Test_p0003(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		r := LengthOfLongestSubstringSolution1(c.input)
-		t.Logf("Solution1: I = %s, E = %d; R = %d\n", c.input, c.expected, r)
-		assert.Equal(t, r, c.expected)
+		r1 := LengthOfLongestSubstringSolution1(c.input)
+		t.Logf("Solution1: I = %s, E = %d; R = %d\n", c.input, c.expected, r1)
+		assert.Equal(t, c.expected, r1)
+
+		r2 := LengthOfLongestSubstringSolution2(c.input)
+		t.Logf("Solution1: I = %s, E = %d; R = %d\n", c.input, c.expected, r2)
+		assert.Equal(t, c.expected, r2)
 	}
 }

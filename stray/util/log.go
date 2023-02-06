@@ -22,7 +22,7 @@ type Logger interface {
 }
 
 type logger struct {
-	name string
+	enable bool
 }
 
 func (l Level) String() string {
@@ -47,7 +47,6 @@ func (l Level) String() string {
 }
 
 func (log *logger) Debugf(format string, args ...interface{}) {
-	fmt.Println(log.name)
 	log.write(format, args...)
 }
 
@@ -62,7 +61,7 @@ func (log *logger) write(format string, args ...interface{}) {
 }
 
 func newLogger() Logger {
-	l := &logger{name: "log1"}
+	l := &logger{}
 	return l
 }
 

@@ -10,20 +10,22 @@ import (
 )
 
 func main() {
-	w := zapcore.AddSync(&lumberjack.Logger{
+	writer := &lumberjack.Logger{
 		Filename:   "/Users/xiongjiale/datum/tmp/foo.log",
 		MaxSize:    500, // megabytes
 		MaxBackups: 3,
 		MaxAge:     28, // days
 		Compress:   true,
-	})
+	}
+	w := zapcore.AddSync(writer)
 	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
 		w,
 		zap.DebugLevel,
 	)
 	logger2 := zap.New(core)
-	logger2.Debug("test1")
+	logger2.Debug("test1 writer ")
+	writer.Write("Test1 abc\n")
 
 	logger := zap.NewExample()
 	defer logger.Sync()

@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type Level int8
@@ -22,7 +21,7 @@ type Logger interface {
 }
 
 type logger struct {
-	enable bool
+	level Level
 }
 
 func (l Level) String() string {
@@ -42,7 +41,7 @@ func (l Level) String() string {
 	case FatalLevel:
 		return "FATAL"
 	default:
-		return strconv.Itoa(int(l))
+		return fmt.Sprintf("LEVEL(%d)", l)
 	}
 }
 

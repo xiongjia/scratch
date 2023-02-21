@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	util "stray/util"
 
 	"go.uber.org/zap"
@@ -11,8 +9,6 @@ import (
 )
 
 func main() {
-	log.SetFlags(1)
-
 	writer := &lumberjack.Logger{
 		Filename:   "/Users/xiongjiale/datum/tmp/foo.log",
 		MaxSize:    500, // megabytes
@@ -34,6 +30,5 @@ func main() {
 	defer logger.Sync()
 	logger.Info("test")
 
-	fmt.Println("test - main")
 	util.Test()
 }

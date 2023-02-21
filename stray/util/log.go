@@ -2,6 +2,8 @@ package util
 
 import (
 	"fmt"
+	"io"
+	"os"
 )
 
 type Level int8
@@ -20,8 +22,22 @@ type Logger interface {
 	Debugf(format string, args ...interface{})
 }
 
+type Options struct {
+	enable       bool `default:true`
+	enableStdout bool `default:true`
+	level        Level
+
+	logFilename     string
+	rotatMaxSize    int
+	rotatMaxBackups int
+	rotateMaxDays   int
+	rotateCompress  bool
+}
+
 type logger struct {
-	level Level
+	level       Level
+	fileWriter  io.Writer
+	printWriter io.Writer
 }
 
 func (l Level) String() string {
@@ -46,29 +62,37 @@ func (l Level) String() string {
 }
 
 func (log *logger) Debugf(format string, args ...interface{}) {
-	log.write(format, args...)
+	log.write(DebugLevel, format, args...)
 }
 
-func (log *logger) write(format string, args ...interface{}) {
-	fmt.Println(format)
-	for _, arg := range args {
-		switch arg.(type) {
-		case string:
-			fmt.Printf("string = %v\n", arg)
-		}
+func (log *logger) write(level Level, format string, args ...interface{}) {
+	msg := fmt.Sprintf(format, args...)
+	if log.printWriter != nil {
+		log.printWriter.Write([]byte(msg))
+		log.printWriter.Write([]byte("\n"))
 	}
 }
 
-func newLogger() Logger {
-	l := &logger{}
-	return l
+func newLogger(opts *Options) Logger {
+	log := &logger{
+		level:      opts.level,
+		fileWriter: nil,
+		printWriter: func() io.Writer {
+			if opts.enableStdout {
+				return os.Stdout
+			} else {
+				return nil
+			}
+		}(),
+	}
+	return log
 }
 
 func Test() {
-	fmt.Println("test1")
-
-	fmt.Printf("test data = %d, %v\n", TraceLevel, DebugLevel.String())
-
-	log := newLogger()
-	log.Debugf("abc", "1", "2", "3")
+	log := newLogger(&Options{
+		enable:       true,
+		level:        DebugLevel,
+		enableStdout: true,
+	})
+	log.Debugf("Test log %s %s %s", "1", "2", "3")
 }

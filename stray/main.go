@@ -1,6 +1,9 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
 	util "stray/util"
 
 	"go.uber.org/zap"
@@ -9,6 +12,13 @@ import (
 )
 
 func main() {
+	addcmd := flag.NewFlagSet("add", flag.ExitOnError)
+	a := addcmd.Int("a", 1, "value 1")
+
+	fmt.Printf("args = %v\n", os.Args)
+	addcmd.Parse(os.Args[1:])
+	fmt.Printf("test a = %d\n", *a)
+
 	writer := &lumberjack.Logger{
 		Filename:   "/Users/xiongjiale/datum/tmp/foo.log",
 		MaxSize:    500, // megabytes

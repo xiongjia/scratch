@@ -23,11 +23,12 @@ type Logger interface {
 }
 
 type Options struct {
-	enable       bool `default:true`
-	enableStdout bool `default:true`
+	enable       bool
+	enableStdout bool
 	level        Level
 
 	logFilename     string
+	logFileMaxSize  int
 	rotatMaxSize    int
 	rotatMaxBackups int
 	rotateMaxDays   int
@@ -89,6 +90,9 @@ func newLogger(opts *Options) Logger {
 }
 
 func Test() {
+	opts := &Options{}
+	fmt.Printf("%v\n", opts.enable)
+
 	log := newLogger(&Options{
 		enable:       true,
 		level:        DebugLevel,

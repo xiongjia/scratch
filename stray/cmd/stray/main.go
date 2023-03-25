@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+type Context struct {
+	logFilename string
+}
+
 func main() {
 	addcmd := flag.NewFlagSet("add", flag.ExitOnError)
 	a := addcmd.Int("a", 1, "value 1")

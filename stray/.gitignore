@@ -11,4 +11,4 @@
 go.work
 
 # project files
-stray
+/stray

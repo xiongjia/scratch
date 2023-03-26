@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 )
 
@@ -12,6 +14,10 @@ const (
 
 type Context struct {
 	logFilename string
+}
+
+func welcome(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Welcome!")
 }
 
 func main() {
@@ -29,4 +35,8 @@ func main() {
 	fmt.Printf("args = %v\n", os.Args)
 	addcmd.Parse(os.Args[1:])
 	fmt.Printf("test a = %d\n", *a)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/welcome", welcome)
+	http.ListenAndServe(":8771", mux)
 }

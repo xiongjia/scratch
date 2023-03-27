@@ -12,7 +12,8 @@ type Context struct {
 }
 
 func welcome(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	fmt.Fprintf(w, "hello %s\n", ps.ByName("name"))
+	age := r.URL.Query().Get("age")
+	fmt.Fprintf(w, "hello %s - %s\n", ps.ByName("name"), age)
 }
 
 func main() {

@@ -1,42 +1,26 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
-)
 
-const (
-	appName = "stray"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Context struct {
-	logFilename string
+	serverPort int16
 }
 
-func welcome(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Welcome!")
+func welcome(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	fmt.Fprintf(w, "hello %s\n", ps.ByName("name"))
 }
 
 func main() {
-	fmt.Printf("App: %s\n", appName)
+	ctx := &Context{}
+	ctx.serverPort = 8871
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Printf("working dir: %s\n", cwd)
-
-	addcmd := flag.NewFlagSet("add", flag.ExitOnError)
-	a := addcmd.Int("a", 1, "value 1")
-
-	fmt.Printf("args = %v\n", os.Args)
-	addcmd.Parse(os.Args[1:])
-	fmt.Printf("test a = %d\n", *a)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/welcome", welcome)
-	http.ListenAndServe(":8771", mux)
+	router := httprouter.New()
+	router.GET("/hello/:name", welcome)
+	fmt.Printf("Server starting at port %d ...\n", ctx.serverPort)
+	http.ListenAndServe(fmt.Sprintf(":%d", ctx.serverPort), router)
 }

@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -25,7 +27,27 @@ func test1() {
 	fmt.Println("test func1")
 }
 
+func longRunningTask(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("longRunningTask exit")
+			return
+		default:
+			time.Sleep(1 * time.Second)
+			fmt.Println("longRunningTask running")
+		}
+	}
+}
+
 func main() {
+	ctx1, cancel := context.WithCancel(context.Background())
+	go longRunningTask(ctx1)
+	time.Sleep(5 * time.Second)
+	cancel()
+	fmt.Println("task was cancelled")
+	time.Sleep(1 * time.Second)
+
 	dbgData := &struct {
 		a byte
 		b byte

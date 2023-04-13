@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
@@ -90,6 +91,12 @@ func newLogger(opts *Options) Logger {
 }
 
 func Test() {
+	infoLog := log.New(os.Stdout, "INFO", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLog.Println("test1")
+	infoLog.Printf("abc %s", "data")
+	infoLog.Print("aaa")
+	infoLog.Print("aaa1")
+
 	opts := &Options{}
 	fmt.Printf("%v\n", opts.enable)
 

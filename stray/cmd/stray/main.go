@@ -28,7 +28,7 @@ func test1() {
 }
 
 func main() {
-	logger := util.NewLogger(util.DebugLevel)
+	logger := util.NewLogger("", util.DebugLevel)
 	logger.Debug("Debug 1")
 	logger.Debugf("Debug %d", 999)
 

@@ -28,9 +28,10 @@ func test1() {
 }
 
 func main() {
-	logger := util.NewLogger("", util.DebugLevel)
+	logger := util.NewLogger("", util.TraceLevel)
 	logger.Debug("Debug 1")
 	logger.Debugf("Debug %d", 999)
+	logger.Errorf("Abc %s", "abc")
 
 	dbgData := &struct {
 		a byte

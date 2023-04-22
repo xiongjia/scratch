@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -32,6 +33,40 @@ type Logger struct {
 	Warn   LogAppender
 	Errorf LogAppenderf
 	Error  LogAppender
+}
+
+func ParseLogLevel(l string) LogLevel {
+	switch {
+	case strings.EqualFold(l, "ERROR"):
+		return ErrorLevel
+	case strings.EqualFold(l, "WARN"):
+		return WarnLevel
+	case strings.EqualFold(l, "INFO"):
+		return InfoLevel
+	case strings.EqualFold(l, "DEBUG"):
+		return DebugLevel
+	case strings.EqualFold(l, "TRACE"):
+		return TraceLevel
+	default:
+		return InfoLevel
+	}
+}
+
+func LogLevelToStr(l LogLevel) string {
+	switch l {
+	case ErrorLevel:
+		return "ERROR"
+	case WarnLevel:
+		return "WARN"
+	case InfoLevel:
+		return "INFO"
+	case DebugLevel:
+		return "DEBUG"
+	case TraceLevel:
+		return "TRACE"
+	default:
+		return "INFO"
+	}
 }
 
 func makeAppender(confLevel LogLevel, level LogLevel, prefix string, w io.Writer) (LogAppenderf, LogAppender) {

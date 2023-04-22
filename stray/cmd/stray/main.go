@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 
 	"stray/util"
 
@@ -28,10 +29,10 @@ func test1() {
 }
 
 func main() {
-	logger := util.NewLogger("", util.TraceLevel)
-	logger.Debug("Debug 1")
-	logger.Debugf("Debug %d", 999)
-	logger.Errorf("Abc %s", "abc")
+	conf := util.ParseConf(os.Args[1:])
+
+	logger := util.NewLogger("", conf.LogLevel)
+	logger.Debugf("Log level %s", util.LogLevelToStr(conf.LogLevel))
 
 	dbgData := &struct {
 		a byte

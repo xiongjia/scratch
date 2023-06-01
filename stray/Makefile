@@ -1,6 +1,11 @@
 # makefile for stray
 
 COMMANDS = stray 
+ifeq ($(OS),Windows_NT)
+	COMMANDS = stray.exe
+endif
+
+LIBS = ./util/conf.go ./util/log.go
 
 build: $(COMMANDS)
 
@@ -8,7 +13,8 @@ clean:
 	go clean
 	rm -f ${COMMANDS}
 
-stray: $(shell find ./cmd/stray -iname "*.go") $(shell find ./util -iname "*.go") 
-	go build -o stray ./cmd/stray/main.go
+
+$(COMMANDS): ./cmd/stray/main.go $(LIBS)
+	go build -o ${COMMANDS} ./cmd/stray/main.go
 
 .PHONY: build clean

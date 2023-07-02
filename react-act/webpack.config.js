@@ -6,6 +6,7 @@ module.exports = {
         path: path.join(__dirname, "dist", "assets"),
         filename: "bundle.js"
     },
+    devtool: "source-map",
     module: {
         rules: [{ test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }]
     }

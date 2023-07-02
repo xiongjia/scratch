@@ -1,0 +1,11 @@
+# OS junk files
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYLE.BIN/
+
+./dist/

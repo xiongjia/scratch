@@ -1,43 +1,37 @@
 import React from 'react';
 import { useState } from "react";
 import { Sidebar, Menu, SubMenu, MenuItem } from "react-pro-sidebar";
-import { Box } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import { Link } from "react-router-dom";
 
 const MainSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState("dashboard");
 
   return (
-    <Box
-      sx={{
-        "& .pro-icon-wrapper": {
-          backgroundColor: "transparent !important",
-        },
-        "& .pro-inner-item": {
-          padding: "5px 35px 5px 20px !important",
-        },
-        "& .pro-inner-item:hover": {
-          color: "#868dfb !important",
-        },
-        "& .pro-menu-item.active": {
-          color: "#6870fa !important",
-        },
-      }}
-    >
-      <Sidebar>
-        <Menu
-          menuItemStyles={{
-            button: {
-              [`&.active`]: { backgroundColor: 'red', color: '#b6c8d9', },
-            },
-          }}
-        >
-          <SubMenu label="Charts">
-            <MenuItem> Pie charts </MenuItem>
-            <MenuItem> Line charts </MenuItem>
+    <Box>
+      <Sidebar collapsed={isCollapsed}>
+        <Menu>
+          <MenuItem icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{ margin: "10px 0 20px 0" }}>
+            {!isCollapsed && (
+              <Box display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                ml="15px">
+                <Typography>DashBoard</Typography>
+                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                  <MenuOutlinedIcon />
+                </IconButton>
+              </Box>
+            )}
+          </MenuItem>
+          <SubMenu label="Home" icon={<HomeOutlinedIcon />} defaultOpen >
+            <MenuItem> Data1 <Link to="/data1" /> </MenuItem>
+            <MenuItem> Data2 <Link to="/data2" /></MenuItem>
           </SubMenu>
-          <MenuItem> Documentation </MenuItem>
-          <MenuItem> Calendar </MenuItem>
         </Menu>
       </Sidebar>
     </Box>

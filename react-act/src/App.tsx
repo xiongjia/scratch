@@ -2,18 +2,13 @@ import React from 'react';
 import { useState, createContext } from "react";
 import MainSidebar from './components/MainSidebar';
 import Dashboard from './components/Dashboard';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Box } from "@mui/material";
 
 function App() {
-  const [isSidebar, setIsSidebar] = useState(true);
-  const context = createContext({});
-
-
   return (
-    <BrowserRouter>
       <div className='app'>
-      <main className="content" style={{ display: "flex" }}>
+        <main className="content" style={{ display: "flex" }}>
         <MainSidebar/>
         <Box flexGrow={1}>
           <Routes>
@@ -24,7 +19,6 @@ function App() {
         </Box>
       </main>
     </div>
-    </BrowserRouter>
   );
 }
 

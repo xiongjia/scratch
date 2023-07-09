@@ -29,8 +29,12 @@ const MainSidebar = () => {
             )}
           </MenuItem>
           <SubMenu label="Home" icon={<HomeOutlinedIcon />} defaultOpen >
-            <MenuItem> Data1 <Link to="/data1" /> </MenuItem>
-            <MenuItem> Data2 <Link to="/data2" /></MenuItem>
+            <MenuItem component={<Link to="/data1" />}>
+              <Typography>data1</Typography>
+            </MenuItem>
+            <MenuItem component={<Link to="/data2" />}>
+              <Typography>data2</Typography>
+            </MenuItem>
           </SubMenu>
         </Menu>
       </Sidebar>

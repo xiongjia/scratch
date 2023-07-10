@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, createContext } from "react";
 import MainSidebar from './components/MainSidebar';
+import AppBar from './components/AppBar';
 import Dashboard from './components/Dashboard';
 import { Routes, Route } from "react-router-dom";
 import { Box } from "@mui/material";
@@ -8,6 +9,7 @@ import { Box } from "@mui/material";
 function App() {
   return (
       <div className='app'>
+        <AppBar />
         <main className="content" style={{ display: "flex" }}>
         <MainSidebar/>
         <Box flexGrow={1}>

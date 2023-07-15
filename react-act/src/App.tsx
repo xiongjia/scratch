@@ -1,13 +1,20 @@
-import React from 'react';
-import { useState, createContext } from "react";
+import React, { useState } from 'react';
 import MainSidebar from './components/MainSidebar';
 import AppBar from './components/AppBar';
 import Dashboard from './components/Dashboard';
 import { Routes, Route } from "react-router-dom";
 import { Box } from "@mui/material";
+import { PageContext } from "./PageContext";
+
+const val = {
+  name: 'test context' 
+};
 
 function App() {
+  const [name, setName] = useState("default context");
+
   return (
+      <PageContext.Provider value={{name, setName}}>
       <div className='app'>
         <AppBar />
         <main className="content" style={{ display: "flex" }}>
@@ -21,6 +28,7 @@ function App() {
         </Box>
       </main>
     </div>
+    </PageContext.Provider>
   );
 }
 

@@ -13,6 +13,17 @@ const Dashboard = ({name}: DashBoardProps) => {
     return (
         <div>
             <Typography>{name || 'default'} : {ctx.name}</Typography>
+            <Typography>
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+            </Typography>
+            <Typography>{name || 'default'} : {ctx.name}</Typography>
             <Button variant="contained" onClick={() => {
                 console.log("click");
                 ctx.setName("abc");

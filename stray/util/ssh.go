@@ -30,6 +30,7 @@ func NewClient() {
 	defer session.Close()
 
 	var b bytes.Buffer
+	session.Stderr = &b
 	session.Stdout = &b
 	if err := session.Run("hostname && ls && df -ah"); err != nil {
 		log.Fatal("Failed to run: " + err.Error())

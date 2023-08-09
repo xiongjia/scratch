@@ -1,14 +1,24 @@
 package main
 
 import (
-	"os"
+	"flag"
+	"fmt"
 
-	"stray/util"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 func main() {
-	conf := util.ParseConf(os.Args[1:])
-	logger := util.NewLogger("", conf.LogLevel)
+	viper.SetConfigName("test.yaml")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.ReadInConfig()
 
-	logger.Debugf("Log level = %s", util.LogLevelToStr(conf.LogLevel))
+	flag.Int("flagname", 1234, "help message for flagname")
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
+	i := viper.GetInt("flagname") // retrieve value from viper
+	fmt.Printf("test %d\n", i)
 }

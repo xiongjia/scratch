@@ -1,10 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
-	"stray/util"
+	"time"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -53,13 +52,20 @@ func main() {
 	i := viper.GetInt("flagname") // retrieve value from viper
 	fmt.Printf("test %d\n", i)
 
-	data := identity{
-		FirstName: "test1",
-		Age:       11,
+	fmt.Println("chan tests")
+
+	errc := make(chan string, 1)
+	go func() {
+		fmt.Printf("Start sleep\n")
+		time.Sleep(time.Second * 100)
+		errc <- "hello1"
+	}()
+
+	fmt.Printf("Waiting...")
+	select {
+	case str := <-errc:
+		fmt.Println(str)
 	}
-	var buf bytes.Buffer
-	err := util.Marshal(&buf, data)
-	if err != nil {
-		fmt.Printf("err %s\n", err)
-	}
+
+	fmt.Printf("exit \n")
 }

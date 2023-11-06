@@ -12,3 +12,4 @@ go.work
 
 # project files
 /stray
+generated

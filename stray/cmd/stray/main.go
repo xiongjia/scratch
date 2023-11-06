@@ -1,71 +1,71 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"os"
 	"time"
 
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"context"
+	"log"
+	"net"
+	"net/http"
+
+	"stray/util"
+
+	hello "stray/generated/api/proto/v1"
+
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
-func init() {
-	fmt.Println("init")
+type server struct {
+	hello.UnimplementedGreeterServer
 }
 
-func testString(a *[3]string) (r string) {
-	r = "test"
-	fmt.Printf("a1: %s\n", a[1])
-	a[1] = "change1"
-	for _, v := range *a {
-		fmt.Printf("data: %s\n", v)
-	}
-	return
+func NewServer() *server {
+	return &server{}
 }
 
-func testString2(a [3]string) (r string) {
-	r = "test"
-	fmt.Printf("a1: %s\n", a[1])
-	a[1] = "change3"
-	for _, v := range a {
-		fmt.Printf("data: %s\n", v)
-	}
-	return
-}
-
-type identity struct {
-	FirstName string
-	Age       int
+func (s *server) SayHello(ctx context.Context, in *hello.HelloRequest) (*hello.HelloReply, error) {
+	return &hello.HelloReply{Message: in.Name + " test123 "}, nil
 }
 
 func main() {
-	flag.Int("flagname", 1234, "help message for flagname")
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.Parse()
-	viper.BindPFlags(pflag.CommandLine)
-
-	viper.SetConfigName("test.yaml")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	viper.ReadInConfig()
-
-	i := viper.GetInt("flagname") // retrieve value from viper
-	fmt.Printf("test %d\n", i)
-
-	fmt.Println("chan tests")
-
-	errc := make(chan string, 1)
-	go func() {
-		fmt.Printf("Start sleep\n")
-		time.Sleep(time.Second * 100)
-		errc <- "hello1"
-	}()
-
-	fmt.Printf("Waiting...")
-	select {
-	case str := <-errc:
-		fmt.Println(str)
+	listen, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		log.Fatalln("Failed to listen:", err)
 	}
 
-	fmt.Printf("exit \n")
+	s := grpc.NewServer()
+	hello.RegisterGreeterServer(s, &server{})
+	log.Println("Serving gRPC on 0.0.0.0:8080")
+	go func() {
+		log.Fatalln(s.Serve(listen))
+	}()
+
+	conn, err := grpc.DialContext(
+		context.Background(),
+		"0.0.0.0:8080",
+		grpc.WithBlock(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		log.Fatalln("Failed to dial server:", err)
+	}
+
+	gwmux := runtime.NewServeMux()
+	err = hello.RegisterGreeterHandler(context.Background(), gwmux, conn)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+
+	gwServer := &http.Server{
+		Addr:    ":8090",
+		Handler: gwmux,
+	}
+
+	logger.Debugf("Log level = %s", util.LogLevelToStr(conf.LogLevel))
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8090")
+	log.Fatalln(gwServer.ListenAndServe())
 }

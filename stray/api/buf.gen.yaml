@@ -9,3 +9,5 @@ plugins:
   - plugin: grpc-gateway
     out: ../generated/api
     opt: paths=source_relative
+  - name: openapi
+    out: ../generated/api/swagger

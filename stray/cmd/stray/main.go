@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 
 	hello "stray/generated/api/proto/v1"
 	swaggerdata "stray/generated/swagger/data"
+	swaggerui "stray/generated/swagger/ui"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 
@@ -75,27 +77,44 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", gwmux)
-
-	gwServer := &http.Server{
-		Addr:    ":8090",
-		Handler: gwmux,
-	}
-	log.Fatalln(gwServer.ListenAndServe())
 
 	datafs := &assetfs.AssetFS{
 		Asset:    swaggerdata.Asset,
 		AssetDir: swaggerdata.AssetDir,
 	}
+
 	serveFileFn := func(w http.ResponseWriter, r *http.Request, root *assetfs.AssetFS, path string) error {
 		file, err := root.Open(path)
 		if err != nil {
+			log.Println("error ", err)
 			return err
 		}
 		defer file.Close()
 		http.ServeContent(w, r, filepath.Base(path), time.Time{}, file)
 		return nil
 	}
+
+	mux.HandleFunc("/swagger-ui/LICENSE", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("license request ===")
+		err := serveFileFn(w, r, datafs, "LICENSE")
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to open file: %s", err.Error()), http.StatusBadRequest)
+		}
+	})
+
+	mux.HandleFunc("/swagger-ui/document", func(w http.ResponseWriter, r *http.Request) {
+		err := serveFileFn(w, r, datafs, "document")
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to open file: %s", err.Error()), http.StatusBadRequest)
+		}
+	})
+
+	mux.HandleFunc("/swagger-ui/openapi.yaml", func(w http.ResponseWriter, r *http.Request) {
+		err := serveFileFn(w, r, datafs, "openapi.yaml")
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to open file: %s", err.Error()), http.StatusBadRequest)
+		}
+	})
 
 	uiServer := http.FileServer(&assetfs.AssetFS{
 		Asset:    swaggerui.Asset,
@@ -104,7 +123,12 @@ func main() {
 		Fallback: "index.html",
 	})
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui/", uiServer))
+	mux.Handle("/", gwmux)
 
+	gwServer := &http.Server{
+		Addr:    ":8090",
+		Handler: mux,
+	}
 	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8090")
-	// log.Fatalln(gwServer.ListenAndServe())
+	log.Fatalln(gwServer.ListenAndServe())
 }

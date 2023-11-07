@@ -3,6 +3,7 @@ module stray
 go 1.19
 
 require (
+	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.14.0

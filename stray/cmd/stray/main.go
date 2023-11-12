@@ -77,13 +77,12 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-
 	datafs := &assetfs.AssetFS{
 		Asset:    swaggerdata.Asset,
 		AssetDir: swaggerdata.AssetDir,
 	}
-
 	serveFileFn := func(w http.ResponseWriter, r *http.Request, root *assetfs.AssetFS, path string) error {
+		log.Println("serve file ", path)
 		file, err := root.Open(path)
 		if err != nil {
 			log.Println("error ", err)
@@ -93,7 +92,6 @@ func main() {
 		http.ServeContent(w, r, filepath.Base(path), time.Time{}, file)
 		return nil
 	}
-
 	mux.HandleFunc("/swagger-ui/LICENSE", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("license request ===")
 		err := serveFileFn(w, r, datafs, "LICENSE")
@@ -101,7 +99,6 @@ func main() {
 			http.Error(w, fmt.Sprintf("failed to open file: %s", err.Error()), http.StatusBadRequest)
 		}
 	})
-
 	mux.HandleFunc("/swagger-ui/document", func(w http.ResponseWriter, r *http.Request) {
 		err := serveFileFn(w, r, datafs, "document")
 		if err != nil {
@@ -124,6 +121,9 @@ func main() {
 	})
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui/", uiServer))
 	mux.Handle("/", gwmux)
+
+	// fileServer := http.FileServer(http.Dir("D:/dev/tmp"))
+	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	gwServer := &http.Server{
 		Addr:    ":8090",

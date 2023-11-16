@@ -13,6 +13,9 @@ import (
 	swaggerdata "stray/generated/swagger/data"
 	swaggerui "stray/generated/swagger/ui"
 
+	"github.com/gocql/gocql"
+	"github.com/scylladb/gocqlx/v2"
+
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -50,7 +53,35 @@ func clientTest() {
 	}()
 }
 
+type Tweet struct {
+	UserId int32
+	Name   string
+}
+
+func dbTest() {
+	cluster := gocql.NewCluster([]string{"172.24.10.193:9042"}...)
+	cluster.Authenticator = gocql.PasswordAuthenticator{
+		Username: "cassandra",
+		Password: "cassandra",
+	}
+	cluster.Keyspace = "rhino"
+	session, err := gocqlx.WrapSession(cluster.CreateSession())
+	if err != nil {
+		log.Fatalln("gocqlx error")
+	}
+	defer session.Close()
+
+	// query := fmt.Sprintf("SELECT * FROM %s.%s where id = ?", "rhino", "account")
+	var name string
+	err = session.Query("SELECT name FROM account LIMIT 1", []string{}).Consistency(gocql.One).Scan(&name)
+	if err != nil {
+		return
+	}
+}
+
 func main() {
+	dbTest()
+
 	listen, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)

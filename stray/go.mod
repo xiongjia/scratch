@@ -8,6 +8,7 @@ require (
 	github.com/google/gnostic v0.7.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/scylladb/gocqlx/v2 v2.8.0
+	github.com/teivah/broadcast v0.1.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.14.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20231030173426-d783a09b4405

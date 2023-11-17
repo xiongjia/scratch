@@ -15,6 +15,7 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx/v2"
+	"github.com/teivah/broadcast"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 
@@ -58,7 +59,7 @@ type Tweet struct {
 	Name   string
 }
 
-func dbTest() {
+func DbTest() {
 	cluster := gocql.NewCluster([]string{"172.24.10.193:9042"}...)
 	cluster.Authenticator = gocql.PasswordAuthenticator{
 		Username: "cassandra",
@@ -79,8 +80,40 @@ func dbTest() {
 	}
 }
 
+type msg string
+
+const (
+	msgA msg = "A"
+	msgB     = "B"
+	msgC     = "C"
+)
+
+func MsgTest() {
+	relay := broadcast.NewRelay[msg]()
+	defer relay.Close()
+
+	for i := 0; i < 2; i++ {
+		go func(i int) {
+			l := relay.Listener(1)
+			log.Println("test")
+
+			for n := range l.Ch() { // Ranges over notifications
+				fmt.Printf("listener %d has received a notification: %v\n", i, n)
+			}
+		}(i)
+	}
+
+	time.Sleep(time.Second * 2)
+	relay.Notify(msgA)
+	time.Sleep(time.Second * 2)
+	relay.Broadcast(msgC)
+}
+
 func main() {
-	dbTest()
+	log.Println("test")
+
+	// DbTest()
+	MsgTest()
 
 	listen, err := net.Listen("tcp", ":8080")
 	if err != nil {

@@ -1,5 +1,7 @@
 # common
 
+.vscode
+
 *.exe
 *.exe~
 *.dll

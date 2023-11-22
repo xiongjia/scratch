@@ -4,10 +4,12 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 
 	"stray/internal/log"
+	"stray/internal/pedestal"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -28,7 +30,13 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("core cmd test 123")
+		log.Infof("Service core is starting")
+		s, err := pedestal.NewServer()
+		if err != nil {
+			log.Panicf("Core service start error: %s", err.Error())
+		}
+
+		s.Start(context.Background())
 	},
 }
 

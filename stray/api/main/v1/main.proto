@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package hello;
+package main;
 
 import "gnostic/openapi/v3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "stray/api/proto/v1/hello";
+option go_package = "stray/api/main/v1";
 
 // The greeting service definition
 service Greeter {

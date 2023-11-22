@@ -1,13 +1,18 @@
 version: v1
 plugins:
   - plugin: go
-    out: ../generated/api
+    out: ../gen/api
     opt: paths=source_relative
   - plugin: go-grpc
-    out: ../generated/api
+    out: ../gen/api
     opt: paths=source_relative
   - plugin: grpc-gateway
-    out: ../generated/api
+    out: ../gen/api
     opt: paths=source_relative
-  - name: openapi
-    out: ../generated/api/swagger
+  - name: openapiv2
+    out: ../gen/api
+    opt:
+      - allow_merge=false
+      - output_format=yaml
+  - plugin: buf.build/bufbuild/es:v1.4.2
+    out: ../gen/api

@@ -10,7 +10,7 @@ plugins:
     out: ../gen/api
     opt: paths=source_relative
   - name: openapiv2
-    out: ../gen/api
+    out: ../gen/api_doc
     opt:
       - allow_merge=false
       - output_format=yaml

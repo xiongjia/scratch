@@ -6,7 +6,7 @@ import "gnostic/openapi/v3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "stray/api/core/v1";
+option go_package = "stray/api/v1/core";
 
 // The greeting service definition
 service Greeter {

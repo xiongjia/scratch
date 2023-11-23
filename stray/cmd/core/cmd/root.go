@@ -35,7 +35,6 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Panicf("Core service start error: %s", err.Error())
 		}
-
 		s.Start(context.Background())
 	},
 }

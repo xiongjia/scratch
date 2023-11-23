@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"stray/cmd/infra/service"
 	"stray/internal/log"
 
 	"github.com/spf13/cobra"
@@ -28,7 +29,8 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("main cmd test 123")
+		log.Infof("Main CMD started")
+		service.MainService()
 	},
 }
 

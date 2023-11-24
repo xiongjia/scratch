@@ -3,6 +3,7 @@ package pedestal
 import (
 	"net"
 	"strconv"
+	"sync"
 
 	"stray/internal/log"
 
@@ -21,7 +22,7 @@ func newRPCServer(svc NetworkService, handles []RpcServiceRegistrar) *RPCServer 
 	}
 }
 
-func (s *RPCServer) start() (err error) {
+func (s *RPCServer) start(wg *sync.WaitGroup) (err error) {
 	var opts []grpc.ServerOption
 
 	listen, err := net.Listen("tcp", net.JoinHostPort(
@@ -38,7 +39,11 @@ func (s *RPCServer) start() (err error) {
 	for _, h := range s.handles {
 		h(serv)
 	}
+
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
+
 		log.Infof("RPC Server started %s:%d", s.svc.IP, s.svc.Port)
 		serv.Serve(listen)
 	}()

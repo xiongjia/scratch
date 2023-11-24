@@ -2,6 +2,7 @@ package pedestal
 
 import (
 	"context"
+	"sync"
 
 	"google.golang.org/grpc"
 )
@@ -28,7 +29,11 @@ func (pd *Pedestal) AddRpcServiceHandle(handler RpcServiceRegistrar) {
 }
 
 func (pd *Pedestal) Start(ctx context.Context) (err error) {
+	var wg sync.WaitGroup
+
 	rpcServ := newRPCServer(pd.rpcSvc, pd.rpcSvcHandles)
-	rpcServ.start()
+	rpcServ.start(&wg)
+
+	wg.Wait()
 	return nil
 }

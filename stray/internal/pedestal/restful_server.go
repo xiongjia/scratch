@@ -1,42 +1,72 @@
 package pedestal
 
 import (
-	"fmt"
 	"net"
 	"net/http"
+	"path/filepath"
 	"stray/internal/log"
 	"strconv"
 	"sync"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+
+	assetfs "github.com/elazarl/go-bindata-assetfs"
+	"github.com/go-chi/chi/middleware"
 )
 
 type RestfulServer struct {
-	svc NetworkService
+	svc      NetworkService
+	handlers []RestfulHandleRegistrar
+	mux      *chi.Mux
 }
 
-func newRestfulServer(svc NetworkService) *RestfulServer {
-	return &RestfulServer{
-		svc: svc,
+type RestfulHandleRegistrar func(mux *chi.Mux)
+
+func assertFsHandle(w http.ResponseWriter, r *http.Request,
+	root *assetfs.AssetFS, path string) error {
+	f, err := root.Open(path)
+	if err != nil {
+		return err
 	}
+	defer f.Close()
+
+	http.ServeContent(w, r, filepath.Base(path), time.Time{}, f)
+	return nil
+}
+
+func newRestfulServer(svc NetworkService, handles []RestfulHandleRegistrar) *RestfulServer {
+	serv := &RestfulServer{
+		svc: svc,
+		mux: chi.NewRouter(),
+	}
+	serv.handlers = append(serv.handlers, swaggerUiHandle)
+	serv.handlers = append(serv.handlers, handles...)
+	return serv
+}
+
+func (s *RestfulServer) addRestfulHandler(handler RestfulHandleRegistrar) {
+
 }
 
 func (s *RestfulServer) start(wg *sync.WaitGroup) (err error) {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/demo", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "test")
-	})
-
-	log.Infof("Restful server %s:%d", s.svc.IP, s.svc.Port)
+	s.mux.Use(middleware.Logger)
+	for _, h := range s.handlers {
+		h(s.mux)
+	}
 	srv := &http.Server{
 		Addr: net.JoinHostPort(
 			s.svc.IP,
 			strconv.Itoa(int(s.svc.Port)),
 		),
-		Handler: mux,
+		Handler: s.mux,
 	}
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
+
+		log.Infof("Restful server %s:%d", s.svc.IP, s.svc.Port)
 		srv.ListenAndServe()
 	}()
 	return nil

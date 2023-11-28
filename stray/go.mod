@@ -3,6 +3,9 @@ module stray
 go 1.19
 
 require (
+	github.com/elazarl/go-bindata-assetfs v1.0.1
+	github.com/go-chi/chi v1.5.5
+	github.com/go-chi/chi/v5 v5.0.10
 	github.com/google/gnostic v0.7.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/spf13/cobra v1.8.0

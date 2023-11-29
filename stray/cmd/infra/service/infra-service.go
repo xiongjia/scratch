@@ -2,13 +2,16 @@ package service
 
 import (
 	"context"
-	"net/http"
+	"net"
 	"stray/gen/api/infra/v1"
 	"stray/internal/log"
 	"stray/internal/pedestal"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	apidoc "stray/gen/api_doc/infra/v1"
 )
@@ -23,11 +26,25 @@ func (s *infraServ) SayHello(ctx context.Context, in *infra.HelloRequest) (*infr
 }
 
 func swaggerDoc(mux *chi.Mux) {
-	log.Infof("restful register")
-	mux.Get("/swagger-ui/openapi.yaml", func(w http.ResponseWriter, r *http.Request) {
-		b, _ := apidoc.Asset("infra.swagger.yaml")
-		w.Write(b)
-	})
+	b, _ := apidoc.Asset("infra.swagger.yaml")
+	pedestal.AddRestfulBuffHandle(mux, "/swagger-ui/openapi.yaml", b)
+}
+
+func grpcGatewayHandle(mux *chi.Mux, rpcSvc pedestal.NetworkService) {
+	cc, err := grpc.DialContext(context.Background(), net.JoinHostPort(
+		rpcSvc.IP,
+		strconv.Itoa(int(rpcSvc.Port)),
+	), grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to dial server: %s", err.Error())
+	}
+
+	gwmux := runtime.NewServeMux()
+	err = infra.RegisterGreeterHandlerClient(context.Background(), gwmux, infra.NewGreeterClient(cc))
+	if err != nil {
+		log.Fatalf("Failed to handle RPC Gateway: %s", err.Error())
+	}
+	mux.Handle("/*", gwmux)
 }
 
 func MainService() {
@@ -41,5 +58,8 @@ func MainService() {
 		infra.RegisterGreeterServer(r, svc)
 	})
 	s.AddRestfulHandler(swaggerDoc)
+	s.AddRestfulHandler(func(mux *chi.Mux) {
+		grpcGatewayHandle(mux, s.RpcSvc)
+	})
 	s.Start(context.Background())
 }

@@ -9,7 +9,13 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func AddServerFsHandle(mux *chi.Mux, path string, root http.FileSystem) {
+func AddRestfulBuffHandle(mux *chi.Mux, path string, b []byte) {
+	mux.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		w.Write(b)
+	})
+}
+
+func AddRestfulFsHandle(mux *chi.Mux, path string, root http.FileSystem) {
 	fserv := http.FileServer(root)
 	mux.Get(path, func(w http.ResponseWriter, r *http.Request) {
 		rctx := chi.RouteContext(r.Context())
@@ -20,7 +26,7 @@ func AddServerFsHandle(mux *chi.Mux, path string, root http.FileSystem) {
 }
 
 func swaggerUiHandle(mux *chi.Mux) {
-	AddServerFsHandle(mux, "/swagger-ui/*", &assetfs.AssetFS{
+	AddRestfulFsHandle(mux, "/swagger-ui/*", &assetfs.AssetFS{
 		Asset:    docui.Asset,
 		AssetDir: docui.AssetDir,
 		Prefix:   "swagger-ui",

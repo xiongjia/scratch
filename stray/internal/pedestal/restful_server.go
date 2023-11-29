@@ -45,15 +45,18 @@ func newRestfulServer(svc NetworkService, handles []RestfulHandleRegistrar) *Res
 	return serv
 }
 
-func (s *RestfulServer) addRestfulHandler(handler RestfulHandleRegistrar) {
-
-}
-
 func (s *RestfulServer) start(wg *sync.WaitGroup) (err error) {
 	s.mux.Use(middleware.Logger)
 	for _, h := range s.handlers {
 		h(s.mux)
 	}
+
+	// DEBUG MUX methods and middlewares
+	chi.Walk(s.mux, func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
+		log.Infof("[%s]: '%s' has %d middlewares", method, route, len(middlewares))
+		return nil
+	})
+
 	srv := &http.Server{
 		Addr: net.JoinHostPort(
 			s.svc.IP,

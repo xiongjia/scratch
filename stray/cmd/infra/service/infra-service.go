@@ -31,6 +31,7 @@ func swaggerDoc(mux *chi.Mux) {
 }
 
 func grpcGatewayHandle(mux *chi.Mux, rpcSvc pedestal.NetworkService) {
+	// TODO re-create client if master service changed
 	cc, err := grpc.DialContext(context.Background(), net.JoinHostPort(
 		rpcSvc.IP,
 		strconv.Itoa(int(rpcSvc.Port)),
@@ -38,7 +39,6 @@ func grpcGatewayHandle(mux *chi.Mux, rpcSvc pedestal.NetworkService) {
 	if err != nil {
 		log.Fatalf("Failed to dial server: %s", err.Error())
 	}
-
 	gwmux := runtime.NewServeMux()
 	err = infra.RegisterGreeterHandlerClient(context.Background(), gwmux, infra.NewGreeterClient(cc))
 	if err != nil {

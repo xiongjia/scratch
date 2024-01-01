@@ -9,8 +9,8 @@ ifeq ($(OS),Windows_NT)
 endif
 
 app:
-	go build -o ${CMD_MAIN} ./cmd/infra/main.go
-	go build -o ${CMD_CORE} ./cmd/core/main.go
+	go build -gcflags=all="-N -l" -v -o ${CMD_MAIN} ./cmd/infra/main.go
+	go build -gcflags=all="-N -l" -v -o ${CMD_CORE} ./cmd/core/main.go
 
 build: generate app
 

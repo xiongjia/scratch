@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"container/list"
 	"fmt"
 	"os"
 
@@ -85,6 +86,15 @@ func swapTest[T any](a, b *T) {
 	*a, *b = *b, *a
 }
 
+func testSort(l *list.List) {
+	if l.Front() == nil {
+      return
+   }
+   for cur := l.Front(); cur != l.Front().Prev(); cur = cur.Next() {
+      fmt.Println(cur.Value)
+   }
+}
+
 func test() {
 	fmt.Println("test")
 
@@ -92,4 +102,8 @@ func test() {
 	b := 2
 	swapTest(&a, &b)
 	fmt.Printf("a = %d, b = %d \n", a, b)
+
+	l1 := list.New()
+	l1.PushFront(1)
+	testSort(l1)
 }

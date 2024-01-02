@@ -30,6 +30,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Tools tests")
 		log.Debugf("test")
+		test()
 	},
 }
 
@@ -78,4 +79,17 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func swapTest[T any](a, b *T) {
+	*a, *b = *b, *a
+}
+
+func test() {
+	fmt.Println("test")
+
+	a := 1
+	b := 2
+	swapTest(&a, &b)
+	fmt.Printf("a = %d, b = %d \n", a, b)
 }

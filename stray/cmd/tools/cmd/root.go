@@ -7,6 +7,7 @@ import (
 	"container/list"
 	"fmt"
 	"os"
+	"sort"
 
 	"stray/internal/log"
 
@@ -88,14 +89,32 @@ func swapTest[T any](a, b *T) {
 
 func testSort(l *list.List) {
 	if l.Front() == nil {
-      return
-   }
-   for cur := l.Front(); cur != l.Front().Prev(); cur = cur.Next() {
-      fmt.Println(cur.Value)
-   }
+		return
+	}
+	for cur := l.Front(); cur != l.Front().Prev(); cur = cur.Next() {
+		fmt.Println(cur.Value)
+	}
+}
+
+type SortByLength []string
+
+func (s SortByLength) Len() int {
+	return len(s)
+}
+
+func (s SortByLength) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s SortByLength) Less(i, j int) bool {
+	return len(s[i]) < len(s[j])
 }
 
 func test() {
+	words := []string{"cloud", "atom", "sea", "by", "forest", "maintenance"}
+	sort.Sort(SortByLength(words))
+	fmt.Println(words)
+
 	fmt.Println("test")
 
 	a := 1

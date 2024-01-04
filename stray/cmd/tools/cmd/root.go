@@ -11,6 +11,7 @@ import (
 
 	"stray/internal/log"
 
+	"github.com/sourcegraph/conc/panics"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -110,7 +111,25 @@ func (s SortByLength) Less(i, j int) bool {
 	return len(s[i]) < len(s[j])
 }
 
+func concTest() {
+	var pc panics.Catcher
+
+	i := 0
+	pc.Try(func() { i += 2 })
+	pc.Try(func() { panic("abort!") })
+	pc.Try(func() { i += 1 })
+
+	rc := pc.Recovered()
+	fmt.Println(i)
+
+	if rc != nil {
+		fmt.Println(rc.Value.(string))
+	}
+}
+
 func test() {
+	concTest()
+
 	words := []string{"cloud", "atom", "sea", "by", "forest", "maintenance"}
 	sort.Sort(SortByLength(words))
 	fmt.Println(words)

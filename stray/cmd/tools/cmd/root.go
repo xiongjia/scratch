@@ -1,0 +1,147 @@
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+*/
+package cmd
+
+import (
+	"container/list"
+	"fmt"
+	"os"
+	"sort"
+
+	"stray/internal/log"
+
+	"github.com/sourcegraph/conc/panics"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+var cfgFile string
+
+// rootCmd represents the base command when called without any subcommands
+var rootCmd = &cobra.Command{
+	Use:   "tool",
+	Short: "A brief description of your application",
+	Long: `A longer description that spans multiple lines and likely contains
+examples and usage of using your application. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	// Uncomment the following line if your bare application
+	// has an action associated with it:
+	Run: func(cmd *cobra.Command, args []string) {
+		log.Infof("Tools tests")
+		log.Debugf("test")
+		test()
+	},
+}
+
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() {
+	err := rootCmd.Execute()
+	if err != nil {
+		os.Exit(1)
+	}
+}
+
+func init() {
+	cobra.OnInitialize(initConfig)
+
+	// Here you will define your flags and configuration settings.
+	// Cobra supports persistent flags, which, if defined here,
+	// will be global for your application.
+
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.core.yaml)")
+
+	// Cobra also supports local flags, which will only run
+	// when this action is called directly.
+	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	if cfgFile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(cfgFile)
+	} else {
+		// Find home directory.
+		home, err := os.UserHomeDir()
+		cobra.CheckErr(err)
+
+		// Search config in home directory with name ".core" (without extension).
+		viper.AddConfigPath(home)
+		viper.SetConfigType("yaml")
+		viper.SetConfigName(".core")
+	}
+
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+func swapTest[T any](a, b *T) {
+	*a, *b = *b, *a
+}
+
+func testSort(l *list.List) {
+	if l.Front() == nil {
+		return
+	}
+	for cur := l.Front(); cur != l.Front().Prev(); cur = cur.Next() {
+		fmt.Println(cur.Value)
+	}
+}
+
+type SortByLength []string
+
+func (s SortByLength) Len() int {
+	return len(s)
+}
+
+func (s SortByLength) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s SortByLength) Less(i, j int) bool {
+	return len(s[i]) < len(s[j])
+}
+
+func concTest() {
+	var pc panics.Catcher
+
+	i := 0
+	pc.Try(func() { i += 2 })
+	pc.Try(func() { panic("abort!") })
+	pc.Try(func() { i += 1 })
+
+	rc := pc.Recovered()
+	fmt.Println(i)
+
+	if rc != nil {
+		fmt.Println(rc.Value.(string))
+	}
+}
+
+func test() {
+	concTest()
+
+	words := []string{"cloud", "atom", "sea", "by", "forest", "maintenance"}
+	sort.Sort(SortByLength(words))
+	fmt.Println(words)
+
+	fmt.Println("test")
+
+	a := 1
+	b := 2
+	swapTest(&a, &b)
+	fmt.Printf("a = %d, b = %d \n", a, b)
+
+	l1 := list.New()
+	l1.PushFront(1)
+	testSort(l1)
+}

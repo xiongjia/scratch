@@ -4,16 +4,22 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"container/list"
+	"context"
 	"fmt"
+	"net"
 	"os"
-	"sort"
+	"runtime"
+	"time"
 
 	"stray/internal/log"
 
-	"github.com/sourcegraph/conc/panics"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
+
+	infrav1 "stray/gen/api/infra/v1"
 )
 
 var cfgFile string
@@ -32,8 +38,7 @@ to quickly create a Cobra application.`,
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Infof("Tools tests")
-		log.Debugf("test")
-		test()
+		testTool()
 	},
 }
 
@@ -84,64 +89,61 @@ func initConfig() {
 	}
 }
 
-func swapTest[T any](a, b *T) {
-	*a, *b = *b, *a
+func unaryClientInterceptor() grpc.UnaryClientInterceptor {
+	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		fmt.Printf("Interceptor\n")
+		start := time.Now()
+		cos := runtime.GOOS
+		ctx = metadata.AppendToOutgoingContext(ctx, "client-os", cos)
+		err := invoker(ctx, method, req, reply, cc, opts...)
+		end := time.Now()
+		fmt.Printf("RPC: %s,,client-OS: '%v' req:%v start time: %s, end time: %s, err: %v", method, cos, req,
+			start.Format(time.RFC3339), end.Format(time.RFC3339), err)
+		return err
+	}
 }
 
-func testSort(l *list.List) {
-	if l.Front() == nil {
+func testTool() {
+	cancelCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	dialOpts := []grpc.DialOption{grpc.WithBlock()}
+	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dialOpts = append(dialOpts, grpc.WithUnaryInterceptor(unaryClientInterceptor()))
+
+	rpcSrvAddr := net.JoinHostPort("127.0.0.1", "8081")
+	conn, err := grpc.DialContext(cancelCtx, rpcSrvAddr, dialOpts...)
+	if err != nil {
+		fmt.Printf("dial error %s", err.Error())
 		return
 	}
-	for cur := l.Front(); cur != l.Front().Prev(); cur = cur.Next() {
-		fmt.Println(cur.Value)
+
+	rpcClient := infrav1.NewGreeterClient(conn)
+
+	rep, err := rpcClient.SayHello(context.Background(), &infrav1.HelloRequest{
+		Name: "333",
+	})
+	if err != nil {
+		fmt.Printf("rpc error %s", err.Error())
+	} else {
+		fmt.Printf("msg %s", rep.GetMessage())
 	}
-}
 
-type SortByLength []string
-
-func (s SortByLength) Len() int {
-	return len(s)
-}
-
-func (s SortByLength) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-
-func (s SortByLength) Less(i, j int) bool {
-	return len(s[i]) < len(s[j])
-}
-
-func concTest() {
-	var pc panics.Catcher
-
-	i := 0
-	pc.Try(func() { i += 2 })
-	pc.Try(func() { panic("abort!") })
-	pc.Try(func() { i += 1 })
-
-	rc := pc.Recovered()
-	fmt.Println(i)
-
-	if rc != nil {
-		fmt.Println(rc.Value.(string))
+	rep, err = rpcClient.SayHello(context.Background(), &infrav1.HelloRequest{
+		Name: "333",
+	})
+	if err != nil {
+		fmt.Printf("2: rpc error %s", err.Error())
+	} else {
+		fmt.Printf("2: msg %s", rep.GetMessage())
 	}
-}
 
-func test() {
-	concTest()
+	go func() {
+		<-cancelCtx.Done()
+		fmt.Printf("closing gRPC client connection: %v", cancelCtx.Err())
+		if cerr := conn.Close(); cerr != nil {
+			fmt.Printf("Failed to close gRPC conn to %s: %v", rpcSrvAddr, cerr)
+		}
+	}()
 
-	words := []string{"cloud", "atom", "sea", "by", "forest", "maintenance"}
-	sort.Sort(SortByLength(words))
-	fmt.Println(words)
-
-	fmt.Println("test")
-
-	a := 1
-	b := 2
-	swapTest(&a, &b)
-	fmt.Printf("a = %d, b = %d \n", a, b)
-
-	l1 := list.New()
-	l1.PushFront(1)
-	testSort(l1)
 }

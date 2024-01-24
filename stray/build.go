@@ -13,6 +13,7 @@ import (
 )
 
 type BuildEnv struct {
+	Verbose    bool   `json:"verbose"`
 	ProjectDir string `json:"project_dir"`
 	GoCmd      string `json:"go_cmd"`
 
@@ -35,18 +36,17 @@ type Binary struct {
 
 var (
 	buildEnv = BuildEnv{
+		Verbose:     true,
 		ProjectDir:  ".",
 		GoCmd:       "go",
 		BuildDebug:  true,
 		BuildGOOS:   os.Getenv("GOOS"),
 		RuntimeGOOS: runtime.GOOS,
-		OutputDir:   ".",
+		OutputDir:   "./build",
 	}
 	project = Project{
 		OutputBinaries: []Binary{
-			{Output: "stray-infra", MainPkg: "cmd/infra/main.go"},
-			{Output: "stray-core", MainPkg: "cmd/core/main.go"},
-			{Output: "stray-tool", MainPkg: "cmd/core/main.go"},
+			{Output: "pikachu", MainPkg: "cmd/pikachu/main.go"},
 		},
 	}
 )
@@ -110,7 +110,10 @@ func makeOsBinFilename(filename string) string {
 func buildBinary(bin Binary) {
 	slog.Debug("Build binary: ", "bin", bin)
 
-	args := []string{"build", "-v"}
+	args := []string{"build"}
+	if buildEnv.Verbose {
+		args = append(args, "-v")
+	}
 	if buildEnv.BuildDebug {
 		args = append(args, "-gcflags", "all=-N -l")
 	} else {

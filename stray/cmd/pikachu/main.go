@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-	util.InitSLog(&util.SLogOptions{Level: slog.LevelDebug, AddSource: true})
-
+	slog.SetDefault(util.MakeSLog(&util.SLogOptions{Level: slog.LevelDebug, AddSource: true}))
 	slog.Debug("debug test")
 }

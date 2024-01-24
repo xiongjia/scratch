@@ -30,11 +30,10 @@ func makeLogWriter(opts *SLogOptions) io.Writer {
 	}
 }
 
-func InitSLog(opts *SLogOptions) {
+func MakeSLog(opts *SLogOptions) *slog.Logger {
 	logOpts := &slog.HandlerOptions{
 		Level:     opts.Level,
 		AddSource: opts.AddSource,
 	}
-	logger := slog.New(slog.NewJSONHandler(makeLogWriter(opts), logOpts))
-	slog.SetDefault(logger)
+	return slog.New(slog.NewJSONHandler(makeLogWriter(opts), logOpts))
 }

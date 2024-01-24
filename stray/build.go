@@ -51,19 +51,20 @@ var (
 	}
 )
 
-func init() {
-	logOpts := &slog.HandlerOptions{Level: slog.LevelDebug}
-	handler := slog.NewJSONHandler(os.Stdout, logOpts)
-	logger := slog.New(handler)
-	slog.SetDefault(logger)
+func initLog() {
+	logOpts := &slog.HandlerOptions{}
+	if buildEnv.Verbose {
+		logOpts.Level = slog.LevelDebug
+	}
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, logOpts)))
 }
 
 func main() {
+	flag.BoolVar(&buildEnv.Verbose, "verbose", false, "Print verbose build log")
 	flag.Parse()
-	slog.Debug("Build Script ",
-		slog.Any("env", buildEnv),
-		slog.Any("project", project))
+	initLog()
 
+	slog.Info("Staring Build script ", slog.Any("env", buildEnv), slog.Any("project", project))
 	cmd := flag.Arg(0)
 	if len(cmd) == 0 {
 		cmd = "buildAll"
@@ -86,7 +87,7 @@ func runCommand(cmd string) {
 func cleanAll() {
 	slog.Debug("cleanAll")
 	for _, binary := range project.OutputBinaries {
-		rmFiles(filepath.Join(buildEnv.OutputDir, makeOsBinFilename(binary.Output)))
+		rmFiles(makeOutputBinFilename(binary.Output))
 	}
 }
 
@@ -96,19 +97,29 @@ func buildAll() {
 	}
 }
 
-func makeOsBinFilename(filename string) string {
+func makeOutputBinFilename(filename string) string {
 	goos := buildEnv.BuildGOOS
 	if len(goos) == 0 {
 		goos = buildEnv.RuntimeGOOS
 	}
 	if !strings.EqualFold(goos, "windows") {
-		return filename
+		return filepath.Join(buildEnv.OutputDir, filename)
 	}
-	return fmt.Sprintf("%s.exe", filename)
+	return filepath.Join(buildEnv.OutputDir, fmt.Sprintf("%s.exe", filename))
 }
 
 func buildBinary(bin Binary) {
 	slog.Debug("Build binary: ", "bin", bin)
+
+	output := makeOutputBinFilename(bin.Output)
+	binPkg := filepath.Join(buildEnv.ProjectDir, bin.MainPkg)
+	shouldRebuild := shouldRebuildAssets(output, binPkg,
+		filepath.Join(buildEnv.ProjectDir, "cmd"),
+		filepath.Join(buildEnv.ProjectDir, "internal"))
+	if !shouldRebuild {
+		slog.Info("No source code change. (SKIP)", slog.Any("bin", bin))
+		return
+	}
 
 	args := []string{"build"}
 	if buildEnv.Verbose {
@@ -119,11 +130,17 @@ func buildBinary(bin Binary) {
 	} else {
 		args = append(args, "-trimpath")
 	}
-	args = append(args,
-		"-o", filepath.Join(buildEnv.OutputDir, makeOsBinFilename(bin.Output)),
-		filepath.Join(buildEnv.ProjectDir, bin.MainPkg))
-	// TODO check exit code
-	invokeCmd(".", buildEnv.GoCmd, args...)
+	args = append(args, "-o", output, binPkg)
+	exitCode, err := invokeCmd(".", buildEnv.GoCmd, args...)
+	if err != nil {
+		slog.Error("go build command error", slog.Any("error", err))
+		return
+	}
+	if exitCode != 0 {
+		slog.Error("go build command error exit code != 0", slog.Int("exitCode", exitCode))
+		return
+	}
+	slog.Info("Build process finished", slog.Any("pkg", bin))
 }
 
 func rmFiles(paths ...string) {
@@ -151,28 +168,26 @@ func invokeCmd(wrkDir string, cmd string, args ...string) (int, error) {
 	return exitCode, nil
 }
 
-func shouldRebuildAssets(target, srcdir string) bool {
+func shouldRebuildAssets(target string, srcDirs ...string) bool {
 	info, err := os.Stat(target)
 	if err != nil {
 		// If the file doesn't exist, we must rebuild it
 		return true
 	}
-
-	// Check if any of the files in gui/ are newer than the asset file. If
-	// so we should rebuild it.
 	currentBuild := info.ModTime()
-	assetsAreNewer := false
+	srcAreNewer := false
 	stop := errors.New("no need to iterate further")
-	filepath.Walk(srcdir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.ModTime().After(currentBuild) {
-			assetsAreNewer = true
-			return stop
-		}
-		return nil
-	})
-
-	return assetsAreNewer
+	for _, srcDir := range srcDirs {
+		filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if info.ModTime().After(currentBuild) {
+				srcAreNewer = true
+				return stop
+			}
+			return nil
+		})
+	}
+	return srcAreNewer
 }

@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"log/slog"
+	"stray/internal/util"
+)
 
 func main() {
-	fmt.Printf("test")
+	util.InitSLog(&util.SLogOptions{Level: slog.LevelDebug, AddSource: true})
+
+	slog.Debug("debug test")
 }

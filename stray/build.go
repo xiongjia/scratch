@@ -42,7 +42,7 @@ var (
 		BuildDebug:  true,
 		BuildGOOS:   os.Getenv("GOOS"),
 		RuntimeGOOS: runtime.GOOS,
-		OutputDir:   "./build",
+		OutputDir:   "./build-output",
 	}
 	project = Project{
 		OutputBinaries: []Binary{

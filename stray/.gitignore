@@ -15,4 +15,4 @@ go.work
 # project files
 /stray
 gen
-build
+build-output

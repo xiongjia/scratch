@@ -4,6 +4,8 @@ import (
 	"io"
 	"log/slog"
 	"os"
+
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type SLogOptions struct {
@@ -14,8 +16,12 @@ type SLogOptions struct {
 }
 
 func makeFsLogWriter(opts *SLogOptions) io.Writer {
-	// TODO open fs logger
-	return makeDummyWriter()
+	return &lumberjack.Logger{
+		Filename:   opts.LogFilename,
+		MaxSize:    500,
+		MaxBackups: 3,
+		Compress:   true,
+	}
 }
 
 func makeLogWriter(opts *SLogOptions) io.Writer {

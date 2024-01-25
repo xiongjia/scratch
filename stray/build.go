@@ -115,7 +115,8 @@ func buildBinary(bin Binary) {
 	binPkg := filepath.Join(buildEnv.ProjectDir, bin.MainPkg)
 	shouldRebuild := shouldRebuildAssets(output, binPkg,
 		filepath.Join(buildEnv.ProjectDir, "cmd"),
-		filepath.Join(buildEnv.ProjectDir, "internal"))
+		filepath.Join(buildEnv.ProjectDir, "internal"),
+		filepath.Join(buildEnv.ProjectDir, "pkg"))
 	if !shouldRebuild {
 		slog.Info("No source code change. (SKIP)", slog.Any("bin", bin))
 		return

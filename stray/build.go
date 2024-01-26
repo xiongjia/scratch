@@ -172,7 +172,6 @@ func invokeCmd(wrkDir string, cmd string, args ...string) (int, error) {
 func shouldRebuildAssets(target string, srcDirs ...string) bool {
 	info, err := os.Stat(target)
 	if err != nil {
-		// If the file doesn't exist, we must rebuild it
 		return true
 	}
 	currentBuild := info.ModTime()

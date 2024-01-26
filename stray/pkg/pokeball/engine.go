@@ -12,10 +12,6 @@ type Engine struct {
 	router map[string]HandlerFunc
 }
 
-var (
-	log = slog.Default()
-)
-
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	key := req.Method + "-" + req.URL.Path
 	if handler, ok := engine.router[key]; ok {
@@ -27,7 +23,7 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
 	key := method + "-" + pattern
-	log.Debug("Adding Route", slog.String("method", method), slog.String("pattern", pattern))
+	slog.Debug("Adding Route", slog.String("method", method), slog.String("pattern", pattern))
 	engine.router[key] = handler
 }
 
@@ -36,6 +32,6 @@ func (engine *Engine) Get(pattern string, handler HandlerFunc) {
 }
 
 func New() *Engine {
-	log.Debug("creating a new pokeball engine")
+	slog.Debug("creating a new pokeball engine")
 	return &Engine{router: make(map[string]HandlerFunc)}
 }

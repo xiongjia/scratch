@@ -1,6 +1,7 @@
 package squirtle
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -14,18 +15,21 @@ type Metric struct {
 	HttpHandler http.Handler
 }
 
+type promhttpErrorLogger struct{ promhttp.Logger }
+
+func (l *promhttpErrorLogger) Println(v ...interface{}) {
+	slog.Error("prometheus client error", slog.String("client-error", fmt.Sprint(v...)))
+}
+
 func NewMetric() *Metric {
 	reg := prometheus.NewRegistry()
 	handler := promhttp.HandlerFor(reg, promhttp.HandlerOpts{
 		ErrorHandling: promhttp.ContinueOnError,
+		ErrorLog:      &promhttpErrorLogger{},
 	})
 	m := &Metric{Reg: reg, HttpHandler: handler}
 	slog.Debug("created a new prometheus registry")
 	return m
-}
-
-func (m *Metric) errorLogger(v ...interface{}) {
-
 }
 
 func (m *Metric) Factory() promauto.Factory {

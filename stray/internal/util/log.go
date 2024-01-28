@@ -11,9 +11,13 @@ import (
 type SLogOptions struct {
 	Level         slog.Level
 	AddSource     bool
-	LogFilename   string
 	DisableStdout bool
+	LogFilename   string
 }
+
+type dummyLogWriter struct{ io.Writer }
+
+func (d *dummyLogWriter) Write(p []byte) (n int, err error) { return len(p), nil }
 
 func makeFsLogWriter(opts *SLogOptions) io.Writer {
 	return &lumberjack.Logger{
@@ -32,7 +36,7 @@ func makeLogWriter(opts *SLogOptions) io.Writer {
 	} else if len(opts.LogFilename) != 0 && opts.DisableStdout {
 		return makeFsLogWriter(opts)
 	} else {
-		return makeDummyWriter()
+		return &dummyLogWriter{}
 	}
 }
 

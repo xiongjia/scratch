@@ -14,4 +14,6 @@ func TestStorage(t *testing.T) {
 	storageOpt := &bulbasaur.LocalStorageOptions{Dir: "c:/wrk/tmp/tsdb1"}
 	_, err := bulbasaur.MakeLocalStorageEngine(storageOpt)
 	assert.NoError(t, err)
+
+	// Test data appending
 }

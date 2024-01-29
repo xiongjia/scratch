@@ -20,7 +20,6 @@ func MakeLocalStorageEngine(opts *LocalStorageOptions) (*LocalStorageEngine, err
 	if err != nil {
 		return nil, err
 	}
-
 	return &LocalStorageEngine{
 		stats: stats,
 		db:    db,

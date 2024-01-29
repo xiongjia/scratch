@@ -47,6 +47,7 @@ var (
 	project = Project{
 		OutputBinaries: []Binary{
 			{Output: "pikachu", MainPkg: "cmd/pikachu/main.go"},
+			{Output: "snorlax", MainPkg: "cmd/snorlax/main.go"},
 		},
 	}
 )

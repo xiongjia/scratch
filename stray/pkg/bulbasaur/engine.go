@@ -1,37 +1,21 @@
 package bulbasaur
 
 import (
+	"github.com/prometheus/prometheus/scrape"
 	"github.com/prometheus/prometheus/storage"
-	"github.com/prometheus/prometheus/tsdb"
 )
 
-type storageEngine struct {
-	stats *tsdb.DBStats
-	db    storage.Storage
-}
-
 type Engine struct {
-	storage *storageEngine
-}
-
-func makeStorageEngine() (*storageEngine, error) {
-	dbStates := tsdb.NewDBStats()
-	db, err := tsdb.Open("c:/wrk/tmp/tsdb", nil, nil, nil, dbStates)
-	if err != nil {
-		return nil, err
-	}
-
-	return &storageEngine{
-		stats: dbStates,
-		db:    db,
-	}, nil
-
+	storage *LocalStorageEngine
 }
 
 func NewEngine() (*Engine, error) {
-	storageEng, err := makeStorageEngine()
+	storageOpt := &LocalStorageOptions{Dir: "c:/wrk/tmp/tsdb1"}
+	storageEng, err := MakeLocalStorageEngine(storageOpt)
 	if err != nil {
 		return nil, err
 	}
+	fanoutStorage := storage.NewFanout(nil, storageEng.db)
+	scrape.NewManager(nil, nil, fanoutStorage, nil)
 	return &Engine{storage: storageEng}, nil
 }

@@ -1,6 +1,7 @@
 package util_test
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -27,4 +28,11 @@ func TestKitLog(t *testing.T) {
 	level.Debug(logger2).Log("data", 1, "msg", "this message is at the debug level")
 
 	slog.Error("test", "data", 1, "data", 2)
+
+	attr1 := slog.Any("k1", 1)
+	attr2 := slog.Any("k1", 1)
+	attrs := make([]slog.Attr, 2)
+	attrs[0] = attr1
+	attrs[1] = attr2
+	slog.LogAttrs(context.Background(), slog.LevelDebug, "", attrs...)
 }

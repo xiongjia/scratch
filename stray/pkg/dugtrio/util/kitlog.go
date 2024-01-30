@@ -27,7 +27,6 @@ func (h *loggerHandler) Log(keyvals ...interface{}) error {
 		if k == kitlevel.Key() {
 			fmt.Printf(" log level = %s", v)
 		}
-
 		kstr := fmt.Sprint(k)
 		fmt.Printf("key = %s, val = %v", kstr, v)
 	}
@@ -37,4 +36,8 @@ func (h *loggerHandler) Log(keyvals ...interface{}) error {
 
 func NewKitLoggerAdapter() kitlog.Logger {
 	return kitlevel.NewFilter(&loggerHandler{}, kitlevel.AllowAll())
+}
+
+func NewKitLoggerAdapterNop() kitlog.Logger {
+	return kitlog.NewNopLogger()
 }

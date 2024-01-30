@@ -3,7 +3,7 @@ package main
 import (
 	"log/slog"
 	"net/http"
-	"stray/internal/util"
+	"stray/pkg/dugtrio/util"
 	"stray/pkg/pokeball"
 	"stray/pkg/squirtle"
 	"time"
@@ -16,7 +16,7 @@ var (
 )
 
 func main() {
-	slog.SetDefault(util.MakeSLog(&util.SLogOptions{Level: slog.LevelDebug, AddSource: true}))
+	slog.SetDefault(util.NewSLog(&util.SLogOptions{Level: slog.LevelDebug, AddSource: true}))
 	slog.Debug("debug test")
 
 	engine := pokeball.New()
@@ -28,14 +28,28 @@ func main() {
 }
 
 func monitor() {
-	// TODO testing other counters
-	testCount := metric.Factory().NewCounter(prometheus.CounterOpts{
+	// Counter
+	testCountVec := metric.Factory().NewCounterVec(prometheus.CounterOpts{
 		Name: "pikachu_test_opt_total",
-		Help: "The total number of processed events",
-	})
+		Help: "The total number of processed events"},
+		[]string{"sn", "vm"})
+	testCount := testCountVec.WithLabelValues("disk-sn-mock-1", "uuid")
+
+	// Gauge
+	testGaugeVec := metric.Factory().NewGaugeVec(prometheus.GaugeOpts{
+		Name:      "test_vol_size",
+		Help:      "The total volume size",
+		Namespace: "stray",
+		Subsystem: "pikachu"},
+		[]string{"vol", "vm"})
+	testGauge := testGaugeVec.WithLabelValues("/dev/pdx1", "uuid")
+
 	go func() {
+		cnt := 0
 		for {
+			cnt += 2
 			testCount.Inc()
+			testGauge.Set(float64(cnt))
 			time.Sleep(2 * time.Second)
 		}
 	}()

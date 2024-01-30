@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"stray/internal/util"
+	"stray/pkg/dugtrio/util"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

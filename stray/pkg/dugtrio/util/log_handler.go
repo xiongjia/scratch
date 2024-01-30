@@ -8,23 +8,31 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+const (
+	SLogFileMinSize    int = 10
+	SLogFileMinBackups int = 3
+)
+
+type logNop struct{ io.Writer }
+
+func (d *logNop) Write(p []byte) (n int, err error) { return len(p), nil }
+
 type SLogOptions struct {
-	Level         slog.Level
-	AddSource     bool
-	DisableStdout bool
-	LogFilename   string
+	Level                 slog.Level
+	AddSource             bool
+	DisableStdout         bool
+	LogFilename           string
+	LogFileMaxSize        int
+	LogFileMaxBackups     int
+	LogFileBackupCompress bool
 }
-
-type dummyLogWriter struct{ io.Writer }
-
-func (d *dummyLogWriter) Write(p []byte) (n int, err error) { return len(p), nil }
 
 func makeFsLogWriter(opts *SLogOptions) io.Writer {
 	return &lumberjack.Logger{
 		Filename:   opts.LogFilename,
-		MaxSize:    500,
-		MaxBackups: 3,
-		Compress:   true,
+		MaxSize:    max(SLogFileMinSize, opts.LogFileMaxSize),
+		MaxBackups: max(SLogFileMinBackups, opts.LogFileMaxBackups),
+		Compress:   opts.LogFileBackupCompress,
 	}
 }
 
@@ -36,11 +44,11 @@ func makeLogWriter(opts *SLogOptions) io.Writer {
 	} else if len(opts.LogFilename) != 0 && opts.DisableStdout {
 		return makeFsLogWriter(opts)
 	} else {
-		return &dummyLogWriter{}
+		return &logNop{}
 	}
 }
 
-func MakeSLog(opts *SLogOptions) *slog.Logger {
+func NewSLog(opts *SLogOptions) *slog.Logger {
 	logOpts := &slog.HandlerOptions{
 		Level:     opts.Level,
 		AddSource: opts.AddSource,

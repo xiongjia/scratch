@@ -1,8 +1,10 @@
 package util
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	kitlog "github.com/go-kit/log"
 	kitlevel "github.com/go-kit/log/level"
@@ -16,21 +18,37 @@ type loggerHandler struct {
 	kitlog.Logger
 }
 
-func (h *loggerHandler) Log(keyvals ...interface{}) error {
-	for i := 0; i < len(keyvals); i += 2 {
-		k := keyvals[i]
+func parseKitLogLevel(v any) kitlevel.Value {
+	return kitlevel.ParseDefault(fmt.Sprintf("%s", v), kitlevel.ErrorValue())
+}
+
+func convertToSlogLevel(lvl kitlevel.Value) slog.Level {
+	return slog.LevelError
+}
+
+func appendKitLog(lvl kitlevel.Value, attrs []slog.Attr) {
+	slog.LogAttrs(context.Background(), convertToSlogLevel(lvl), "", attrs...)
+}
+
+func (h *loggerHandler) Log(keyVals ...interface{}) error {
+	srcSize := len(keyVals)
+	lvl := kitlevel.ErrorValue()
+	attrs := make([]slog.Attr, srcSize/2+1)
+	attrIdx := 0
+	for i := 0; i < srcSize; i += 2 {
+		k := keyVals[i]
 		var v interface{} = errMissingValue
-		if i+1 < len(keyvals) {
-			v = keyvals[i+1]
+		if i+1 < srcSize {
+			v = keyVals[i+1]
 		}
-
 		if k == kitlevel.Key() {
-			fmt.Printf(" log level = %s", v)
+			lvl = parseKitLogLevel(v)
+			continue
 		}
-		kstr := fmt.Sprint(k)
-		fmt.Printf("key = %s, val = %v", kstr, v)
+		attrs[attrIdx] = slog.Any(fmt.Sprint(k), v)
+		attrIdx += 1
 	}
-
+	appendKitLog(lvl, attrs)
 	return nil
 }
 

@@ -16,23 +16,27 @@ var (
 
 type loggerHandler struct {
 	kitlog.Logger
+
+	logger *slog.Logger
+	ctx    context.Context
 }
 
-func parseKitLogLevel(v any) kitlevel.Value {
-	return kitlevel.ParseDefault(fmt.Sprintf("%s", v), kitlevel.ErrorValue())
-}
-
-func convertToSlogLevel(lvl kitlevel.Value) slog.Level {
-	return slog.LevelError
-}
-
-func appendKitLog(lvl kitlevel.Value, attrs []slog.Attr) {
-	slog.LogAttrs(context.Background(), convertToSlogLevel(lvl), "", attrs...)
+func convertToSlogLevel(lvl string) slog.Level {
+	switch lvl {
+	case kitlevel.DebugValue().String():
+		return slog.LevelDebug
+	case kitlevel.WarnValue().String():
+		return slog.LevelWarn
+	case kitlevel.InfoValue().String():
+		return slog.LevelInfo
+	default:
+		return slog.LevelError
+	}
 }
 
 func (h *loggerHandler) Log(keyVals ...interface{}) error {
 	srcSize := len(keyVals)
-	lvl := kitlevel.ErrorValue()
+	lvl := ""
 	attrs := make([]slog.Attr, srcSize/2+1)
 	attrIdx := 0
 	for i := 0; i < srcSize; i += 2 {
@@ -42,18 +46,23 @@ func (h *loggerHandler) Log(keyVals ...interface{}) error {
 			v = keyVals[i+1]
 		}
 		if k == kitlevel.Key() {
-			lvl = parseKitLogLevel(v)
+			lvl = fmt.Sprintf("%s", v)
 			continue
 		}
 		attrs[attrIdx] = slog.Any(fmt.Sprint(k), v)
 		attrIdx += 1
 	}
-	appendKitLog(lvl, attrs)
+	h.logger.LogAttrs(h.ctx, convertToSlogLevel(lvl), "", attrs...)
 	return nil
 }
 
-func NewKitLoggerAdapter() kitlog.Logger {
-	return kitlevel.NewFilter(&loggerHandler{}, kitlevel.AllowAll())
+func NewKitLoggerAdapterSlog(l *slog.Logger) kitlog.Logger {
+	if l == nil {
+		l = slog.Default()
+	}
+	handler := &loggerHandler{logger: l, ctx: context.Background()}
+	logger := kitlevel.NewFilter(handler, kitlevel.AllowAll())
+	return logger
 }
 
 func NewKitLoggerAdapterNop() kitlog.Logger {

@@ -15,11 +15,28 @@ const (
 
 type logNop struct{ io.Writer }
 
-func (d *logNop) Write(p []byte) (n int, err error) { return len(p), nil }
+func (l *logNop) Write(p []byte) (n int, err error) { return len(p), nil }
+
+type OnAppendLog func(logLine string)
+
+type logJsonCallback struct {
+	io.Writer
+	callback OnAppendLog
+}
+
+func (l *logJsonCallback) Write(p []byte) (n int, err error) {
+	l.callback(string(p))
+	return len(p), nil
+}
+
+type SLogBaseOptions struct {
+	Level     slog.Level
+	AddSource bool
+}
 
 type SLogOptions struct {
-	Level                 slog.Level
-	AddSource             bool
+	SLogBaseOptions
+
 	DisableStdout         bool
 	LogFilename           string
 	LogFileMaxSize        int
@@ -48,10 +65,18 @@ func makeLogWriter(opts *SLogOptions) io.Writer {
 	}
 }
 
-func NewSLog(opts *SLogOptions) *slog.Logger {
+func NewSLog(opts SLogOptions) *slog.Logger {
 	logOpts := &slog.HandlerOptions{
 		Level:     opts.Level,
 		AddSource: opts.AddSource,
 	}
-	return slog.New(slog.NewJSONHandler(makeLogWriter(opts), logOpts))
+	return slog.New(slog.NewJSONHandler(makeLogWriter(&opts), logOpts))
+}
+
+func NewSlogCallback(opts SLogBaseOptions, cb OnAppendLog) *slog.Logger {
+	logOpts := &slog.HandlerOptions{
+		Level:     opts.Level,
+		AddSource: opts.AddSource,
+	}
+	return slog.New(slog.NewJSONHandler(&logJsonCallback{callback: cb}, logOpts))
 }

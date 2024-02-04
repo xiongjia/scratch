@@ -1,6 +1,7 @@
 package bulbasaur
 
 import (
+	"context"
 	"log/slog"
 	"stray/pkg/dugtrio"
 
@@ -17,7 +18,10 @@ type LocalStorageEngine struct {
 func (e *LocalStorageEngine) Test() {
 	e.logger.Debug("test")
 
-	// appender := e.db.Appender(context.Background())
+	appender := e.db.Appender(context.Background())
+
+	appender.Commit()
+	//appender.AppendExemplar("")
 
 }
 

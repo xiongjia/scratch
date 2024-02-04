@@ -13,6 +13,10 @@ func init() {
 	ProjectRoot = sourceFilepathClean(strings.Trim(ProjectRoot, "\""))
 }
 
+func HasProjectRoot() bool {
+	return len(ProjectRoot) != 0
+}
+
 func sourceFilepathClean(s string) string {
 	if len(s) == 0 {
 		return s

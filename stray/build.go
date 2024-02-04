@@ -57,7 +57,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	buildEnv.ProjectDir = filepath.Clean(wrkDir)
+	buildEnv.ProjectDir = strings.ReplaceAll(filepath.Clean(filepath.Clean(wrkDir)), "\\", "/")
 }
 
 func initLog() {

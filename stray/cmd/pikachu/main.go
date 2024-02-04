@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"stray/pkg/dugtrio"
@@ -17,20 +16,18 @@ var (
 )
 
 func main() {
-	slog.SetDefault(dugtrio.NewSLog(dugtrio.SLogOptions{
+	logger := dugtrio.NewSLog(dugtrio.SLogOptions{
 		SLogBaseOptions: dugtrio.SLogBaseOptions{
 			Level:     slog.LevelDebug,
 			AddSource: true,
 		},
-	}))
-	slog.Debug("debug test")
+	})
+	dugtrio.SetDefaultLogger(logger)
 
-	fmt.Printf("project root = %s", dugtrio.ProjectRoot)
-
-	engine := pokeball.New()
+	engine := pokeball.New(pokeball.EngineOptions{Logger: dugtrio.DefaultLogger()})
 	engine.Get("/metrics", metric.HttpHandler.ServeHTTP)
 
-	slog.Info("Server started on :2112")
+	logger.Info("Server started on :2112")
 	monitor()
 	http.ListenAndServe(":2112", engine)
 }

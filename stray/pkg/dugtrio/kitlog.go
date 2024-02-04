@@ -58,7 +58,7 @@ func (h *loggerHandler) Log(keyVals ...interface{}) error {
 
 func NewKitLoggerAdapterSlog(l *slog.Logger) kitlog.Logger {
 	if l == nil {
-		l = slog.Default()
+		return kitlog.NewNopLogger()
 	}
 	handler := &loggerHandler{logger: l, ctx: context.Background()}
 	logger := kitlevel.NewFilter(handler, kitlevel.AllowAll())

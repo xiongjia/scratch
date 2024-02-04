@@ -7,15 +7,16 @@ import (
 )
 
 func main() {
-	slog.SetDefault(dugtrio.NewSLog(dugtrio.SLogOptions{
+	logger := dugtrio.NewSLog(dugtrio.SLogOptions{
 		SLogBaseOptions: dugtrio.SLogBaseOptions{
 			Level:     slog.LevelDebug,
 			AddSource: true,
 		},
-	}))
-	slog.Debug("debug test")
+	})
+	dugtrio.SetDefaultLogger(logger)
 
-	bulbasaur.NewEngine()
-
-	slog.Debug("Test ended")
+	bulbasaur.NewEngine(bulbasaur.EngineOptions{
+		Logger: logger,
+	})
+	logger.Debug("Test ended")
 }

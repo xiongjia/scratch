@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type LogTestItemSrc struct {
+type logTestItemSrc struct {
 	SrcFunc string `json:"function,omitempty"`
 	SrcFile string `json:"file,omitempty"`
 	SrcLine int    `json:"line,omitempty"`
 }
 
 type logTestItem struct {
-	Source LogTestItemSrc `json:"source"`
+	Source logTestItemSrc `json:"source"`
 
 	Msg   string `json:"msg,omitempty"`
 	Num   int    `json:"num,omitempty"`

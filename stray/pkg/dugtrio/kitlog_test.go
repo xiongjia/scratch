@@ -19,7 +19,7 @@ type kitLogItem struct {
 }
 
 func TestKitLog(t *testing.T) {
-	l := dugtrio.NewSlogCallback(dugtrio.SLogBaseOptions{Level: slog.LevelDebug}, func(logLine string) {
+	l := dugtrio.NewSlogCallback(dugtrio.SLogBaseOptions{Level: slog.LevelDebug, AddSource: true}, func(logLine string) {
 		if logLine == "" {
 			return
 		}

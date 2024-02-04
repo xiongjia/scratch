@@ -25,7 +25,6 @@ func (e *Engine) Test() {
 	pools := e.scrapeMgr.ScrapePools()
 	fmt.Printf("Pools = %v\n", pools)
 
-	e.scrapeMgr.Run()
 }
 
 func NewEngine(opts EngineOptions) (*Engine, error) {

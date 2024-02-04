@@ -1,9 +1,9 @@
-package util_test
+package dugtrio_test
 
 import (
 	"encoding/json"
 	"log/slog"
-	"stray/pkg/dugtrio/util"
+	"stray/pkg/dugtrio"
 	"strings"
 	"testing"
 
@@ -19,7 +19,7 @@ type kitLogItem struct {
 }
 
 func TestKitLog(t *testing.T) {
-	l := util.NewSlogCallback(util.SLogBaseOptions{Level: slog.LevelDebug}, func(logLine string) {
+	l := dugtrio.NewSlogCallback(dugtrio.SLogBaseOptions{Level: slog.LevelDebug}, func(logLine string) {
 		if logLine == "" {
 			return
 		}
@@ -30,6 +30,6 @@ func TestKitLog(t *testing.T) {
 		assert.Equal(t, 1, item.Num)
 		assert.True(t, strings.EqualFold("debug", item.Level))
 	})
-	kitlog := util.NewKitLoggerAdapterSlog(l)
+	kitlog := dugtrio.NewKitLoggerAdapterSlog(l)
 	kitlevel.Debug(kitlog).Log("num", 1, "string", "this message is at the debug level")
 }

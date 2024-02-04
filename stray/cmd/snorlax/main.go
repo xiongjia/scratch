@@ -3,11 +3,16 @@ package main
 import (
 	"log/slog"
 	"stray/pkg/bulbasaur"
-	"stray/pkg/dugtrio/util"
+	"stray/pkg/dugtrio"
 )
 
 func main() {
-	slog.SetDefault(util.NewSLog(&util.SLogOptions{Level: slog.LevelDebug, AddSource: true}))
+	slog.SetDefault(dugtrio.NewSLog(dugtrio.SLogOptions{
+		SLogBaseOptions: dugtrio.SLogBaseOptions{
+			Level:     slog.LevelDebug,
+			AddSource: true,
+		},
+	}))
 	slog.Debug("debug test")
 
 	bulbasaur.NewEngine()

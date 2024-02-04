@@ -52,6 +52,14 @@ var (
 	}
 )
 
+func init() {
+	wrkDir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	buildEnv.ProjectDir = filepath.Clean(wrkDir)
+}
+
 func initLog() {
 	logOpts := &slog.HandlerOptions{}
 	if buildEnv.Verbose {
@@ -64,7 +72,6 @@ func main() {
 	flag.BoolVar(&buildEnv.Verbose, "verbose", false, "Print verbose build log")
 	flag.Parse()
 	initLog()
-
 	slog.Info("Staring Build script ", slog.Any("env", buildEnv), slog.Any("project", project))
 	cmd := flag.Arg(0)
 	if len(cmd) == 0 {
@@ -109,6 +116,10 @@ func makeOutputBinFilename(filename string) string {
 	return filepath.Join(buildEnv.OutputDir, fmt.Sprintf("%s.exe", filename))
 }
 
+func makeProjectLDFlags() string {
+	return fmt.Sprintf("-X stray/pkg/dugtrio.ProjectRoot=\"%s\"", buildEnv.ProjectDir)
+}
+
 func buildBinary(bin Binary) {
 	slog.Debug("Build binary: ", "bin", bin)
 
@@ -132,7 +143,7 @@ func buildBinary(bin Binary) {
 	} else {
 		args = append(args, "-trimpath")
 	}
-	args = append(args, "-o", output, binPkg)
+	args = append(args, "-ldflags", makeProjectLDFlags(), "-o", output, binPkg)
 	exitCode, err := invokeCmd(".", buildEnv.GoCmd, args...)
 	if err != nil {
 		slog.Error("go build command error", slog.Any("error", err))
@@ -176,6 +187,14 @@ func shouldRebuildAssets(target string, srcDirs ...string) bool {
 		return true
 	}
 	currentBuild := info.ModTime()
+
+	buildScriptInfo, err := os.Stat(filepath.Join(buildEnv.ProjectDir, "build.go"))
+	if err != nil {
+		return true
+	}
+	if buildScriptInfo.ModTime().After(currentBuild) {
+		return true
+	}
 	srcAreNewer := false
 	stop := errors.New("no need to iterate further")
 	for _, srcDir := range srcDirs {

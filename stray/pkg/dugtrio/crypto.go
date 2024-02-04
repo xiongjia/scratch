@@ -1,4 +1,4 @@
-package util
+package dugtrio
 
 import (
 	"golang.org/x/crypto/bcrypt"

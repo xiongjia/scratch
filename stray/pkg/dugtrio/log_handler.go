@@ -1,4 +1,4 @@
-package util
+package dugtrio
 
 import (
 	"io"
@@ -65,18 +65,28 @@ func makeLogWriter(opts *SLogOptions) io.Writer {
 	}
 }
 
+func attrReplace(groups []string, a slog.Attr) slog.Attr {
+	if a.Key == slog.SourceKey {
+		source := a.Value.Any().(*slog.Source)
+		source.File = convertSourceFilename(source.File)
+	}
+	return a
+}
+
 func NewSLog(opts SLogOptions) *slog.Logger {
 	logOpts := &slog.HandlerOptions{
-		Level:     opts.Level,
-		AddSource: opts.AddSource,
+		Level:       opts.Level,
+		AddSource:   opts.AddSource,
+		ReplaceAttr: attrReplace,
 	}
 	return slog.New(slog.NewJSONHandler(makeLogWriter(&opts), logOpts))
 }
 
 func NewSlogCallback(opts SLogBaseOptions, cb OnAppendLog) *slog.Logger {
 	logOpts := &slog.HandlerOptions{
-		Level:     opts.Level,
-		AddSource: opts.AddSource,
+		Level:       opts.Level,
+		AddSource:   opts.AddSource,
+		ReplaceAttr: attrReplace,
 	}
 	return slog.New(slog.NewJSONHandler(&logJsonCallback{callback: cb}, logOpts))
 }

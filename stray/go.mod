@@ -1,6 +1,6 @@
 module stray
 
-go 1.21
+go 1.22
 
 require (
 	github.com/elazarl/go-bindata-assetfs v1.0.1

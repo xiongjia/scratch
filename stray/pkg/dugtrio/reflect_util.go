@@ -111,10 +111,11 @@ func reflectElementCompare(v1, v2 *reflect.Value) int {
 		// It cannot be compared.
 		return 0
 	}
-	switch typeV1.Kind() {
-	case reflect.String:
+
+	switch {
+	case typeV1.Kind() == reflect.String:
 		return strings.Compare(v1.String(), v2.String())
-	case reflect.Bool:
+	case typeV1.Kind() == reflect.Bool:
 		boolV1 := v1.Bool()
 		boolV2 := v2.Bool()
 		if boolV1 == boolV2 {
@@ -124,7 +125,7 @@ func reflectElementCompare(v1, v2 *reflect.Value) int {
 		} else {
 			return -1
 		}
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case v1.CanUint():
 		uintV1 := v1.Uint()
 		uintV2 := v2.Uint()
 		if uintV1 == uintV2 {
@@ -134,7 +135,7 @@ func reflectElementCompare(v1, v2 *reflect.Value) int {
 		} else {
 			return -1
 		}
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+	case v1.CanInt():
 		intV1 := v1.Int()
 		intV2 := v2.Int()
 		if intV1 == intV2 {
@@ -144,8 +145,9 @@ func reflectElementCompare(v1, v2 *reflect.Value) int {
 		} else {
 			return -1
 		}
+	default:
+		return 0
 	}
-	return 0
 }
 
 func reflectElementMatch(v *reflect.Value, m string, ignoreCase bool, matchAll bool) bool {

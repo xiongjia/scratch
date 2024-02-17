@@ -1,6 +1,7 @@
 package dugtrio
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -61,4 +62,29 @@ func TestReflectCompare(t *testing.T) {
 	assert.Equal(t, 0, r, "v1.V1 == v2.V1")
 	r = reflectElementCompare(ReflectFindValueByName(v1, "V2"), ReflectFindValueByName(v2, "V2"))
 	assert.Greater(t, 0, r, "v1.V2 < v2.V2")
+}
+
+type refVal struct {
+	val1 string
+}
+
+func TestReflectUtil(t *testing.T) {
+	v1 := refVal{val1: "abc"}
+	v2 := refVal{val1: "ABC"}
+	fmt.Printf("v1 = %s, v2 = %s\n", v1, v2)
+
+	vstr1 := ReflectFindValueByName(v1, "val1")
+	fmt.Printf("val = %v\n", vstr1)
+	if vstr1.Comparable() {
+		fmt.Printf("Comparable\n")
+	}
+
+	vstr2 := ReflectFindValueByName(v2, "val1")
+	fmt.Printf("val = %v\n", vstr2)
+
+	if vstr1.Equal(*vstr2) {
+		fmt.Printf("equal")
+	} else {
+		fmt.Printf("!equal")
+	}
 }

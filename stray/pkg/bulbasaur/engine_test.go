@@ -3,7 +3,9 @@ package bulbasaur_test
 import (
 	"context"
 	"fmt"
+	"html/template"
 	"log/slog"
+	"os"
 	"stray/pkg/bulbasaur"
 	"stray/pkg/dugtrio"
 	"testing"
@@ -163,4 +165,32 @@ func TestSd(t *testing.T) {
 
 	runGrp.Run()
 	fmt.Printf("test passed")
+}
+
+func TestTemplate(t *testing.T) {
+	const tpl = `
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{{.Title}}</title>
+	</head>
+	<body>
+		{{range .Items}}<div>{{ . }}</div>{{else}}<div><strong>no rows</strong></div>{{end}}
+	</body>
+</html>`
+
+	tmpl, err := template.New("webpage").Parse(tpl)
+	if err != nil {
+		return
+	}
+
+	data := struct {
+		Title string
+		Items []string
+	}{
+		Title: "My page",
+		Items: []string{},
+	}
+	tmpl.Execute(os.Stdout, data)
 }

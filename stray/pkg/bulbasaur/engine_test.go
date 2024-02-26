@@ -19,7 +19,58 @@ import (
 	"github.com/prometheus/prometheus/scrape"
 	"github.com/prometheus/prometheus/tsdb"
 	"gopkg.in/yaml.v2"
+
+	"github.com/d5/tengo/v2"
+	"github.com/traefik/yaegi/interp"
 )
+
+const src = `package foo
+func Bar(s string) string { return s + "-Foo" }`
+
+func TestYaegi(t *testing.T) {
+	i := interp.New(interp.Options{})
+	_, err := i.Eval(src)
+	if err != nil {
+		panic(err)
+	}
+
+	v, err := i.Eval("foo.Bar")
+	if err != nil {
+		panic(err)
+	}
+
+	bar := v.Interface().(func(string) string)
+
+	r := bar("Kung")
+	fmt.Printf("result = %s\n", r)
+}
+
+func TestTengo(t *testing.T) {
+	script := tengo.NewScript([]byte(
+		`each := func(seq, fn) {
+            for x in seq { fn(x) }
+        }
+
+        sum := 0
+        mul := 1
+        each([a, b, c, d], func(x) {
+            sum += x
+            mul *= x
+        })`))
+
+	_ = script.Add("a", 1)
+	_ = script.Add("b", 9)
+	_ = script.Add("c", 8)
+	_ = script.Add("d", 4)
+	compiled, err := script.RunContext(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	sum := compiled.Get("sum")
+	mul := compiled.Get("mul")
+	fmt.Println(sum, mul) // "22 288"
+}
 
 func TestEngine(t *testing.T) {
 	logger := dugtrio.NewSlogForTesting(t, dugtrio.SLogBaseOptions{Level: slog.LevelDebug})

@@ -3,6 +3,7 @@ module stray
 go 1.22
 
 require (
+	github.com/d5/tengo/v2 v2.16.1
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.0.10
@@ -15,6 +16,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
+	github.com/traefik/yaegi v0.15.1
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.16.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20231127180814-3a041ad873d4

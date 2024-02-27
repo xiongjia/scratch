@@ -63,9 +63,9 @@ func NewBuildEnv() (buildEnv *BuildEnv, err error) {
 }
 
 func (be *BuildEnv) rmFiles(paths ...string) {
-	for _, path := range paths {
-		be.Log.Debug("remove file : ", "path", path)
-		os.RemoveAll(path)
+	for _, filePath := range paths {
+		be.Log.Debug("removing file", "path", filePath)
+		os.RemoveAll(filePath)
 	}
 }
 
@@ -86,21 +86,14 @@ func (be *BuildEnv) invokeCmd(wrkDir string, cmd string, args ...string) (int, e
 	return exitCode, nil
 }
 
-func (be *BuildEnv) DumpEnv() string {
-	var b strings.Builder
-	b.WriteString("ProjectDir: ")
-	b.WriteString(be.ProjectDir)
-	return b.String()
-}
-
-func (be *BuildEnv) ConvertToFullFilename(filename string) string {
+func (be *BuildEnv) convertToFullFilename(filename string) string {
 	if filepath.IsAbs(filename) {
 		return filename
 	}
 	return filepath.Join(be.ProjectDir, filename)
 }
 
-func (be *BuildEnv) ConvertToOutputBinFilename(filename string) string {
+func (be *BuildEnv) convertToOutputBinFilename(filename string) string {
 	goos := be.BuildGOOS
 	if len(goos) == 0 {
 		goos = be.RuntimeGOOS
@@ -109,6 +102,13 @@ func (be *BuildEnv) ConvertToOutputBinFilename(filename string) string {
 		return projectFilenameClean(filepath.Join(be.OutputDir, filename))
 	}
 	return projectFilenameClean(filepath.Join(be.OutputDir, fmt.Sprintf("%s.exe", filename)))
+}
+
+func (be *BuildEnv) DumpEnv() string {
+	var b strings.Builder
+	b.WriteString("ProjectDir: ")
+	b.WriteString(be.ProjectDir)
+	return b.String()
 }
 
 func (be *BuildEnv) shouldRebuildAssets(target string, srcDirs ...string) bool {
@@ -122,7 +122,7 @@ func (be *BuildEnv) shouldRebuildAssets(target string, srcDirs ...string) bool {
 	stop := errors.New("no need to iterate further")
 
 	for _, buildScript := range be.BuildScripts {
-		scriptInfo, err := os.Stat(be.ConvertToFullFilename(buildScript))
+		scriptInfo, err := os.Stat(be.convertToFullFilename(buildScript))
 		if err != nil {
 			return true
 		}
@@ -160,7 +160,7 @@ func (be *BuildEnv) RunBuildCommand(cmd string, p *Project) {
 func (be *BuildEnv) cleanAll(p *Project) {
 	be.Log.Debug("cleanAll")
 	for _, binary := range p.OutputBinaries {
-		be.rmFiles(be.ConvertToOutputBinFilename(binary.Output))
+		be.rmFiles(be.convertToOutputBinFilename(binary.Output))
 	}
 }
 
@@ -172,12 +172,12 @@ func (be *BuildEnv) buildAll(p *Project) {
 
 func (be *BuildEnv) buildBinary(bin Binary) {
 	be.Log.Debug("Build binary: ", "bin", bin)
-	output := be.ConvertToOutputBinFilename(bin.Output)
-	binPkg := be.ConvertToFullFilename(bin.MainPkg)
+	output := be.convertToOutputBinFilename(bin.Output)
+	binPkg := be.convertToFullFilename(bin.MainPkg)
 	shouldRebuild := be.shouldRebuildAssets(output, binPkg,
-		be.ConvertToFullFilename("cmd"),
-		be.ConvertToFullFilename("internal"),
-		be.ConvertToFullFilename("pkg"))
+		be.convertToFullFilename("cmd"),
+		be.convertToFullFilename("internal"),
+		be.convertToFullFilename("pkg"))
 	if !shouldRebuild {
 		be.Log.Info("No source code change. (SKIP)", slog.Any("bin", bin))
 		return

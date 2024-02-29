@@ -131,7 +131,9 @@ func (be *BuildEnv) shouldRebuildAssets(target string, srcDirs ...string) bool {
 		}
 	}
 	for _, srcDir := range srcDirs {
-		filepath.Walk(be.convertToFullFilename(srcDir), func(path string, info os.FileInfo, err error) error {
+		fullSrcDir := be.convertToFullFilename(srcDir)
+		be.Log.Debug("Checking dependency", slog.String("src", fullSrcDir))
+		filepath.Walk(fullSrcDir, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -175,11 +177,7 @@ func (be *BuildEnv) buildBinary(bin Binary) {
 	output := be.convertToOutputBinFilename(bin.Output)
 	binPkg := be.convertToFullFilename(bin.MainPkg)
 
-	// TODO bin.Dependencies
-	shouldRebuild := be.shouldRebuildAssets(output, binPkg,
-		be.convertToFullFilename("cmd"),
-		be.convertToFullFilename("internal"),
-		be.convertToFullFilename("pkg"))
+	shouldRebuild := be.shouldRebuildAssets(output, bin.Dependencies...)
 	if !shouldRebuild {
 		be.Log.Info("No source code change. (SKIP)", slog.Any("bin", bin))
 		return

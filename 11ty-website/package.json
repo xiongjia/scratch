@@ -1,0 +1,19 @@
+{
+  "name": "11ty-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx @11ty/eleventy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "html-minifier": "^4.0.0",
+    "prettier": "3.2.5"
+  }
+}

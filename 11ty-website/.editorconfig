@@ -21,4 +21,3 @@ trim_trailing_whitespace = false
 
 [*.{js,json,ts}]
 indent_size = 2
-

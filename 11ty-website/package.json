@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx @11ty/eleventy",
+    "build:sass": "npx sass src/styles:dist/styles --no-source-map --style=compressed",
+    "build:11ty": "npx @11ty/eleventy",
+    "build:dev": "cross-env APP=development npm run build:sass & npm run build:11ty",
+    "build": "cross-env APP=production npm run build:sass & npm run build:11ty",
     "serv": "npx @11ty/eleventy --serve"
   },
   "keywords": [],
@@ -12,8 +15,11 @@
   "license": "ISC",
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
+    "cross-env": "^7.0.3",
     "eslint-config-prettier": "^9.1.0",
+    "hjson": "^3.2.2",
     "html-minifier": "^4.0.0",
-    "prettier": "3.2.5"
+    "prettier": "3.2.5",
+    "sass": "^1.72.0"
   }
 }

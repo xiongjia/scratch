@@ -2,6 +2,7 @@
 
 const htmlmin = require('html-minifier')
 const hjson = require('hjson')
+const eleventySass = require('eleventy-sass')
 
 module.exports = (cfg) => {
   if (process.env.REACT_APP === 'production') {
@@ -17,8 +18,10 @@ module.exports = (cfg) => {
       }
     })
   }
+
   cfg.addDataExtension('hjson', (content) => hjson.parse(content))
   cfg.addLayoutAlias('base', 'base.njk')
+  cfg.addPlugin(eleventySass)
 
   return {
     dir: {

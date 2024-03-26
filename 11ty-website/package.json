@@ -16,6 +16,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "cross-env": "^7.0.3",
+    "eleventy-sass": "^2.2.4",
     "eslint-config-prettier": "^9.1.0",
     "hjson": "^3.2.2",
     "html-minifier": "^4.0.0",

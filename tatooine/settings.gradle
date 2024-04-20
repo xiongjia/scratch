@@ -1,5 +1,0 @@
-rootProject.name = "tatooine"
-
-include("infra")
-include("gateway")
-

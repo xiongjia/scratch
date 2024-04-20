@@ -16,6 +16,9 @@ tags
 .sass-cache
 compile_commands.json
 .vscode
+.ninja_*
+lex.yy.c
+y.tab.*
 
 # java git ignore
 *.class
@@ -32,34 +35,6 @@ target
 *.iws
 *.ipr
 out
-
-tychus/.gitignore
-tychus/.apt_generated
-tychus/.factorypath
-tychus/bin
-tychus/build
-tychus/**/*.db
-tychus/test-output
-
-jwebsocket/.gitignore
-jwebsocket/bin
-jwebsocket/build
-kharazim/.gitignore
-kharazim/bin
-kharazim/build
-
-
-# CMake projects
-roach/build
-anubarak/build
-zeratul/build
-gazlowe/build
-chen/build
-
-.ninja_*
-lex.yy.c
-y.tab.*
-simple-compiler/sc
 
 # node.js projects
 node_modules
@@ -89,11 +64,6 @@ DerivedData
 Pods/
 Podfile.lock
 
-# Scala sbt projects
-scala-scratch/target
-scala-scratch/project/target
-scala-scratch/project/project
-
 # python projects
 __pycache__/
 *.py[cod]
@@ -103,9 +73,4 @@ target/
 .coverage
 .coverage.*
 .cache
-
-# tachi
-tachi/build
-
-
 

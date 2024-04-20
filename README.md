@@ -5,7 +5,6 @@ This "scratch" repository is saving my test codes
 
 ## Contents
 * **jwebsocket** : A sample Echo Server & Client for [Java WebSocket](https://github.com/TooTallNate/Java-WebSocket)
-* **roach** : A simple HTTP Server library ( libuv + http-parser + Boost + CMake )
 * **gazlowe** : My algorithm tests
 * **scala-scratch** : My Scala test code
 * **kharazim** : My Java Netty test code
@@ -18,3 +17,4 @@ This "scratch" repository is saving my test codes
 ## Test Projects
 * projects/stray : Golang gRPC + REST API server
 
+* projects/roach : A simple HTTP Server library ( libuv + http-parser + Boost + CMake )

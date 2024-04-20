@@ -1,3 +1,0 @@
-[submodule "vim-win-building/vim-src"]
-	path = vim-win-building/vim-src
-	url = https://github.com/vim/vim.git

@@ -1,7 +1,0 @@
-
-*.log
-*~
-
-configure.scan
-/autom4te.cache/
-

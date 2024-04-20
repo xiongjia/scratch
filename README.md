@@ -8,11 +8,8 @@ This "scratch" repository is saving my test codes
 * **jscratch** : A simple gradle template for a Java application.
 * **jwebsocket** : A sample Echo Server & Client for [Java WebSocket](https://github.com/TooTallNate/Java-WebSocket)
 * **roach** : A simple HTTP Server library ( libuv + http-parser + Boost + CMake )
-* **zeratul** : A simple socks proxy (Boost ASIO)
 * **gazlowe** : My algorithm tests
 * **scala-scratch** : My Scala test code
 * **kharazim** : My Java Netty test code
-* **js-promise** : The ES6 JS promise tests
-* **orthrus** : Spring Server + React Client + Gradle build tools
 
 

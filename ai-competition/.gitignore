@@ -1,6 +1,0 @@
-*.pyc
-.vscode/
-*.iml
-game_logs/
-*ant*.log
-

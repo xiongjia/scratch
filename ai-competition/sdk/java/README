@@ -1,9 +1,0 @@
-There are two sample bots folder.
-
-sample_mybot:
-   It is the basic bot in java, build files are provided at the same time.
-   Run 'make.cmd' directly and you can get Mybot.jar. (Make sure you have java environment first)
-   
-sample_bots:
-   We provide three advanced bots in this folder called 'HunterBot', 'LeftyBot' and 'RandomBot'.
-   In common folder: These files are used for all these three bots.

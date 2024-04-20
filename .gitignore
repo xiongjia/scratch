@@ -33,31 +33,6 @@ target
 *.ipr
 out
 
-jblank/.gitignore
-jblank/.apt_generated
-jblank/.factorypath
-jblank/bin
-jblank/build
-jblank/**/*.db
-jblank/test-output
-
-
-jscratch/.gitignore
-jscratch/.apt_generated
-jscratch/.factorypath
-jscratch/bin
-jscratch/build
-jscratch/**/*.db
-jscratch/test-output
-
-probius/.gitignore
-probius/.apt_generated
-probius/.factorypath
-probius/bin
-probius/build
-probius/**/*.db
-probius/test-output
-
 tychus/.gitignore
 tychus/.apt_generated
 tychus/.factorypath
@@ -66,9 +41,6 @@ tychus/build
 tychus/**/*.db
 tychus/test-output
 
-jmeter-example-sampler/.gitignore
-jmeter-example-sampler/bin
-jmeter-example-sampler/build
 jwebsocket/.gitignore
 jwebsocket/bin
 jwebsocket/build
@@ -76,12 +48,6 @@ kharazim/.gitignore
 kharazim/bin
 kharazim/build
 
-orthrus/**/*/build
-orthrus/**/*/.gradle
-orthrus/**/*/dist
-orthrus/**/*/.apt_generated
-orthrus/**/*/.factorypath
-orthrus/server/bin
 
 # CMake projects
 roach/build
@@ -89,9 +55,8 @@ anubarak/build
 zeratul/build
 gazlowe/build
 chen/build
+
 .ninja_*
-ninja-build-tests/*.o
-ninja-build-tests/hello
 lex.yy.c
 y.tab.*
 simple-compiler/sc
@@ -103,11 +68,6 @@ npm-debug.log
 yarn-debug.log*
 yarn-error.log*
 package-lock.json
-
-zealot/dist
-tracer/**/*/build
-tracer/**/*/dist
-tracer/**/*/coverage
 
 # iOS / OS X project (Xcode, CocoaPods)
 DerivedData
@@ -144,21 +104,8 @@ target/
 .coverage.*
 .cache
 
-# pg ext
-pgext/**/*.o
-pgext/**/*.so
-pgext/results/
-pgext/regression.diffs
-pgext/regression.out
-pgext/tmp_check/
-pgext/tmp_check_iso/
-pgext/log/
-pgext/output_iso/
-
 # tachi
 tachi/build
 
-# vim building
-vim-win-building/dest
 
 

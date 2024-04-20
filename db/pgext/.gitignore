@@ -1,0 +1,11 @@
+# pg ext
+**/*.o
+**/*.so
+results/
+regression.diffs
+regression.out
+tmp_check/
+tmp_check_iso/
+log/
+output_iso/
+

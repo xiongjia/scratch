@@ -6,10 +6,13 @@ require (
 	github.com/d5/tengo/v2 v2.16.1
 	github.com/deepmap/oapi-codegen/v2 v2.1.0
 	github.com/elazarl/go-bindata-assetfs v1.0.1
+	github.com/getkin/kin-openapi v0.122.0
+	github.com/ghodss/yaml v1.0.0
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-kit/log v0.2.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
+	github.com/oapi-codegen/nethttp-middleware v1.0.1
 	github.com/oklog/run v1.1.0
 	github.com/prometheus/client_golang v1.18.0
 	github.com/prometheus/prometheus v0.49.1
@@ -36,7 +39,6 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dennwc/varint v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/getkin/kin-openapi v0.122.0 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
@@ -46,6 +48,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/gnostic-models v0.6.9-0.20230804172637-c7be7c783f49 // indirect
 	github.com/google/uuid v1.4.0 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

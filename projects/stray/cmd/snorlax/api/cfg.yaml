@@ -3,3 +3,4 @@ output: ping.gen.go
 generate:
   models: true
   chi-server: true
+  embedded-spec: true

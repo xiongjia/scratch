@@ -1,0 +1,6 @@
+package: api
+output: mgrsrv.gen.go
+generate:
+  models: true
+  chi-server: true
+  embedded-spec: true

@@ -1,4 +1,4 @@
-openapi: "3.0.1"
+openapi: "3.0.0"
 info:
   version: 1.0.0
   title: Minimal ping API server
@@ -6,13 +6,23 @@ info:
 paths:
   /ping:
     get:
-      responses:
-        '200':
-          description: pet response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pong'
+        parameters:
+        - name: params
+          in: query
+          description: '{"type":"foo","color":"green"}'
+          required: true
+          style: form
+          schema:
+            type: array
+            items:
+                type: "string"
+        responses:
+            '200':
+                description: "pet response"
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Pong'
 
 components:
   schemas:

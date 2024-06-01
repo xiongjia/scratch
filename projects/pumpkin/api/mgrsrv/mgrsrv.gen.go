@@ -15,6 +15,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
+	"github.com/oapi-codegen/runtime"
 )
 
 // Pong defines model for Pong.
@@ -22,11 +23,17 @@ type Pong struct {
 	Ping string `json:"ping"`
 }
 
+// GetPingParams defines parameters for GetPing.
+type GetPingParams struct {
+	// Params {"type":"foo","color":"green"}
+	Params []string `form:"params" json:"params"`
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
 	// (GET /ping)
-	GetPing(w http.ResponseWriter, r *http.Request)
+	GetPing(w http.ResponseWriter, r *http.Request, params GetPingParams)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -34,7 +41,7 @@ type ServerInterface interface {
 type Unimplemented struct{}
 
 // (GET /ping)
-func (_ Unimplemented) GetPing(w http.ResponseWriter, r *http.Request) {
+func (_ Unimplemented) GetPing(w http.ResponseWriter, r *http.Request, params GetPingParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -51,8 +58,28 @@ type MiddlewareFunc func(http.Handler) http.Handler
 func (siw *ServerInterfaceWrapper) GetPing(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetPingParams
+
+	// ------------- Required query parameter "params" -------------
+
+	if paramValue := r.URL.Query().Get("params"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "params"})
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "params", r.URL.Query(), &params.Params)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "params", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetPing(w, r)
+		siw.Handler.GetPing(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -185,11 +212,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/0RQwU4rMQz8ldW8d1x1F7jlxgn1gNQ74hCybutqNzGJqUBV/h05y8LJjjNjz8wNIS2S",
-	"IkUtcDeUcKbFt/aQ4smq5CSUlalNhdcpffpFZoKDGK6Hfom9imZD1Noj0/sHZ5rgXlba6y8qvV0oKKrB",
-	"OB6TbVTWtu+ZIy9+7ozSPR72XaF8pYweV8qFU4TD3W7cjag9klD0wnB4aKMe4vXclA6b1BOpFXPhlVPc",
-	"T3B4Ij1wE56pSIpltXc/jlZCikqx0bzIzKERh0ux61tK1v3PdITDv+EvxuEnw6EF2CxOVEJm0VW8kHbb",
-	"UfuvtX4HAAD//79Hw2OHAQAA",
+	"H4sIAAAAAAAC/1xRPW8bMQz9K8ZrRyHntpu2TkWGAt5zGdQz7SiwRIaigxoH/feCcpK6nXjikY/vY8XC",
+	"RbhStYa4oi1PVNL43HE9ehVlIbVMoyv52qXfqciJECE+F2AX8Vcz9YneA5Rezllpj/hwXXv8mOJfz7QY",
+	"uo/lemBHtGwD72euuaTTxlc233f3m0b6SoqAV9KWuSLiy932bosewEI1SUbEt9EKkGRPg+n0TvVI5sVV",
+	"JMtc7/eI+EG2y4O4JE2FjLQhPqzYU1s0i10PrfOgPCPOODDPCDMWPrGOzlGJ6owOV4GIlzPpBQE1leGM",
+	"IzfcOmF6pvDmspPKRmWw/c++D6eSarr4u9ll2HNgLeiPDtqEa7vG8nW79bJwNapDbhI55WUInp6bi1lv",
+	"7n5WOiDi0/Q3/ukt+2kEP6L51wsh27wf9f+99z8BAAD//7WGmvQ/AgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

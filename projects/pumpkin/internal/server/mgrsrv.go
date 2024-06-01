@@ -14,7 +14,7 @@ func NewMgrSrv() MgrSrv {
 	return MgrSrv{}
 }
 
-func (MgrSrv) GetPing(w http.ResponseWriter, r *http.Request) {
+func (MgrSrv) GetPing(w http.ResponseWriter, r *http.Request, params api.GetPingParams) {
 	resp := api.Pong{
 		Ping: "pong pong",
 	}

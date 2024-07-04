@@ -3,7 +3,7 @@
 This is an example component.
 
 ```jsx
-import { Foo } from 'components';
+import { Foo } from '@pea/components';
 
 export default () => <Foo title="Hello!" />
 ```

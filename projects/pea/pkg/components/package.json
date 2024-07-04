@@ -1,5 +1,5 @@
 {
-  "name": "components",
+  "name": "@pea/components",
   "version": "0.0.1",
   "description": "A react library developed with dumi",
   "module": "dist/index.js",
@@ -69,5 +69,9 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "stylelint": "^14.9.1"
+  },
+  "dependencies": {
+    "@types/antd": "^1.0.0",
+    "antd": "^5.19.0"
   }
 }

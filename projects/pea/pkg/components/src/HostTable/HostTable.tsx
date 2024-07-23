@@ -14,11 +14,14 @@ const HostColumns: ProColumns<HostType>[] = [
   {
     dataIndex: 'hostname',
     title: 'Hostname',
+    width: 350,
   },
   {
     title: 'option',
     valueType: 'option',
     key: 'option',
+    width: 100,
+    fixed: 'right',
     render: (text, record) => [
       <a
         key="remove"
@@ -34,7 +37,8 @@ const HostColumns: ProColumns<HostType>[] = [
 
 const testSrc: HostType[] = [
   {
-    ipAddr: '1.1.1.1',
+    ipAddr:
+      '1.1.1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
     hostname: 'host1',
   },
   {
@@ -59,6 +63,7 @@ const HostTable = () => {
         options={false}
         pagination={false}
         rowKey={(record) => record.ipAddr}
+        scroll={{ x: 'max-content' }}
         request={async () => {
           return {
             data: testSrc,

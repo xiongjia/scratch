@@ -10,6 +10,7 @@ const HostColumns: ProColumns<HostType>[] = [
   {
     dataIndex: 'ipAddr',
     title: 'IP Address',
+    editable: false,
   },
   {
     dataIndex: 'hostname',
@@ -22,11 +23,12 @@ const HostColumns: ProColumns<HostType>[] = [
     key: 'option',
     width: 100,
     fixed: 'right',
-    render: (text, record) => [
+    render: (text, record, idx, action) => [
       <a
         key="remove"
         onClick={() => {
           console.log('remove ' + record.ipAddr)
+          action?.startEditable(record.ipAddr)
         }}
       >
         REMOVE
@@ -37,8 +39,7 @@ const HostColumns: ProColumns<HostType>[] = [
 
 const testSrc: HostType[] = [
   {
-    ipAddr:
-      '1.1.1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
+    ipAddr: '1.1.1.1111111',
     hostname: 'host1',
   },
   {
@@ -72,7 +73,7 @@ const HostTable = () => {
           }
         }}
         editable={{
-          type: 'multiple',
+          type: 'single',
         }}
         rowSelection={{
           defaultSelectedRowKeys: ['ipAddr'],

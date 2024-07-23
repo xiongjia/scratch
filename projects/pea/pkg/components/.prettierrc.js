@@ -8,6 +8,7 @@ module.exports = {
   proseWrap: 'never',
   singleQuote: true,
   trailingComma: 'all',
+  semi: false,
   overrides: [
     {
       files: '*.md',

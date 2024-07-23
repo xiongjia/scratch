@@ -71,6 +71,7 @@
     "stylelint": "^14.9.1"
   },
   "dependencies": {
+    "@ant-design/pro-components": "^2.7.14",
     "@types/antd": "^1.0.0",
     "antd": "^5.19.0"
   }

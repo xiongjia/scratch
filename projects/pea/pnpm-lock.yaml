@@ -25,12 +25,18 @@ importers:
       antd:
         specifier: ^5.19.0
         version: 5.19.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       react-redux:
         specifier: ^9.1.2
         version: 9.1.2(@types/react@18.3.3)(react@18.3.1)(redux@5.0.1)
+      use-immer:
+        specifier: ^0.10.0
+        version: 0.10.0(immer@10.1.1)(react@18.3.1)
     devDependencies:
       '@commitlint/cli':
         specifier: ^17.1.2
@@ -7214,6 +7220,12 @@ packages:
 
   url@0.11.3:
     resolution: {integrity: sha512-6hxOLGfZASQK/cijlZnZJTq8OXAkt/3YGfQX45vvMYXpZoo8NdWZcY73K108Jf759lS1Bv/8wXnHDTSz17dSRw==}
+
+  use-immer@0.10.0:
+    resolution: {integrity: sha512-/eVwNR4TG9Tm/dd+aHYLLaI0FLfYKlkTqKMkn78Ah/EYVzWd/zJIgpkdoFEKbhQJOGo8XN7/mWrTx0exp1c+Ug==}
+    peerDependencies:
+      immer: '>=8.0.0'
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
 
   use-isomorphic-layout-effect@1.1.2:
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==}
@@ -16328,6 +16340,11 @@ snapshots:
     dependencies:
       punycode: 1.4.1
       qs: 6.12.2
+
+  use-immer@0.10.0(immer@10.1.1)(react@18.3.1):
+    dependencies:
+      immer: 10.1.1
+      react: 18.3.1
 
   use-isomorphic-layout-effect@1.1.2(@types/react@18.3.3)(react@18.3.1):
     dependencies:

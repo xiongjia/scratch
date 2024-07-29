@@ -3,7 +3,6 @@ import { Drawer } from 'antd'
 import React, { ReactNode } from 'react'
 
 export type GuideStep = {
-  key: string
   title: string
   name: string
   content: ReactNode
@@ -68,7 +67,7 @@ function Guide<T>(
       {steps?.map((step) => {
         return (
           <StepsForm.StepForm<T>
-            key={step.key}
+            key={step.name}
             name={step.name}
             title={step.title}
             onFinish={step.onFinish}

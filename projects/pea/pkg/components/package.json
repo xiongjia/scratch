@@ -76,7 +76,9 @@
     "@types/antd": "^1.0.0",
     "@types/lodash-es": "^4.17.12",
     "antd": "^5.19.0",
+    "immer": "^10.1.1",
     "lodash-es": "^4.17.21",
-    "react-redux": "^9.1.2"
+    "react-redux": "^9.1.2",
+    "use-immer": "^0.10.0"
   }
 }

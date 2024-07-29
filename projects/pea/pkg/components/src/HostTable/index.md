@@ -1,12 +1,11 @@
-# Start
+# Table 
 
 
 ---
 
-### Test
+### Test Table
 
-```jsx
-import { HostTable } from '@pea/components';
-
-export default () => <HostTable  />;
+```tsx
+import { HostTable } from '@pea/components'
+export default () => <HostTable  />
 ```

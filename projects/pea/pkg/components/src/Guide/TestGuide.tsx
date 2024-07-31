@@ -1,8 +1,10 @@
 import React from 'react'
+import { Provider } from 'react-redux'
 import Guide, { GuideStep } from './Guide'
 import GuideContextProvider from './GuideContext'
 import StepHostInput from './StepHostInput'
 import StepHostsSelector from './StepHostsSelector'
+import store from './store'
 
 const makeSteps = (): GuideStep[] => {
   const steps: GuideStep[] = []
@@ -24,15 +26,17 @@ const makeSteps = (): GuideStep[] => {
 
 const TestGuide = () => {
   return (
-    <GuideContextProvider>
-      <Guide
-        onFinish={async () => {
-          console.log('guide finish')
-          return true
-        }}
-        steps={makeSteps()}
-      />
-    </GuideContextProvider>
+    <Provider store={store}>
+      <GuideContextProvider>
+        <Guide
+          onFinish={async () => {
+            console.log('guide finish')
+            return true
+          }}
+          steps={makeSteps()}
+        />
+      </GuideContextProvider>
+    </Provider>
   )
 }
 

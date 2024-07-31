@@ -5,7 +5,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@@/*": [".dumi/tmp/*"],
       "@pea/components": ["src"],

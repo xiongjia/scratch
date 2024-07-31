@@ -1,9 +1,17 @@
 import { Space } from 'antd'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { GuideContext } from './GuideContext'
+import { actions } from './store/ModuleHosts'
+import { useAppDispatch, useAppSelector } from './store/store'
 
 const StepHostsSelector = () => {
   const ctx = useContext(GuideContext)
+  const dispatch = useAppDispatch()
+  const hosts = useAppSelector((state) => state.host.hosts)
+
+  useEffect(() => {
+    console.log('hosts = ' + JSON.stringify(hosts))
+  }, [hosts])
 
   return (
     <Space direction="vertical">
@@ -11,7 +19,8 @@ const StepHostsSelector = () => {
       <button
         type="button"
         onClick={() => {
-          console.log('state: ' + JSON.stringify(ctx))
+          console.log('btn click')
+          dispatch(actions.loadHostList())
         }}
       >
         Test btn

@@ -1,0 +1,19 @@
+openapi: "3.0.1"
+info: { version: 1.0.0, title: Stray }
+servers: [{url: /api}]
+
+paths:
+  /version:
+    tags: [General]
+    get:
+      responses:
+        '200':
+          description: Version Info
+          content: {application/json: {schema: {$ref: '#/components/schemas/VersionInfo'}}}
+
+components:
+  schemas:
+    VersionInfo:
+      type: object
+      required: [major, minor, patch]
+      properties: { major: { type: integer }, minor: { type: integer }, patch: { type: integer }}

@@ -1,1 +1,0 @@
-package ditto_test

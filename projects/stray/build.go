@@ -2,39 +2,54 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log/slog"
-	"stray/pkg/ditto"
+	"stray/pkg/buildmgr"
+	"stray/pkg/utility"
 )
 
-func makeProject(be *ditto.BuildEnv) *ditto.Project {
-	ldflags := fmt.Sprintf("-X stray/pkg/dugtrio.ProjectRoot=\"%s\"", be.ProjectDir)
-	dependencies := []string{"cmd", "internal", "pkg"}
-	return &ditto.Project{
-		OutputBinaries: []ditto.Binary{
-			{Output: "pikachu",
-				MainPkg:      "cmd/pikachu/main.go",
-				LDFlags:      ldflags,
-				Dependencies: dependencies},
-			{Output: "snorlax",
-				MainPkg:      "cmd/snorlax/main.go",
-				LDFlags:      ldflags,
-				Dependencies: dependencies},
+var (
+	projects = []*buildmgr.BinaryBuildOption{
+		{
+			Output:       "stray-core",
+			MainPkg:      "cmd/core/main.go",
+			Dependencies: []string{"cmd", "pkg"},
 		},
 	}
+	buildCmd      string
+	buildLogLevel string
+)
+
+func init() {
+	flag.StringVar(&buildCmd, "cmd", "build", "Build command (build, clean)")
+	flag.StringVar(&buildLogLevel, "logLevel", "info", "Build command log level (debug, info, warn, error)")
 }
 
 func main() {
-	be, err := ditto.NewBuildEnv()
+	flag.Parse()
+	utility.InitDefaultLog(&utility.LogOption{
+		Level:     utility.ParseLogLevel(buildLogLevel, slog.LevelInfo),
+		AddSource: false,
+	})
+
+	be, err := buildmgr.NewBuildEnv()
 	if err != nil {
 		panic(err)
 	}
-	be.Log.Info("Build Script is running", slog.String("env", be.DumpEnv()))
-	project := makeProject(be)
-	be.Log.Debug("Build Project", slog.Any("project", project))
-	cmd := flag.Arg(0)
-	if len(cmd) == 0 {
-		cmd = "buildAll"
+
+	slog.Debug("Build Option", slog.String("cmd", buildCmd))
+	if buildCmd == "cleanDist" {
+		err = buildmgr.CleanDist(be)
+		if err != nil {
+			slog.Error("Clean dist command error", slog.Any("err", err))
+		} else {
+			slog.Info("Clean dist command was completed with success")
+		}
+	} else {
+		err = buildmgr.BuildAll(be, projects)
+		if err != nil {
+			slog.Error("Projects build error", slog.Any("err", err))
+		} else {
+			slog.Info("Projects building was completed with success")
+		}
 	}
-	be.RunBuildCommand(cmd, project)
 }

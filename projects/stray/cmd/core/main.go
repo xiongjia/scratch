@@ -1,10 +1,9 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package main
 
-import "stray/cmd/core/cmd"
+import (
+	"fmt"
+)
 
 func main() {
-	cmd.Execute()
+	fmt.Printf("test 123 \n")
 }

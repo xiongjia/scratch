@@ -1,11 +1,10 @@
-package collection_test
+package util_test
 
 import (
-	"stray/pkg/collection"
+	"github.com/stretchr/testify/assert"
+	"stray/pkg/util"
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestJsonParser(t *testing.T) {
@@ -15,13 +14,13 @@ func TestJsonParser(t *testing.T) {
 		}
 	)
 
-	jsonb, err := collection.JsonStringFromObject[*mockObj](&mockObj{Name: "name1"})
+	jsonb, err := util.JsonStringFromObject[*mockObj](&mockObj{Name: "name1"})
 	assert.NoError(t, err)
 	assert.NotEmpty(t, jsonb)
 	input := strings.NewReader(string(jsonb))
 	t.Logf("mock input json %s", string(jsonb))
 
-	output, err := collection.JsonReaderToObject[mockObj](input)
+	output, err := util.JsonReaderToObject[mockObj](input)
 	assert.NoError(t, err)
 	t.Logf("output object = %+v", output)
 	assert.Equal(t, output.Name, "name1")

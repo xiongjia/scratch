@@ -1,10 +1,10 @@
-package utility_test
+package util_test
 
 import (
 	"testing"
 	"time"
 
-	"stray/pkg/utility"
+	"stray/pkg/util"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
@@ -13,7 +13,7 @@ import (
 func TestWg(t *testing.T) {
 	defer goleak.VerifyNone(t)
 
-	wg := utility.MakeWaitGroup()
+	wg := util.NewWaitGroup()
 
 	var testData int
 	testData = 1

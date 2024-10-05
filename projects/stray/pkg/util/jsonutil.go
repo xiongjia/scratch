@@ -1,4 +1,4 @@
-package collection
+package util
 
 import (
 	"bytes"
@@ -31,4 +31,8 @@ func JsonStringFromObject[T any](input T) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func JsonWriterFromObject[T any](writer io.Writer, input T) error {
+	return json.NewEncoder(writer).Encode(input)
 }

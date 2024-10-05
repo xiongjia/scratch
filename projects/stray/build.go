@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log/slog"
 	"stray/pkg/buildmgr"
-	"stray/pkg/utility"
+	"stray/pkg/util"
 )
 
 var (
@@ -26,8 +26,8 @@ func init() {
 
 func main() {
 	flag.Parse()
-	utility.InitDefaultLog(&utility.LogOption{
-		Level:     utility.ParseLogLevel(buildLogLevel, slog.LevelInfo),
+	util.InitDefaultLog(&util.LogOption{
+		Level:     util.ParseLogLevel(buildLogLevel, slog.LevelInfo),
 		AddSource: false,
 	})
 

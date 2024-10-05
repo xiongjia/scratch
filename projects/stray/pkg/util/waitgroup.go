@@ -1,4 +1,4 @@
-package utility
+package util
 
 import "sync"
 
@@ -8,7 +8,7 @@ type (
 	}
 )
 
-func MakeWaitGroup() *WaitGroup {
+func NewWaitGroup() *WaitGroup {
 	return &WaitGroup{}
 }
 

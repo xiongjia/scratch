@@ -3,11 +3,11 @@ package main
 import (
 	"log/slog"
 	"stray/internal/server"
-	"stray/pkg/utility"
+	"stray/pkg/util"
 )
 
 func main() {
-	utility.InitDefaultLog(&utility.LogOption{
+	util.InitDefaultLog(&util.LogOption{
 		Level:     slog.LevelDebug,
 		AddSource: false,
 	})
@@ -20,7 +20,7 @@ func main() {
 		return
 	}
 
-	wg := utility.MakeWaitGroup()
+	wg := util.NewWaitGroup()
 	wg.Go(func() {
 		err = server.StartServer("0.0.0.0", 8897, serv)
 		if err != nil {

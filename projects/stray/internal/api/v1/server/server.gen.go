@@ -8,7 +8,9 @@ package server
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -16,17 +18,17 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
-// VersionInfo defines model for VersionInfo.
-type VersionInfo struct {
-	Major int `json:"major"`
-	Minor int `json:"minor"`
-	Patch int `json:"patch"`
-}
+// PostV1DebugEchoJSONRequestBody defines body for PostV1DebugEcho for application/json ContentType.
+type PostV1DebugEchoJSONRequestBody = DebugEchoOptions
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
+	// (POST /v1/debug/echo)
+	PostV1DebugEcho(w http.ResponseWriter, r *http.Request)
 
 	// (GET /version)
 	GetVersion(w http.ResponseWriter, r *http.Request)
@@ -40,6 +42,20 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// PostV1DebugEcho operation middleware
+func (siw *ServerInterfaceWrapper) PostV1DebugEcho(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostV1DebugEcho(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
 
 // GetVersion operation middleware
 func (siw *ServerInterfaceWrapper) GetVersion(w http.ResponseWriter, r *http.Request) {
@@ -175,19 +191,149 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	m.HandleFunc("POST "+options.BaseURL+"/v1/debug/echo", wrapper.PostV1DebugEcho)
 	m.HandleFunc("GET "+options.BaseURL+"/version", wrapper.GetVersion)
 
 	return m
 }
 
+type PostV1DebugEchoRequestObject struct {
+	Body *PostV1DebugEchoJSONRequestBody
+}
+
+type PostV1DebugEchoResponseObject interface {
+	VisitPostV1DebugEchoResponse(w http.ResponseWriter) error
+}
+
+type PostV1DebugEcho200JSONResponse DebugEchoResponse
+
+func (response PostV1DebugEcho200JSONResponse) VisitPostV1DebugEchoResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetVersionRequestObject struct {
+}
+
+type GetVersionResponseObject interface {
+	VisitGetVersionResponse(w http.ResponseWriter) error
+}
+
+type GetVersion200JSONResponse VersionInfo
+
+func (response GetVersion200JSONResponse) VisitGetVersionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+// StrictServerInterface represents all server handlers.
+type StrictServerInterface interface {
+
+	// (POST /v1/debug/echo)
+	PostV1DebugEcho(ctx context.Context, request PostV1DebugEchoRequestObject) (PostV1DebugEchoResponseObject, error)
+
+	// (GET /version)
+	GetVersion(ctx context.Context, request GetVersionRequestObject) (GetVersionResponseObject, error)
+}
+
+type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
+type StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
+
+type StrictHTTPServerOptions struct {
+	RequestErrorHandlerFunc  func(w http.ResponseWriter, r *http.Request, err error)
+	ResponseErrorHandlerFunc func(w http.ResponseWriter, r *http.Request, err error)
+}
+
+func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc) ServerInterface {
+	return &strictHandler{ssi: ssi, middlewares: middlewares, options: StrictHTTPServerOptions{
+		RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		},
+		ResponseErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		},
+	}}
+}
+
+func NewStrictHandlerWithOptions(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc, options StrictHTTPServerOptions) ServerInterface {
+	return &strictHandler{ssi: ssi, middlewares: middlewares, options: options}
+}
+
+type strictHandler struct {
+	ssi         StrictServerInterface
+	middlewares []StrictMiddlewareFunc
+	options     StrictHTTPServerOptions
+}
+
+// PostV1DebugEcho operation middleware
+func (sh *strictHandler) PostV1DebugEcho(w http.ResponseWriter, r *http.Request) {
+	var request PostV1DebugEchoRequestObject
+
+	var body PostV1DebugEchoJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostV1DebugEcho(ctx, request.(PostV1DebugEchoRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostV1DebugEcho")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostV1DebugEchoResponseObject); ok {
+		if err := validResponse.VisitPostV1DebugEchoResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetVersion operation middleware
+func (sh *strictHandler) GetVersion(w http.ResponseWriter, r *http.Request) {
+	var request GetVersionRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetVersion(ctx, request.(GetVersionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetVersion")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetVersionResponseObject); ok {
+		if err := validResponse.VisitGetVersionResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/3SQwU7DMBBEfwUNHKMkhZt/oOKMxKXqwbjb1lVim/UWqYry72jthHKA024ymcnOm+Di",
-	"mGKgIBlmQnZnGm1Z34mzj+E1HKM+Jo6JWDwVcbSXyLrILREMfBA6EWNuMPrwn5SsuPNf0tyA6fPqmQ4w",
-	"uyV9jVp9+2b1xY8LOcGsPr/cJ14G1d6E7Q0Nvur5MNi0fdvr72OiYJOHwUvbt5safC59up/PJ5xIdGhd",
-	"K0rgAIMtyQIEemtOMeSK4rnvdbgYhEJx2pQG74q3u+QaWsHq9sR0hMFjdyffLdi738xLuwNlxz5JbbLI",
-	"D3dd7CkrsS0FYjtgry8zsdaB2U248gCDTmvP+/k7AAD//9MOBhfvAQAA",
+	"H4sIAAAAAAAC/7RTzWrcMBB+lTLtcVl525uOpSWEHlJayCUsQZEntpa1RtXMBhbjdy8j2ZtCHeihe7GF",
+	"RqPvbzSCpyFRxCgMdgT2PQ6uLD0NA8XHe8wcKN7GZ9LdlClhloDlzOAOlHUh54RgIUTBDjNMGxhCfKuU",
+	"nPh+rTRtIOOvU8jYgn2Yb1+uWvr2m6WPng7oRW9s8enUPX7R71ff012SQJFX+HL3By5LDrH7G5a7fwH5",
+	"gZwoMv5XFD0VZqslyFFrPyW7M2zgpSYBFnbbZtsoJUoYXQpg4dO22e6qR30hYV52pjA26PsaHbHoX6k6",
+	"Nei2BQvfieV+d1EFlSWyfKb2XOcgCsbS6VI6Bl96zYGVyjIxuvqQ8RksvDevI2XmeTJvBDRN1ZbqZOH9",
+	"sWmuhXpJrKC2yD6HQgQs3H0rCYnrWNMpPbDXLXPxfYQOVxy8QZkfCVxRy8pzXJExl9+91hdFNxgxu2PV",
+	"xJhVFdiHEU75CBaMjtG0n34HAAD//x3D3KERBAAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

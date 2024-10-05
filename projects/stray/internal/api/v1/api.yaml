@@ -9,11 +9,13 @@ paths:
       responses:
         '200':
           description: Version Info
-          content: {application/json: {schema: {$ref: '#/components/schemas/VersionInfo'}}}
-
-components:
-  schemas:
-    VersionInfo:
-      type: object
-      required: [major, minor, patch]
-      properties: { major: { type: integer }, minor: { type: integer }, patch: { type: integer }}
+          content: {application/json: {schema: {$ref: './common.yaml#/components/schemas/VersionInfo'}}}
+  /v1/debug/echo:
+    post:
+      tags: [Debug]
+      requestBody:
+        content: {application/json: {schema: {$ref: './debug.yaml#/components/schemas/DebugEchoOptions'}}}
+      responses:
+        '200':
+          description: OK
+          content: {application/json: {schema: {$ref: './debug.yaml#/components/schemas/DebugEchoResponse'}}}

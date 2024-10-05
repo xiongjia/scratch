@@ -1,0 +1,10 @@
+components:
+  schemas:
+    DebugEchoOptions:
+      type: object
+      required: [msg]
+      properties: { msg: { type: string } }
+    DebugEchoResponse:
+      type: object
+      required: [msg]
+      properties: { msg: { type: string } }

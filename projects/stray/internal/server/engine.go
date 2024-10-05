@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	api "stray/internal/api/v1/server"
-
 	"stray/pkg/collection"
 )
 

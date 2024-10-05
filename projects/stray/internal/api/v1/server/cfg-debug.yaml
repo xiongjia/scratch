@@ -1,0 +1,6 @@
+package: server
+output: debug.gen.go
+generate:
+  models: true
+output-options:
+  skip-prune: true

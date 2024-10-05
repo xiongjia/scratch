@@ -5,6 +5,7 @@ go 1.23
 require (
 	github.com/creasty/defaults v1.8.0
 	github.com/getkin/kin-openapi v0.127.0
+	github.com/ghodss/yaml v1.0.0
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/stretchr/testify v1.9.0

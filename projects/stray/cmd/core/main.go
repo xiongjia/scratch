@@ -22,6 +22,7 @@ func main() {
 
 	wg := util.NewWaitGroup()
 	wg.Go(func() {
+		slog.Info("API Server Started (0.0.0.0:8897)")
 		err = server.StartServer("0.0.0.0", 8897, serv)
 		if err != nil {
 			slog.Error("Server error", slog.Any("err", err))

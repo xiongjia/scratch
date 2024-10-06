@@ -1,13 +1,17 @@
 package util_test
 
 import (
-	"github.com/stretchr/testify/assert"
 	"stray/pkg/util"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestJsonParser(t *testing.T) {
+	defer goleak.VerifyNone(t)
+
 	type (
 		mockObj struct {
 			Name string

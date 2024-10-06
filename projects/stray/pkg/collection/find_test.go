@@ -5,9 +5,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestFind(t *testing.T) {
+	defer goleak.VerifyNone(t)
+
 	_, ok := collection.First([]int{})
 	assert.False(t, ok)
 
@@ -21,6 +24,8 @@ func TestFind(t *testing.T) {
 }
 
 func TestEmpty(t *testing.T) {
+	defer goleak.VerifyNone(t)
+
 	type (
 		Mock struct {
 			Num int `default:"123"`

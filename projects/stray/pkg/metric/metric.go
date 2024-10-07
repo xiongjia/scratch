@@ -37,7 +37,8 @@ func NewMetric() *Metric {
 }
 
 func (m *Metric) Bind(mux *http.ServeMux, router string) {
-
+	slog.Debug("bind prometheus http router", slog.String("router", router))
+	mux.HandleFunc(fmt.Sprintf("/%s", router), m.HttpHandler.ServeHTTP)
 }
 
 func (m *Metric) Factory() promauto.Factory {

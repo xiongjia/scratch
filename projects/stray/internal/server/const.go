@@ -7,4 +7,5 @@ const (
 
 	PREFIX_API_ROUTER = "api"
 	PREFIX_API_DOC    = "apidoc"
+	PREFIX_METRIC     = "metric"
 )

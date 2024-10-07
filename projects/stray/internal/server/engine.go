@@ -14,6 +14,7 @@ import (
 
 type (
 	Server struct {
+		engineMetric *EngineMetric
 	}
 
 	ServerConfig struct {
@@ -53,6 +54,8 @@ func NewServer(cfg ...ServerConfig) (http.Handler, error) {
 		slog.Error("create server mux error", slog.Any("err", err), slog.Any("cfg", servCfg))
 		return nil, err
 	}
-	handler := api.HandlerFromMuxWithBaseURL(&Server{}, mux, fmt.Sprintf("/%s", PREFIX_API_ROUTER))
+	engineMetric := NewEngineMetric(mux)
+	server := &Server{engineMetric: engineMetric}
+	handler := api.HandlerFromMuxWithBaseURL(server, mux, fmt.Sprintf("/%s", PREFIX_API_ROUTER))
 	return handler, nil
 }

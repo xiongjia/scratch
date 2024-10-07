@@ -1,6 +1,7 @@
 package metric_test
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -15,8 +16,10 @@ import (
 func TestMetric(t *testing.T) {
 	defer goleak.VerifyNone(t)
 
+	mux := http.NewServeMux()
 	m := metric.NewMetric()
-	ts := httptest.NewServer(http.HandlerFunc(m.HttpHandler.ServeHTTP))
+	m.Bind(mux, "metric")
+	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
 	// To register a Counter
@@ -28,7 +31,7 @@ func TestMetric(t *testing.T) {
 	testCount := testCountVec.WithLabelValues("lab1-val", "lab2-val")
 	testCount.Inc()
 
-	res, err := http.Get(ts.URL)
+	res, err := http.Get(fmt.Sprintf("%s/metric", ts.URL))
 	assert.NoError(t, err)
 	defer res.Body.Close()
 
@@ -36,4 +39,6 @@ func TestMetric(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, content)
 	t.Logf("content %s", string(content))
+
+	// prometheus.Collector
 }

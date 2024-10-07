@@ -29,7 +29,9 @@ func HttpUtilWriteObjectQuite[T any](w http.ResponseWriter, statusCode int, obj 
 	err := HttpUtilWriteObject(w, statusCode, obj)
 	if err != nil {
 		slog.Error("Write HTTP Response error",
-			slog.Any("err", err), slog.Int("status", statusCode), slog.Any("response", obj))
+			slog.Any("err", err),
+			slog.Int("status", statusCode),
+			slog.Any("response", obj))
 	}
 }
 

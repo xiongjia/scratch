@@ -4,9 +4,21 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/ghodss/yaml"
 )
+
+func HttpMiddlewareLog(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		handler.ServeHTTP(w, r)
+		slog.Debug("HTTP Request",
+			slog.String("method", r.Method),
+			slog.String("path", r.URL.Path),
+			slog.Duration("duration", time.Since(start)))
+	})
+}
 
 func HttpUtilWriteObject[T any](w http.ResponseWriter, statusCode int, obj T) error {
 	w.WriteHeader(statusCode)

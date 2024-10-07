@@ -57,5 +57,5 @@ func NewServer(cfg ...ServerConfig) (http.Handler, error) {
 	engineMetric := NewEngineMetric(mux)
 	server := &Server{engineMetric: engineMetric}
 	handler := api.HandlerFromMuxWithBaseURL(server, mux, fmt.Sprintf("/%s", PREFIX_API_ROUTER))
-	return handler, nil
+	return util.HttpMiddlewareLog(handler), nil
 }

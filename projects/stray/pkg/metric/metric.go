@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
+	versioncollector "github.com/prometheus/client_golang/prometheus/collectors/version"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -33,6 +34,10 @@ func NewMetric() *Metric {
 		ErrorHandling: promhttp.ContinueOnError,
 		ErrorLog:      &promLoggerHandler{},
 	})
+
+	verCollector := versioncollector.NewCollector("stray_exporter")
+	reg.MustRegister(verCollector)
+
 	return &Metric{reg: reg, HttpHandler: handler}
 }
 
@@ -43,4 +48,8 @@ func (m *Metric) Bind(mux *http.ServeMux, router string) {
 
 func (m *Metric) Factory() promauto.Factory {
 	return promauto.With(m.reg)
+}
+
+func (m *Metric) Registry() *prometheus.Registry {
+	return m.reg
 }

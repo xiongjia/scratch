@@ -37,7 +37,6 @@ func BuildAll(be *BuildEnv, opts []*BinaryBuildOption) error {
 func Build(be *BuildEnv, opt *BinaryBuildOption) error {
 	slog.Debug("Binary build option", slog.Any("opt", opt))
 	output := be.MakeBinFilename(opt.Output)
-	mainPkg := be.MakeProjectFullFilename(opt.MainPkg)
 
 	shouldRebuild := be.ShouldRebuildAssets(output, opt.Dependencies...)
 	if !shouldRebuild {
@@ -56,7 +55,7 @@ func Build(be *BuildEnv, opt *BinaryBuildOption) error {
 	if len(opt.LDFlags) > 0 {
 		args = append(args, "-ldflags", opt.LDFlags)
 	}
-	args = append(args, "-o", output, mainPkg)
+	args = append(args, "-o", output, opt.MainPkg)
 
 	exitCode, err := invokeBuildCmd(".", be.GoCmd, args...)
 	if err != nil {

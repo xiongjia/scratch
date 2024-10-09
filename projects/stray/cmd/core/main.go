@@ -1,12 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
+	"runtime/debug"
 	"stray/internal/server"
 	"stray/pkg/util"
 )
 
 func main() {
+	if bi, ok := debug.ReadBuildInfo(); ok {
+		fmt.Printf("%+v\n", bi)
+	}
+
 	util.InitDefaultLog(&util.LogOption{
 		Level:     slog.LevelDebug,
 		AddSource: false,

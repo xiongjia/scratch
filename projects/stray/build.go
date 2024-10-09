@@ -11,7 +11,7 @@ var (
 	projects = []*buildmgr.BinaryBuildOption{
 		{
 			Output:       "stray-core",
-			MainPkg:      "cmd/core/main.go",
+			MainPkg:      "./cmd/core/",
 			Dependencies: []string{"cmd", "pkg"},
 		},
 	}

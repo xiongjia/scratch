@@ -1,0 +1,17 @@
+{
+  "name": "rspack-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rspack build",
+    "dev": "rspack serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rspack/cli": "^1.1.6",
+    "@rspack/core": "^1.1.6"
+  }
+}

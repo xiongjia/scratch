@@ -12,11 +12,15 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@ant-design/cssinjs": "^1.22.1",
     "@ant-design/pro-components": "^2.7.19",
+    "@reduxjs/toolkit": "^2.5.0",
     "@types/antd": "^1.0.0",
     "antd": "^5.21.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.0.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "1.9.0",

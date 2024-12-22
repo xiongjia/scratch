@@ -1,25 +1,18 @@
-import { EntryPage } from '&/view/index'
-import { StyleProvider, px2remTransformer } from '@ant-design/cssinjs'
 import { ConfigProvider } from 'antd'
-import { Route, Routes } from 'react-router-dom'
+import { HashRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { Home, Playground } from '&/view'
 import './App.css'
-
-const px2rem = px2remTransformer({ rootValue: 16 })
 
 const App = () => {
   return (
-    <ConfigProvider
-      form={{
-        colon: false,
-      }}
-    >
-      <StyleProvider hashPriority="high" transformers={[px2rem]}>
+    <ConfigProvider>
+      <HashRouter>
         <Routes>
-          <Route path="/" element={<EntryPage />} />
-          <Route path="/test" element={<EntryPage />} />
-          <Route path="*" element={<EntryPage />} />
+          <Route path="home" element={<Home />} />
+          <Route path="playground" element={<Playground />} />
+          <Route path="/" element={<Navigate to="home" />} />
         </Routes>
-      </StyleProvider>
+      </HashRouter>
     </ConfigProvider>
   )
 }

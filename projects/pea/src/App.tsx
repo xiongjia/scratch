@@ -10,7 +10,7 @@ const App = () => {
         <Routes>
           <Route path="home" element={<Home />} />
           <Route path="playground" element={<Playground />} />
-          <Route path="/" element={<Navigate to="home" />} />
+          <Route path="/" element={<Navigate to="playground" />} />
         </Routes>
       </HashRouter>
     </ConfigProvider>

@@ -1,4 +1,4 @@
-import { Space, Button } from 'antd'
+import { Space, Button, Form, Input } from 'antd'
 import { HostTable, type HostItem } from '&/component'
 
 const hosts: HostItem[] = [
@@ -19,12 +19,41 @@ const hosts: HostItem[] = [
 ]
 
 const Playground = () => {
+  const [form] = Form.useForm()
+
+  const onFinish = (val: { user: string }) => {
+    console.log('Received user:', val)
+    form.setFieldValue('user', 'update1')
+  }
+
   return (
     <>
       <Space direction="vertical" size="large">
         <p>Playground</p>
-        <HostTable hosts={hosts} />
 
+        <Form
+          form={form}
+          onFinish={onFinish}
+          name="basic"
+          initialValues={{ user: '123' }}
+          layout="vertical"
+        >
+          <Form.Item
+            label="user"
+            name="user"
+            rules={[{ required: true, message: 'Please input your username!' }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+
+        <HostTable hosts={hosts} />
         <Button
           size="large"
           onClick={() => {

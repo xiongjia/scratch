@@ -1,7 +1,6 @@
-import { map } from 'lodash-es'
-import { useEffect, useState } from 'react'
-import type { ProColumns } from '@ant-design/pro-components'
-import { ProTable } from '@ant-design/pro-components'
+import { Form, Table, Input, Button } from 'antd'
+import type { FormListFieldData, FormListOperation, FormProps } from 'antd'
+import type { ColumnProps } from 'antd/es/table'
 
 export type HostItem = {
   key: string
@@ -11,51 +10,67 @@ export type HostItem = {
   outputLog: string
 }
 
-const hostCols: ProColumns<HostItem>[] = [
-  {
-    title: '主机名',
-    key: 'name',
-    width: 250,
-    dataIndex: 'name',
-    fixed: 'left',
-    editable: false,
-  },
-  {
-    title: '状态',
-    key: 'status',
-    dataIndex: 'status',
-    editable: false,
-  },
-  {
-    title: '节点名',
-    key: 'nodeName',
-    dataIndex: 'nodeName',
-  },
-]
-
 const HostTable = ({ hosts }: { hosts: HostItem[] }) => {
-  const [editableKeys, setEditableKeys] = useState<string[]>([])
+  const columns: ColumnProps<{
+    field: FormListFieldData
+    operation: FormListOperation
+  }>[] = [
+    {
+      title: 'host name',
+      dataIndex: 'name',
+      render(value, { field }) {
+        return (
+          <Form.Item
+            name={[field.name, 'name']}
+            rules={[{ required: true, message: 'required' }]}
+          >
+            <Input />
+          </Form.Item>
+        )
+      },
+    },
+  ]
 
-  useEffect(() => {
-    setEditableKeys(map<HostItem, string>(hosts, (itr: HostItem) => itr.key))
-  }, [hosts])
+  const onFinish: FormProps<FormData>['onFinish'] = (values) => {
+    console.log(values)
+  }
 
   return (
     <>
-      <ProTable<HostItem>
-        headerTitle="Hosts"
-        size="large"
-        search={false}
-        options={false}
-        pagination={false}
-        columns={hostCols}
-        rowKey={(rcd) => rcd.key}
-        scroll={{ x: 'max-content' }}
-        dataSource={hosts}
-        editable={{
-          editableKeys: editableKeys,
+      <Form
+        initialValues={{
+          hosts: hosts,
         }}
-      />
+        onFinish={onFinish}
+      >
+        <Form.Item label="hosts">
+          <Form.List name="hosts">
+            {(fields, operation) => {
+              const dataSources = fields.map((field) => ({
+                field,
+                operation,
+              }))
+              console.log('dataSources', dataSources)
+              return (
+                <Table
+                  size="small"
+                  bordered
+                  rowKey={(row) => row.field.key}
+                  dataSource={dataSources}
+                  pagination={false}
+                  columns={columns}
+                />
+              )
+            }}
+          </Form.List>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </>
   )
 }

@@ -29,6 +29,20 @@ const HostTable = ({ hosts }: { hosts: HostItem[] }) => {
         )
       },
     },
+    {
+      title: 'node name',
+      dataIndex: 'nodeName',
+      render(value, { field }) {
+        return (
+          <Form.Item
+            name={[field.name, 'nodeName']}
+            rules={[{ required: true, message: 'required' }]}
+          >
+            <Input />
+          </Form.Item>
+        )
+      },
+    },
   ]
 
   const onFinish: FormProps<FormData>['onFinish'] = (values) => {

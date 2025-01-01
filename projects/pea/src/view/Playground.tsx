@@ -1,5 +1,5 @@
 import { Space, Button, Form, Input } from 'antd'
-import { HostTable, type HostItem } from '&/component'
+import { HostTable, type HostItem, TestSteps } from '&/component'
 
 const hosts: HostItem[] = [
   {
@@ -61,6 +61,8 @@ const Playground = () => {
         >
           Test
         </Button>
+
+        <TestSteps />
       </Space>
     </>
   )

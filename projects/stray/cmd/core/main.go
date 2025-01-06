@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -14,27 +13,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/config"
-	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/prometheus/prometheus/scrape"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/tsdb"
 	"github.com/prometheus/prometheus/util/logging"
-
-	"github.com/prometheus/prometheus/discovery"
 )
-
-func staticConfig(addrs ...string) discovery.StaticConfig {
-	var cfg discovery.StaticConfig
-	for i, addr := range addrs {
-		cfg = append(cfg, &targetgroup.Group{
-			Source: fmt.Sprint(i),
-			Targets: []model.LabelSet{
-				{model.AddressLabel: model.LabelValue(addr)},
-			},
-		})
-	}
-	return cfg
-}
 
 func procInit() {
 	util.InitDefaultLog(&util.LogOption{
@@ -67,23 +50,12 @@ func procInit() {
 		return
 	}
 
-	sdMetrics, err := discovery.CreateAndRegisterSDMetrics(prometheus.DefaultRegisterer)
+	ctx := context.TODO()
+	discoveryMgr, err := metricUtil.NewPromDiscovery(ctx)
 	if err != nil {
-		slog.Error("failed to register service discovery metrics", "err", err)
+		log.Error("discovery mgr", slog.Any("err", err))
 		return
 	}
-
-	ctx := context.TODO()
-	discoveryMgr := discovery.NewManager(ctx, promLog.With("component", "discovery"), prometheus.DefaultRegisterer, sdMetrics)
-	discoveryCfg := map[string]discovery.Configs{
-		"job1": {staticConfig("172.24.6.50:9100")},
-	}
-	discoveryMgr.ApplyConfig(discoveryCfg)
-	go func() {
-		discoveryMgr.Run()
-	}()
-
-	// slog.Debug("targs ", slog.Any("tags", tag))
 
 	scrapCfg := &config.Config{}
 	scrapCfg.ScrapeConfigs = []*config.ScrapeConfig{

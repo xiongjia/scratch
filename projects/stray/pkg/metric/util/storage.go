@@ -85,7 +85,7 @@ func (s *PromStorage) Appender(ctx context.Context) storage.Appender {
 	if x := s.get(); x != nil {
 		return x.Appender(ctx)
 	}
-	return notReadyAppender{}
+	return notReadyAppend{}
 }
 
 func (s *PromStorage) ApplyConfig(conf *config.Config) error {

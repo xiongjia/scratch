@@ -75,45 +75,61 @@ func procInit() {
 
 	ctx := context.TODO()
 	discoveryMgr := discovery.NewManager(ctx, promLog.With("component", "discovery"), prometheus.DefaultRegisterer, sdMetrics)
+	discoveryCfg := map[string]discovery.Configs{
+		"job1": {staticConfig("172.24.6.50:9100")},
+	}
+	discoveryMgr.ApplyConfig(discoveryCfg)
+	go func() {
+		discoveryMgr.Run()
+	}()
 
-	discoveryCfg := make(map[string]discovery.Configs)
-	discoveryCfg["job1"] = nil
+	// slog.Debug("targs ", slog.Any("tags", tag))
 
 	scrapCfg := &config.Config{}
 	scrapCfg.ScrapeConfigs = []*config.ScrapeConfig{
 		{
-			Scheme:         "https",
+			Scheme:         "http",
 			MetricsPath:    "/metrics",
 			JobName:        "job1",
 			ScrapeInterval: model.Duration(time.Second * 10),
 			ScrapeTimeout:  model.Duration(time.Second * 3),
 		},
 	}
+	scrapeMgr.ApplyConfig(scrapCfg)
 
 	cfgText1 := `
 scrape_configs:
-  - job_name: job1
-    static_configs:
-    - targets: ["172.24.6.50:9100"]
+ - job_name: job1
+   static_configs:
+   - targets: ["172.24.6.50:9100"]
 `
-
 	cfg2, err := config.Load(cfgText1, promLog)
 	if err != nil {
 		slog.Error("Error", slog.Any("err", err))
 		return
 	}
-
-	scrapCfg1, _ := cfg2.GetScrapeConfigs()
-	slog.Debug("cfg", slog.Any("cfg2", cfg2), slog.Any("scrapCfg1", scrapCfg1))
+	slog.Error("Test cfg ", slog.Any("cfg2", cfg2))
 	scrapeMgr.ApplyConfig(cfg2)
+
+	// 	scrapCfgs, err := cfg2.GetScrapeConfigs()
+	// 	if err != nil {
+	// 		return
+	// 	}
+
+	// for _, cfgItem := range scrapCfgs {
+	// 	discoveryCfg := make(map[string]discovery.Configs)
+	// 	discoveryCfg["job1"] = cfgItem.ServiceDiscoveryConfigs
+	// 	discoveryMgr.ApplyConfig(discoveryCfg)
+	// }
+	// slog.Debug("cfg", slog.Any("cfg2", cfg2), slog.Any("scrapCfg1", scrapCfgs))
 
 	go func() {
 		scrapeMgr.ScrapePools()
 		scrapeMgr.Run(discoveryMgr.SyncCh())
 	}()
 
-	targets2 := <-mgr.SyncCh()
-	fmt.Printf("Targets %v\n", targets2)
+	// targets2 := <-discoveryMgr.SyncCh()
+	// fmt.Printf("Targets %v\n", targets2)
 }
 
 func main() {

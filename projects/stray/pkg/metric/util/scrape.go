@@ -8,6 +8,7 @@ import (
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/scrape"
+	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/util/logging"
 )
 
@@ -26,12 +27,12 @@ type (
 )
 
 func NewPromScrape(opts PromScrapOptions) (*PromScrape, error) {
-	// fanout := storage.NewFanout(opts.Log, opts.Storage)
+	fanout := storage.NewFanout(opts.Log, opts.Storage)
 	mgr, err := scrape.NewManager(
 		&scrape.Options{},
 		opts.Log,
 		logging.NewJSONFileLogger,
-		NewNopAppend(),
+		fanout,
 		prometheus.DefaultRegisterer)
 	if err != nil {
 		// TODO Adding Log

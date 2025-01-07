@@ -2,12 +2,12 @@ package util
 
 import (
 	"context"
-	"fmt"
-	"log/slog"
+	"errors"
 	"math"
 	"sync"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
@@ -23,8 +23,17 @@ type (
 	}
 )
 
-func NewPromStorage(stats *tsdb.DBStats) *PromStorage {
-	return &PromStorage{stats: stats}
+func NewPromStorage(dbPath string) (*PromStorage, error) {
+	dbStats := tsdb.NewDBStats()
+	db, err := OpenLocalTsdb(dbPath, prometheus.DefaultRegisterer, tsdb.DefaultOptions(), dbStats)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PromStorage{
+		stats: dbStats,
+		db:    db,
+	}, nil
 }
 
 func (s *PromStorage) get() storage.Storage {
@@ -59,7 +68,7 @@ func (s *PromStorage) StartTime() (int64, error) {
 			// Add a safety margin as it may take a few minutes for everything to spin up.
 			return startTime + s.startTimeMargin, nil
 		default:
-			panic(fmt.Sprintf("unknown storage type %T", db))
+			return 0, errors.New("TSDB not implement")
 		}
 	}
 	return math.MaxInt64, tsdb.ErrNotReady
@@ -80,8 +89,6 @@ func (s *PromStorage) ChunkQuerier(mint, maxt int64) (storage.ChunkQuerier, erro
 }
 
 func (s *PromStorage) Appender(ctx context.Context) storage.Appender {
-	slog.Debug("Get Appender")
-
 	if x := s.get(); x != nil {
 		return x.Appender(ctx)
 	}
@@ -102,7 +109,7 @@ func (s *PromStorage) ExemplarQuerier(ctx context.Context) (storage.ExemplarQuer
 		case *tsdb.DB:
 			return db.ExemplarQuerier(ctx)
 		default:
-			panic(fmt.Sprintf("unknown storage type %T", db))
+			return nil, errors.New("TSDB not implement")
 		}
 	}
 	return nil, tsdb.ErrNotReady
@@ -121,10 +128,11 @@ func (s *PromStorage) CleanTombstones() error {
 		case *tsdb.DB:
 			return db.CleanTombstones()
 		default:
-			panic(fmt.Sprintf("unknown storage type %T", db))
+			return errors.New("TSDB not implement")
 		}
 	}
 	return tsdb.ErrNotReady
+
 }
 
 func (s *PromStorage) Delete(ctx context.Context, mint, maxt int64, ms ...*labels.Matcher) error {
@@ -133,7 +141,7 @@ func (s *PromStorage) Delete(ctx context.Context, mint, maxt int64, ms ...*label
 		case *tsdb.DB:
 			return db.Delete(ctx, mint, maxt, ms...)
 		default:
-			panic(fmt.Sprintf("unknown storage type %T", db))
+			return errors.New("TSDB not implement")
 		}
 	}
 	return tsdb.ErrNotReady
@@ -145,7 +153,7 @@ func (s *PromStorage) Snapshot(dir string, withHead bool) error {
 		case *tsdb.DB:
 			return db.Snapshot(dir, withHead)
 		default:
-			panic(fmt.Sprintf("unknown storage type %T", db))
+			return errors.New("TSDB not implement")
 		}
 	}
 	return tsdb.ErrNotReady
@@ -157,7 +165,7 @@ func (s *PromStorage) Stats(statsByLabelName string, limit int) (*tsdb.Stats, er
 		case *tsdb.DB:
 			return db.Head().Stats(statsByLabelName, limit), nil
 		default:
-			panic(fmt.Sprintf("unknown storage type %T", db))
+			return nil, errors.New("TSDB not implement")
 		}
 	}
 	return nil, tsdb.ErrNotReady

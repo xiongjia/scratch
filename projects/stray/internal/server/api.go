@@ -15,7 +15,9 @@ func (Server) GetVersion(w http.ResponseWriter, r *http.Request) {
 }
 
 // (POST /v1/debug/echo)
-func (Server) PostV1DebugEcho(w http.ResponseWriter, r *http.Request) {
+func (s *Server) PostV1DebugEcho(w http.ResponseWriter, r *http.Request) {
+	s.metricEngine.QueryTest()
+
 	opts, err := util.JsonReaderToObject[api.DebugEchoOptions](r.Body)
 	if err != nil {
 		util.HttpUtilWriteError(w, http.StatusBadRequest, err)

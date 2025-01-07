@@ -20,17 +20,17 @@ func procInit() {
 func main() {
 	procInit()
 
-	serv, err := server.NewServer(server.ServerConfig{
+	eng, err := metric.NewEngine(metric.EngineOpts{StorageFolder: "C:/wrk/tmp/tsdb2"})
+	if err != nil {
+		slog.Error("new engine", slog.Any("err", err))
+		return
+	}
+
+	serv, err := server.NewServer(eng, server.ServerConfig{
 		EnableApiDoc: true,
 	})
 	if err != nil {
 		slog.Error("Server init error", slog.Any("err", err))
-		return
-	}
-
-	eng, err := metric.NewEngine()
-	if err != nil {
-		slog.Error("new engine", slog.Any("err", err))
 		return
 	}
 

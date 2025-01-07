@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/prometheus/prometheus/model/exemplar"
 	"github.com/prometheus/prometheus/model/histogram"
@@ -19,6 +20,7 @@ type (
 )
 
 func (notReadyAppend) Append(ref storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
+	slog.Debug("Append", slog.Any("lab", l))
 	return 0, tsdb.ErrNotReady
 }
 

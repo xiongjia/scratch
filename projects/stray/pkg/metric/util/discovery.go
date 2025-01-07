@@ -44,16 +44,17 @@ func NewPromDiscovery(ctx context.Context) (*PromDiscovery, error) {
 	return &PromDiscovery{ctx: ctx, mgr: mgr, promLog: promLog}, nil
 }
 
-func (d *PromDiscovery) Run() {
-	go func() {
-		d.Run()
-	}()
+func (d *PromDiscovery) Run() error {
+	return d.mgr.Run()
 }
 
-func (d *PromDiscovery) ApplyConfig() {
-	// XXX TODO Load the addresses from parameters
+func (d *PromDiscovery) ApplyStaticAddr(addrs ...string) {
 	discoveryCfg := map[string]discovery.Configs{
-		"job1": {staticConfig("172.24.6.50:9100")},
+		"jobMain": {staticConfig(addrs...)},
 	}
 	d.mgr.ApplyConfig(discoveryCfg)
+}
+
+func (d *PromDiscovery) Get() *discovery.Manager {
+	return d.mgr
 }

@@ -3,12 +3,19 @@ package metric
 import (
 	"context"
 	"log/slog"
+	"net/url"
 	"time"
+
+	"github.com/grafana/regexp"
 
 	"stray/pkg/metric/util"
 
 	"github.com/oklog/run"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/prometheus/model/relabel"
 	"github.com/prometheus/prometheus/promql/parser"
+	prom_web "github.com/prometheus/prometheus/web"
+	prom_apiv1 "github.com/prometheus/prometheus/web/api/v1"
 )
 
 type (
@@ -23,7 +30,17 @@ type (
 	EngineOpts struct {
 		StorageFolder string
 	}
+
+	PrometheusVersion = prom_apiv1.PrometheusVersion
 )
+
+func compileCORSRegexString(s string) (*regexp.Regexp, error) {
+	r, err := relabel.NewRegexp(s)
+	if err != nil {
+		return nil, err
+	}
+	return r.Regexp, nil
+}
 
 func NewEngine(opts EngineOpts) (*Engine, error) {
 	promLog := slog.Default()
@@ -56,6 +73,47 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 		slog.Error("New Scrap error", slog.Any("err", err))
 		return nil, err
 	}
+
+	cors, _ := compileCORSRegexString(".*")
+
+	// API Querier
+	webOpts := &prom_web.Options{
+		ListenAddresses: []string{"0.0.0.0:9096"},
+		ReadTimeout:     30 * time.Second,
+		MaxConnections:  512,
+		Context:         context.TODO(),
+		Storage:         promStorage,
+		LocalStorage:    promStorage,
+		// TSDBDir:        dbDir,
+		QueryEngine:    promQL.QueryEngine,
+		ScrapeManager:  promScrape.GetMgr(),
+		RuleManager:    nil,
+		Notifier:       nil,
+		RoutePrefix:    "/",
+		EnableAdminAPI: true,
+		ExternalURL: &url.URL{
+			Scheme: "http",
+			Host:   "localhost:9097",
+			Path:   "/",
+		},
+		Version:    &PrometheusVersion{},
+		Gatherer:   prometheus.DefaultGatherer,
+		Flags:      map[string]string{},
+		CORSOrigin: cors,
+	}
+	slog.Debug("webOpts", webOpts)
+	webHandler := prom_web.New(slog.Default(), webOpts)
+	webHandler.SetReady(prom_web.Ready)
+	l, err := webHandler.Listeners()
+	if err != nil {
+		return nil, err
+	}
+	go func() {
+		err := webHandler.Run(context.TODO(), l, "")
+		if err != nil {
+			panic("web handler error")
+		}
+	}()
 
 	return &Engine{
 		promLog:       promLog,

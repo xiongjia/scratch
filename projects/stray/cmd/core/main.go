@@ -48,6 +48,6 @@ func main() {
 
 	// Update service discovery
 	<-time.After(10 * time.Second)
-	eng.GetServiceDiscovery().ApplyStaticAddr("172.24.6.50:9100")
+	eng.GetServiceDiscovery().ApplyStaticAddr("172.24.6.50:9100",  )
 	wg.Wait()
 }

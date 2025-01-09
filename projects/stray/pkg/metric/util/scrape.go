@@ -26,6 +26,10 @@ type (
 	}
 )
 
+func (s *PromScrape) GetMgr() *scrape.Manager {
+	return s.mgr
+}
+
 func NewPromScrape(opts PromScrapOptions) (*PromScrape, error) {
 	fanout := storage.NewFanout(opts.Log, opts.Storage)
 	mgr, err := scrape.NewManager(

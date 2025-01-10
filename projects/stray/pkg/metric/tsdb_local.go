@@ -1,4 +1,4 @@
-package util
+package metric
 
 import (
 	"log/slog"

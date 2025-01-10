@@ -1,4 +1,4 @@
-package util
+package metric
 
 import "github.com/prometheus/prometheus/storage"
 

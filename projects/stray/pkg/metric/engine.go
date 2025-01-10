@@ -8,8 +8,6 @@ import (
 
 	"github.com/grafana/regexp"
 
-	"stray/pkg/metric/util"
-
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/prometheus/model/relabel"
@@ -21,10 +19,10 @@ import (
 type (
 	Engine struct {
 		promLog       *slog.Logger
-		promDiscovery *util.PromDiscovery
-		promScrape    *util.PromScrape
-		promStorage   *util.PromStorage
-		promQuerier   *util.PromQuerier
+		promDiscovery *PromDiscovery
+		promScrape    *PromScrape
+		promStorage   *PromStorage
+		promQuerier   *PromQuerier
 	}
 
 	EngineOpts struct {
@@ -45,25 +43,25 @@ func compileCORSRegexString(s string) (*regexp.Regexp, error) {
 func NewEngine(opts EngineOpts) (*Engine, error) {
 	promLog := slog.Default()
 
-	promDiscovery, err := util.NewPromDiscovery(context.TODO())
+	promDiscovery, err := NewPromDiscovery(context.TODO())
 	if err != nil {
 		slog.Error("New service discovery", slog.Any("err", err))
 		return nil, err
 	}
 
-	promStorage, err := util.NewPromStorage(opts.StorageFolder)
+	promStorage, err := NewPromStorage(opts.StorageFolder)
 	if err != nil {
 		slog.Error("New tsdb err", slog.Any("err", err))
 		return nil, err
 	}
 
-	promQL, err := util.NewQuerier()
+	promQL, err := NewQuerier()
 	if err != nil {
 		slog.Error("new query error", slog.Any("err", err))
 		return nil, err
 	}
 
-	promScrape, err := util.NewPromScrape(util.PromScrapOptions{
+	promScrape, err := NewPromScrape(PromScrapOptions{
 		Log:       promLog.With("component", "scrape"),
 		Storage:   promStorage,
 		Discovery: promDiscovery,
@@ -188,11 +186,11 @@ func (eng *Engine) QueryTest() {
 	// }
 }
 
-func (eng *Engine) GetServiceDiscovery() *util.PromDiscovery {
+func (eng *Engine) GetServiceDiscovery() *PromDiscovery {
 	return eng.promDiscovery
 }
 
-func (eng *Engine) GetScrape() *util.PromScrape {
+func (eng *Engine) GetScrape() *PromScrape {
 	return eng.promScrape
 }
 

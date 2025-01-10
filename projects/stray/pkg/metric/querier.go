@@ -15,6 +15,12 @@ type (
 		QueryEngine *promql.Engine
 	}
 
+	PromQuerierOpts struct {
+		Log           *slog.Logger
+		MaxMaxSamples int
+		Timeout       time.Duration
+	}
+
 	safePromQLNoStepSubqueryInterval struct {
 		value atomic.Int64
 	}
@@ -32,22 +38,30 @@ func (i *safePromQLNoStepSubqueryInterval) Get(int64) int64 {
 	return i.value.Load()
 }
 
-func NewQuerier() (*PromQuerier, error) {
+func makePromQLEngOpts(opts *PromQuerierOpts) promql.EngineOpts {
 	noStepSubqueryInterval := &safePromQLNoStepSubqueryInterval{}
 	noStepSubqueryInterval.Set(config.DefaultGlobalConfig.EvaluationInterval)
-
-	engLog := slog.Default().With("component", "pmql")
-	queryEngine := promql.NewEngine(promql.EngineOpts{
-		Logger:                   engLog,
-		Reg:                      nil,
-		MaxSamples:               5000000,
-		Timeout:                  100 * time.Second,
+	ret := promql.EngineOpts{
+		Logger:                   makeComponentLog(opts.Log, COMPONENT_PMQL),
 		NoStepSubqueryIntervalFn: noStepSubqueryInterval.Get,
 		EnableAtModifier:         true,
 		EnableNegativeOffset:     true,
 		EnablePerStepStats:       true,
 		LookbackDelta:            time.Duration(5 * time.Minute),
 		EnableDelayedNameRemoval: true,
-	})
-	return &PromQuerier{QueryEngine: queryEngine}, nil
+		Reg:                      nil,
+		MaxSamples:               opts.MaxMaxSamples,
+		Timeout:                  opts.Timeout,
+	}
+	if ret.Timeout < QL_TIMEOUT {
+		ret.Timeout = QL_TIMEOUT
+	}
+	if ret.MaxSamples < QL_MAX_SAMPLES {
+		ret.MaxSamples = QL_MAX_SAMPLES
+	}
+	return ret
+}
+
+func NewQuerier(opts PromQuerierOpts) (*PromQuerier, error) {
+	return &PromQuerier{QueryEngine: promql.NewEngine(makePromQLEngOpts(&opts))}, nil
 }

@@ -6,11 +6,10 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/grafana/regexp"
-
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/prometheus/model/relabel"
+	"github.com/prometheus/common/model"
+
 	"github.com/prometheus/prometheus/promql/parser"
 	prom_web "github.com/prometheus/prometheus/web"
 	prom_apiv1 "github.com/prometheus/prometheus/web/api/v1"
@@ -18,6 +17,7 @@ import (
 
 type (
 	Engine struct {
+		ctx           context.Context
 		promLog       *slog.Logger
 		promDiscovery *PromDiscovery
 		promScrape    *PromScrape
@@ -27,42 +27,47 @@ type (
 
 	EngineOpts struct {
 		StorageFolder string
+
+		QuerierMaxMaxSamples int
+		QuerierTimeout       time.Duration
 	}
 
 	PrometheusVersion = prom_apiv1.PrometheusVersion
 )
 
-func compileCORSRegexString(s string) (*regexp.Regexp, error) {
-	r, err := relabel.NewRegexp(s)
-	if err != nil {
-		return nil, err
-	}
-	return r.Regexp, nil
+func init() {
+	model.NameValidationScheme = model.UTF8Validation
 }
 
 func NewEngine(opts EngineOpts) (*Engine, error) {
-	promLog := slog.Default()
+	ctx := context.Background()
 
-	promDiscovery, err := NewPromDiscovery(context.TODO())
+	// Service Discovery
+	promDiscovery, err := NewPromDiscovery(ctx, PromDiscoveryOpts{})
 	if err != nil {
-		slog.Error("New service discovery", slog.Any("err", err))
+		slog.Error("create sd", slog.Any("err", err))
 		return nil, err
 	}
 
+	// PMQL
+	promQL, err := NewQuerier(PromQuerierOpts{
+		MaxMaxSamples: opts.QuerierMaxMaxSamples,
+		Timeout:       opts.QuerierTimeout,
+	})
+	if err != nil {
+		slog.Error("new query error", slog.Any("err", err))
+		return nil, err
+	}
+
+	// TS Database storage
 	promStorage, err := NewPromStorage(opts.StorageFolder)
 	if err != nil {
 		slog.Error("New tsdb err", slog.Any("err", err))
 		return nil, err
 	}
 
-	promQL, err := NewQuerier()
-	if err != nil {
-		slog.Error("new query error", slog.Any("err", err))
-		return nil, err
-	}
-
 	promScrape, err := NewPromScrape(PromScrapOptions{
-		Log:       promLog.With("component", "scrape"),
+		Log:       slog.Default(),
 		Storage:   promStorage,
 		Discovery: promDiscovery,
 	})
@@ -114,12 +119,15 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 	}()
 
 	return &Engine{
-		promLog:       promLog,
 		promDiscovery: promDiscovery,
 		promScrape:    promScrape,
 		promStorage:   promStorage,
 		promQuerier:   promQL,
 	}, nil
+}
+
+func (eng *Engine) ApplyDiscoveryConfig(groups ...StaticDiscoveryConfig) {
+	eng.promDiscovery.ApplyStaticTargetGroup(groups...)
 }
 
 func (eng *Engine) QueryTest() {

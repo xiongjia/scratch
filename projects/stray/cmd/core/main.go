@@ -50,20 +50,26 @@ func main() {
 
 	procInit(&proc)
 
-	eng, err := metric.NewEngine(metric.EngineOpts{StorageFolder: "C:/wrk/tmp/tsdb2"})
-	if err != nil {
-		slog.Error("new engine", slog.Any("err", err))
-		return
-	}
-	proc.Engine = eng
-
-	serv, err := server.NewServer(proc.Engine, server.ServerConfig{
+	// REST API Server
+	serv, err := server.NewServer(server.ServerConfig{
 		EnableApiDoc: true,
 	})
 	if err != nil {
 		slog.Error("Server init error", slog.Any("err", err))
 		return
 	}
+
+	// prometheus engine
+	eng, err := metric.NewEngine(metric.EngineOpts{
+		StorageFolder: "C:/wrk/tmp/tsdb2",
+		Disable:       false,
+		HttpHandler:   serv,
+	})
+	if err != nil {
+		slog.Error("new engine", slog.Any("err", err))
+		return
+	}
+	proc.Engine = eng
 
 	wg := util.NewWaitGroup()
 	wg.Go(func() {
@@ -79,6 +85,8 @@ func main() {
 
 	// Update service discovery
 	<-time.After(10 * time.Second)
+
+	// TODO load it from cluster
 
 	// update jobs
 	err = eng.ApplyScrapeJobs([]metric.ScrapeJob{

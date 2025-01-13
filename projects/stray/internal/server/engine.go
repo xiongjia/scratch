@@ -9,13 +9,11 @@ import (
 
 	api "stray/internal/api/v1/server"
 	"stray/pkg/collection"
-	"stray/pkg/metric"
 	"stray/pkg/util"
 )
 
 type (
 	Server struct {
-		metricEngine *metric.Engine
 	}
 
 	ServerConfig struct {
@@ -46,7 +44,7 @@ func StartServer(host string, port int, srv http.Handler) error {
 	return httpServer.ListenAndServe()
 }
 
-func NewServer(eng *metric.Engine, cfg ...ServerConfig) (http.Handler, error) {
+func NewServer(cfg ...ServerConfig) (http.Handler, error) {
 	servCfg := collection.FirstOrEmpty[ServerConfig](cfg)
 	slog.Debug("Creating Server", slog.Any("cfg", servCfg))
 
@@ -56,7 +54,7 @@ func NewServer(eng *metric.Engine, cfg ...ServerConfig) (http.Handler, error) {
 		return nil, err
 	}
 
-	server := &Server{metricEngine: eng}
+	server := &Server{}
 	handler := api.HandlerFromMuxWithBaseURL(server, mux, fmt.Sprintf("/%s", PREFIX_API_ROUTER))
 	return util.HttpMiddlewareLog(handler), nil
 }

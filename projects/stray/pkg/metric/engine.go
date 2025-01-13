@@ -3,33 +3,31 @@ package metric
 import (
 	"context"
 	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/oklog/run"
 	"github.com/prometheus/common/model"
-
 	"github.com/prometheus/prometheus/promql/parser"
-	prom_apiv1 "github.com/prometheus/prometheus/web/api/v1"
 )
 
 type (
 	Engine struct {
-		ctx           context.Context
-		promLog       *slog.Logger
+		disable       bool
 		promDiscovery *PromDiscovery
 		promScrape    *PromScrape
 		promStorage   *PromStorage
 		promQuerier   *PromQuerier
+		promApi       *EngineApi
 	}
 
 	EngineOpts struct {
-		StorageFolder string
-
+		Disable              bool
+		StorageFolder        string
+		HttpHandler          http.Handler
 		QuerierMaxMaxSamples int
 		QuerierTimeout       time.Duration
 	}
-
-	PrometheusVersion = prom_apiv1.PrometheusVersion
 )
 
 func init() {
@@ -74,59 +72,33 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 		return nil, err
 	}
 
-	// cors, _ := compileCORSRegexString(".*")
-	// // API Querier
-	// webOpts := &prom_web.Options{
-	// 	ListenAddresses: []string{"0.0.0.0:9096"},
-	// 	ReadTimeout:     30 * time.Second,
-	// 	MaxConnections:  512,
-	// 	Context:         context.TODO(),
-	// 	Storage:         promStorage,
-	// 	LocalStorage:    promStorage,
-	// 	// TSDBDir:        dbDir,
-	// 	QueryEngine:    promQL.QueryEngine,
-	// 	ScrapeManager:  promScrape.GetMgr(),
-	// 	RuleManager:    nil,
-	// 	Notifier:       nil,
-	// 	RoutePrefix:    "/",
-	// 	EnableAdminAPI: true,
-	// 	ExternalURL: &url.URL{
-	// 		Scheme: "http",
-	// 		Host:   "localhost:9097",
-	// 		Path:   "/",
-	// 	},
-	// 	Version:    &PrometheusVersion{},
-	// 	Gatherer:   prometheus.DefaultGatherer,
-	// 	Flags:      map[string]string{},
-	// 	CORSOrigin: cors,
-	// }
-	// slog.Debug("webOpts", webOpts)
-	// webHandler := prom_web.New(slog.Default(), webOpts)
-	// webHandler.SetReady(prom_web.Ready)
-	// l, err := webHandler.Listeners()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// go func() {
-	// 	err := webHandler.Run(context.TODO(), l, "")
-	// 	if err != nil {
-	// 		panic("web handler error")
-	// 	}
-	// }()
-
 	return &Engine{
+		disable:       opts.Disable,
 		promDiscovery: promDiscovery,
 		promScrape:    promScrape,
 		promStorage:   promStorage,
 		promQuerier:   promQL,
+		promApi: NewEngineApi(EngineApiOptions{
+			HttpHandler: opts.HttpHandler,
+			Querier:     promQL,
+			Storage:     promStorage,
+		}),
 	}, nil
 }
 
 func (eng *Engine) ApplyDiscoveryConfig(groups []StaticDiscoveryConfig) error {
+	if eng.disable {
+		slog.Info("ignored service discovery config (engine is disabled)", slog.Any("group", groups))
+		return nil
+	}
 	return eng.promDiscovery.ApplyStaticTargetGroup(groups)
 }
 
 func (eng *Engine) ApplyScrapeJobs(jobs []ScrapeJob) error {
+	if eng.disable {
+		slog.Info("ignored scrape jobs (engine is disabled)", slog.Any("jobs", jobs))
+		return nil
+	}
 	return eng.promScrape.ApplyJobs(jobs)
 }
 

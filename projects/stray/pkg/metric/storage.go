@@ -23,6 +23,18 @@ type (
 	}
 )
 
+func (s *PromStorage) get() storage.Storage {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+	return s.db
+}
+
+func (s *PromStorage) getStats() *tsdb.DBStats {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+	return s.stats
+}
+
 func NewPromStorage(dbPath string) (*PromStorage, error) {
 	dbStats := tsdb.NewDBStats()
 	db, err := OpenLocalTsdb(dbPath, prometheus.DefaultRegisterer, tsdb.DefaultOptions(), dbStats)
@@ -34,18 +46,6 @@ func NewPromStorage(dbPath string) (*PromStorage, error) {
 		stats: dbStats,
 		db:    db,
 	}, nil
-}
-
-func (s *PromStorage) get() storage.Storage {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-	return s.db
-}
-
-func (s *PromStorage) getStats() *tsdb.DBStats {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-	return s.stats
 }
 
 func (s *PromStorage) Set(db storage.Storage, startTimeMargin int64) {

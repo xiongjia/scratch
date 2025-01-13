@@ -3,15 +3,12 @@ package metric
 import (
 	"context"
 	"log/slog"
-	"net/url"
 	"time"
 
 	"github.com/oklog/run"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 
 	"github.com/prometheus/prometheus/promql/parser"
-	prom_web "github.com/prometheus/prometheus/web"
 	prom_apiv1 "github.com/prometheus/prometheus/web/api/v1"
 )
 
@@ -59,15 +56,15 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 		return nil, err
 	}
 
-	// TS Database storage
+	// TODO: TS Database storage (checkout cortex TSDB Storage)
 	promStorage, err := NewPromStorage(opts.StorageFolder)
 	if err != nil {
 		slog.Error("New tsdb err", slog.Any("err", err))
 		return nil, err
 	}
 
-	promScrape, err := NewPromScrape(PromScrapOptions{
-		Log:       slog.Default(),
+	// Scrape
+	promScrape, err := NewPromScrape(PromScrapeOptions{
 		Storage:   promStorage,
 		Discovery: promDiscovery,
 	})
@@ -77,46 +74,45 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 		return nil, err
 	}
 
-	cors, _ := compileCORSRegexString(".*")
-
-	// API Querier
-	webOpts := &prom_web.Options{
-		ListenAddresses: []string{"0.0.0.0:9096"},
-		ReadTimeout:     30 * time.Second,
-		MaxConnections:  512,
-		Context:         context.TODO(),
-		Storage:         promStorage,
-		LocalStorage:    promStorage,
-		// TSDBDir:        dbDir,
-		QueryEngine:    promQL.QueryEngine,
-		ScrapeManager:  promScrape.GetMgr(),
-		RuleManager:    nil,
-		Notifier:       nil,
-		RoutePrefix:    "/",
-		EnableAdminAPI: true,
-		ExternalURL: &url.URL{
-			Scheme: "http",
-			Host:   "localhost:9097",
-			Path:   "/",
-		},
-		Version:    &PrometheusVersion{},
-		Gatherer:   prometheus.DefaultGatherer,
-		Flags:      map[string]string{},
-		CORSOrigin: cors,
-	}
-	slog.Debug("webOpts", webOpts)
-	webHandler := prom_web.New(slog.Default(), webOpts)
-	webHandler.SetReady(prom_web.Ready)
-	l, err := webHandler.Listeners()
-	if err != nil {
-		return nil, err
-	}
-	go func() {
-		err := webHandler.Run(context.TODO(), l, "")
-		if err != nil {
-			panic("web handler error")
-		}
-	}()
+	// cors, _ := compileCORSRegexString(".*")
+	// // API Querier
+	// webOpts := &prom_web.Options{
+	// 	ListenAddresses: []string{"0.0.0.0:9096"},
+	// 	ReadTimeout:     30 * time.Second,
+	// 	MaxConnections:  512,
+	// 	Context:         context.TODO(),
+	// 	Storage:         promStorage,
+	// 	LocalStorage:    promStorage,
+	// 	// TSDBDir:        dbDir,
+	// 	QueryEngine:    promQL.QueryEngine,
+	// 	ScrapeManager:  promScrape.GetMgr(),
+	// 	RuleManager:    nil,
+	// 	Notifier:       nil,
+	// 	RoutePrefix:    "/",
+	// 	EnableAdminAPI: true,
+	// 	ExternalURL: &url.URL{
+	// 		Scheme: "http",
+	// 		Host:   "localhost:9097",
+	// 		Path:   "/",
+	// 	},
+	// 	Version:    &PrometheusVersion{},
+	// 	Gatherer:   prometheus.DefaultGatherer,
+	// 	Flags:      map[string]string{},
+	// 	CORSOrigin: cors,
+	// }
+	// slog.Debug("webOpts", webOpts)
+	// webHandler := prom_web.New(slog.Default(), webOpts)
+	// webHandler.SetReady(prom_web.Ready)
+	// l, err := webHandler.Listeners()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// go func() {
+	// 	err := webHandler.Run(context.TODO(), l, "")
+	// 	if err != nil {
+	// 		panic("web handler error")
+	// 	}
+	// }()
 
 	return &Engine{
 		promDiscovery: promDiscovery,
@@ -126,8 +122,18 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 	}, nil
 }
 
-func (eng *Engine) ApplyDiscoveryConfig(groups ...StaticDiscoveryConfig) {
-	eng.promDiscovery.ApplyStaticTargetGroup(groups...)
+func (eng *Engine) ApplyDiscoveryConfig(groups []StaticDiscoveryConfig) error {
+	return eng.promDiscovery.ApplyStaticTargetGroup(groups)
+}
+
+func (eng *Engine) ApplyScrapeJobs(jobs []ScrapeJob) error {
+	return eng.promScrape.ApplyJobs(jobs)
+}
+
+func (eng *Engine) Shutdown() error {
+	eng.promStorage.Close()
+	// TODO close the running Service discovery and Scrape
+	return nil
 }
 
 func (eng *Engine) QueryTest() {
@@ -194,16 +200,14 @@ func (eng *Engine) QueryTest() {
 	// }
 }
 
-func (eng *Engine) GetServiceDiscovery() *PromDiscovery {
-	return eng.promDiscovery
-}
-
 func (eng *Engine) GetScrape() *PromScrape {
 	return eng.promScrape
 }
 
 func (eng *Engine) Run() error {
 	slog.Debug("Engine running")
+
+	// TODO Query APIs
 
 	var runGroup run.Group
 
@@ -213,6 +217,9 @@ func (eng *Engine) Run() error {
 		return eng.promDiscovery.Run()
 	}, func(err error) {
 		slog.Debug("discovery component exited")
+		if err != nil {
+			slog.Error("discovery component  exit with err", slog.Any("err", err))
+		}
 	})
 
 	// Scrape
@@ -221,6 +228,9 @@ func (eng *Engine) Run() error {
 		return eng.promScrape.Run()
 	}, func(err error) {
 		slog.Debug("scrape component exited")
+		if err != nil {
+			slog.Error("scrape component exit with error", slog.Any("err", err))
+		}
 	})
 
 	return runGroup.Run()

@@ -84,6 +84,7 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 			Querier:     promQL,
 			Storage:     promStorage,
 			ServeMux:    opts.ServeMux,
+			Scrape:      promScrape,
 		}),
 	}, nil
 }

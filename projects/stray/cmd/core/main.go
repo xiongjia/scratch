@@ -61,10 +61,11 @@ func main() {
 
 	// prometheus engine
 	eng, err := metric.NewEngine(metric.EngineOpts{
-		StorageFolder: "C:/wrk/tmp/tsdb2",
-		Disable:       false,
-		HttpHandler:   serv,
-		ServeMux:      serveMux,
+		StorageFolder:        "C:/wrk/tmp/tsdb2",
+		Disable:              false,
+		HttpHandler:          serv,
+		ServeMux:             serveMux,
+		QuerierMaxMaxSamples: 9999999999999,
 	})
 	if err != nil {
 		slog.Error("new engine", slog.Any("err", err))

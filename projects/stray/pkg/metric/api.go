@@ -17,9 +17,11 @@ import (
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/common/route"
 	"github.com/prometheus/prometheus/model/labels"
+	"github.com/prometheus/prometheus/model/metadata"
 	"github.com/prometheus/prometheus/model/timestamp"
 	"github.com/prometheus/prometheus/promql"
 	"github.com/prometheus/prometheus/promql/parser"
+	"github.com/prometheus/prometheus/scrape"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/tsdb"
 	"github.com/prometheus/prometheus/util/annotations"
@@ -32,18 +34,25 @@ import (
 type (
 	StatsRenderer func(context.Context, *stats.Statistics, string) stats.QueryStats
 
+	TargetRetriever interface {
+		TargetsActive() map[string][]*scrape.Target
+		TargetsDropped() map[string][]*scrape.Target
+		TargetsDroppedCounts() map[string]int
+	}
+
 	EngineApi struct {
 		promQuerier *PromQuerier
 		Queryable   *PromStorage
 
-		mux           *http.ServeMux
-		httpHandler   http.Handler
-		cors          *regexp.Regexp
-		logger        *slog.Logger
-		codecs        []Codec
-		statsRenderer StatsRenderer
-		ready         func(http.HandlerFunc) http.HandlerFunc
-		now           func() time.Time
+		mux             *http.ServeMux
+		httpHandler     http.Handler
+		cors            *regexp.Regexp
+		logger          *slog.Logger
+		codecs          []Codec
+		statsRenderer   StatsRenderer
+		ready           func(http.HandlerFunc) http.HandlerFunc
+		now             func() time.Time
+		targetRetriever func(context.Context) TargetRetriever
 	}
 
 	EngineApiOptions struct {
@@ -51,6 +60,7 @@ type (
 		HttpHandler http.Handler
 		Querier     *PromQuerier
 		Storage     *PromStorage
+		Scrape      *PromScrape
 	}
 
 	errorType string
@@ -393,10 +403,165 @@ func (api *EngineApi) Register() {
 
 	apiRoute := route.New()
 	apiRoute.Get("/mon/api/v1/query", wrap(api.query))
+	apiRoute.Get("/mon/api/v1/query_range", wrap(api.queryRange))
+
 	apiRoute.Get("/mon/api/v1/labels", wrap(api.labelNames))
 	apiRoute.Get("/mon/api/v1/label/:name/values", wrap(api.labelValues))
+	apiRoute.Get("/mon/api/v1/metadata", wrap(api.metricMetadata))
 
 	api.mux.Handle("/", apiRoute)
+}
+
+func (api *EngineApi) queryRange(r *http.Request) (result apiFuncResult) {
+	start, err := parseTime(r.FormValue("start"))
+	if err != nil {
+		return invalidParamError(err, "start")
+	}
+	end, err := parseTime(r.FormValue("end"))
+	if err != nil {
+		return invalidParamError(err, "end")
+	}
+	if end.Before(start) {
+		return invalidParamError(errors.New("end timestamp must not be before start time"), "end")
+	}
+
+	step, err := parseDuration(r.FormValue("step"))
+	if err != nil {
+		return invalidParamError(err, "step")
+	}
+
+	if step <= 0 {
+		return invalidParamError(errors.New("zero or negative query resolution step widths are not accepted. Try a positive integer"), "step")
+	}
+
+	// For safety, limit the number of returned points per timeseries.
+	// This is sufficient for 60s resolution for a week or 1h resolution for a year.
+	if end.Sub(start)/step > 11000 {
+		err := errors.New("exceeded maximum resolution of 11,000 points per timeseries. Try decreasing the query resolution (?step=XX)")
+		return apiFuncResult{nil, &apiError{errorBadData, err}, nil, nil}
+	}
+
+	ctx := r.Context()
+	if to := r.FormValue("timeout"); to != "" {
+		var cancel context.CancelFunc
+		timeout, err := parseDuration(to)
+		if err != nil {
+			return invalidParamError(err, "timeout")
+		}
+
+		ctx, cancel = context.WithTimeout(ctx, timeout)
+		defer cancel()
+	}
+
+	opts, err := extractQueryOpts(r)
+	if err != nil {
+		return apiFuncResult{nil, &apiError{errorBadData, err}, nil, nil}
+	}
+	qry, err := api.promQuerier.QueryEngine.NewRangeQuery(ctx, api.Queryable, opts, r.FormValue("query"), start, end, step)
+	if err != nil {
+		return invalidParamError(err, "query")
+	}
+	// From now on, we must only return with a finalizer in the result (to
+	// be called by the caller) or call qry.Close ourselves (which is
+	// required in the case of a panic).
+	defer func() {
+		if result.finalizer == nil {
+			qry.Close()
+		}
+	}()
+
+	ctx = httputil.ContextFromRequest(ctx, r)
+
+	res := qry.Exec(ctx)
+	if res.Err != nil {
+		return apiFuncResult{nil, returnAPIError(res.Err), res.Warnings, qry.Close}
+	}
+
+	// Optional stats field in response if parameter "stats" is not empty.
+	sr := api.statsRenderer
+	if sr == nil {
+		sr = DefaultStatsRenderer
+	}
+	qs := sr(ctx, qry.Stats(), r.FormValue("stats"))
+
+	return apiFuncResult{&QueryData{
+		ResultType: res.Value.Type(),
+		Result:     res.Value,
+		Stats:      qs,
+	}, nil, res.Warnings, qry.Close}
+}
+
+func (api *EngineApi) metricMetadata(r *http.Request) apiFuncResult {
+	metrics := map[string]map[metadata.Metadata]struct{}{}
+
+	limit := -1
+	if s := r.FormValue("limit"); s != "" {
+		var err error
+		if limit, err = strconv.Atoi(s); err != nil {
+			return apiFuncResult{nil, &apiError{errorBadData, errors.New("limit must be a number")}, nil, nil}
+		}
+	}
+	limitPerMetric := -1
+	if s := r.FormValue("limit_per_metric"); s != "" {
+		var err error
+		if limitPerMetric, err = strconv.Atoi(s); err != nil {
+			return apiFuncResult{nil, &apiError{errorBadData, errors.New("limit_per_metric must be a number")}, nil, nil}
+		}
+	}
+
+	metric := r.FormValue("metric")
+	for _, tt := range api.targetRetriever(r.Context()).TargetsActive() {
+		for _, t := range tt {
+			if metric == "" {
+				for _, mm := range t.ListMetadata() {
+					m := metadata.Metadata{Type: mm.Type, Help: mm.Help, Unit: mm.Unit}
+					ms, ok := metrics[mm.Metric]
+
+					if limitPerMetric > 0 && len(ms) >= limitPerMetric {
+						continue
+					}
+
+					if !ok {
+						ms = map[metadata.Metadata]struct{}{}
+						metrics[mm.Metric] = ms
+					}
+					ms[m] = struct{}{}
+				}
+				continue
+			}
+
+			if md, ok := t.GetMetadata(metric); ok {
+				m := metadata.Metadata{Type: md.Type, Help: md.Help, Unit: md.Unit}
+				ms, ok := metrics[md.Metric]
+
+				if limitPerMetric > 0 && len(ms) >= limitPerMetric {
+					continue
+				}
+
+				if !ok {
+					ms = map[metadata.Metadata]struct{}{}
+					metrics[md.Metric] = ms
+				}
+				ms[m] = struct{}{}
+			}
+		}
+	}
+
+	// Put the elements from the pseudo-set into a slice for marshaling.
+	res := map[string][]metadata.Metadata{}
+	for name, set := range metrics {
+		if limit >= 0 && len(res) >= limit {
+			break
+		}
+
+		s := []metadata.Metadata{}
+		for metadata := range set {
+			s = append(s, metadata)
+		}
+		res[name] = s
+	}
+
+	return apiFuncResult{res, nil, nil, nil}
 }
 
 func (api *EngineApi) labelValues(r *http.Request) (result apiFuncResult) {
@@ -632,15 +797,18 @@ func (api *EngineApi) query(r *http.Request) (result apiFuncResult) {
 }
 
 func NewEngineApi(opts EngineApiOptions) *EngineApi {
+	factoryTr := func(_ context.Context) TargetRetriever { return opts.Scrape.Get() }
+
 	cors, _ := compileCORSRegexString(".*")
 	engApi := &EngineApi{
-		cors:          cors,
-		httpHandler:   opts.HttpHandler,
-		mux:           opts.ServeMux,
-		promQuerier:   opts.Querier,
-		Queryable:     opts.Storage,
-		statsRenderer: DefaultStatsRenderer,
-		now:           time.Now,
+		cors:            cors,
+		httpHandler:     opts.HttpHandler,
+		mux:             opts.ServeMux,
+		promQuerier:     opts.Querier,
+		Queryable:       opts.Storage,
+		statsRenderer:   DefaultStatsRenderer,
+		now:             time.Now,
+		targetRetriever: factoryTr,
 	}
 
 	engApi.codecs = append(engApi.codecs, JSONCodec{})

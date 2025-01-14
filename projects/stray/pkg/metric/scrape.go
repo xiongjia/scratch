@@ -58,6 +58,10 @@ func NewPromScrape(opts PromScrapeOptions) (*PromScrape, error) {
 		compLog:       scrapeCompLog}, nil
 }
 
+func (s *PromScrape) Get() *scrape.Manager {
+	return s.scrapeMgr
+}
+
 func (s *PromScrape) Run() error {
 	slog.Debug("promScrape started")
 	discoveryMgr := s.promDiscovery.Get()

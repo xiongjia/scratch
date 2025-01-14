@@ -393,8 +393,8 @@ func (api *EngineApi) Register() {
 
 	apiRoute := route.New()
 	apiRoute.Get("/mon/api/v1/query", wrap(api.query))
-	apiRoute.Get("/labels", wrap(api.labelNames))
-	apiRoute.Get("/label/:name/values", wrap(api.labelValues))
+	apiRoute.Get("/mon/api/v1/labels", wrap(api.labelNames))
+	apiRoute.Get("/mon/api/v1/label/:name/values", wrap(api.labelValues))
 
 	api.mux.Handle("/", apiRoute)
 }

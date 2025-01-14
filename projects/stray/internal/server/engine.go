@@ -44,17 +44,17 @@ func StartServer(host string, port int, srv http.Handler) error {
 	return httpServer.ListenAndServe()
 }
 
-func NewServer(cfg ...ServerConfig) (http.Handler, error) {
+func NewServer(cfg ...ServerConfig) (http.Handler, *http.ServeMux, error) {
 	servCfg := collection.FirstOrEmpty[ServerConfig](cfg)
 	slog.Debug("Creating Server", slog.Any("cfg", servCfg))
 
 	mux, err := makeServerMux(&servCfg)
 	if err != nil {
 		slog.Error("create server mux error", slog.Any("err", err), slog.Any("cfg", servCfg))
-		return nil, err
+		return nil, nil, err
 	}
 
 	server := &Server{}
 	handler := api.HandlerFromMuxWithBaseURL(server, mux, fmt.Sprintf("/%s", PREFIX_API_ROUTER))
-	return util.HttpMiddlewareLog(handler), nil
+	return util.HttpMiddlewareLog(handler), mux, nil
 }

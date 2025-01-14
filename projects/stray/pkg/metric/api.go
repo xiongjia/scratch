@@ -21,6 +21,7 @@ type (
 		promQuerier *PromQuerier
 		promStorage *PromStorage
 
+		mux         *http.ServeMux
 		httpHandler http.Handler
 		cors        *regexp.Regexp
 		logger      *slog.Logger
@@ -30,6 +31,7 @@ type (
 	}
 
 	EngineApiOptions struct {
+		ServeMux    *http.ServeMux
 		HttpHandler http.Handler
 		Querier     *PromQuerier
 		Storage     *PromStorage
@@ -196,11 +198,12 @@ func (api *EngineApi) Register() {
 			}
 			w.WriteHeader(http.StatusNoContent)
 		})
-		return api.ready(httputil.CompressionHandler{Handler: hf}.ServeHTTP)
+		return httputil.CompressionHandler{Handler: hf}.ServeHTTP
 	}
 
 	apiRoute := route.New()
 	apiRoute.Get("/query", wrap(api.query))
+	api.mux.Handle("/", apiRoute)
 }
 
 func (api *EngineApi) query(r *http.Request) (result apiFuncResult) {
@@ -213,10 +216,12 @@ func NewEngineApi(opts EngineApiOptions) *EngineApi {
 	engApi := &EngineApi{
 		cors:        cors,
 		httpHandler: opts.HttpHandler,
+		mux:         opts.ServeMux,
 		promQuerier: opts.Querier,
 		promStorage: opts.Storage,
 	}
 
+	engApi.codecs = append(engApi.codecs, JSONCodec{})
 	engApi.Register()
 	// registerHttpHandler(engApi, opts.HttpHandler)
 	return engApi

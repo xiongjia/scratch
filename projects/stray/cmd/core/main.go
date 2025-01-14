@@ -51,7 +51,7 @@ func main() {
 	procInit(&proc)
 
 	// REST API Server
-	serv, err := server.NewServer(server.ServerConfig{
+	serv, serveMux, err := server.NewServer(server.ServerConfig{
 		EnableApiDoc: true,
 	})
 	if err != nil {
@@ -64,6 +64,7 @@ func main() {
 		StorageFolder: "C:/wrk/tmp/tsdb2",
 		Disable:       false,
 		HttpHandler:   serv,
+		ServeMux:      serveMux,
 	})
 	if err != nil {
 		slog.Error("new engine", slog.Any("err", err))

@@ -25,6 +25,7 @@ type (
 		Disable              bool
 		StorageFolder        string
 		HttpHandler          http.Handler
+		ServeMux             *http.ServeMux
 		QuerierMaxMaxSamples int
 		QuerierTimeout       time.Duration
 	}
@@ -82,6 +83,7 @@ func NewEngine(opts EngineOpts) (*Engine, error) {
 			HttpHandler: opts.HttpHandler,
 			Querier:     promQL,
 			Storage:     promStorage,
+			ServeMux:    opts.ServeMux,
 		}),
 	}, nil
 }

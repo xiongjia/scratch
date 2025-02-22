@@ -2,6 +2,12 @@ module stray
 
 go 1.23
 
+replace github.com/prometheus/prometheus => github.com/prometheus/prometheus v0.45.0
+
+replace github.com/prometheus/procfs => github.com/prometheus/procfs v0.8.0
+
+replace github.com/deepmap/oapi-codegen/v2 => github.com/deepmap/oapi-codegen/v2 v2.0.0
+
 require (
 	github.com/creasty/defaults v1.8.0
 	github.com/getkin/kin-openapi v0.127.0

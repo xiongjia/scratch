@@ -10,6 +10,7 @@ replace github.com/deepmap/oapi-codegen/v2 => github.com/deepmap/oapi-codegen/v2
 
 require (
 	github.com/go-kit/log v0.2.1
+	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/prometheus/client_golang v1.20.4
 	github.com/prometheus/common v0.62.0
 	github.com/prometheus/prometheus v0.0.0-00010101000000-000000000000

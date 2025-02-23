@@ -40,15 +40,15 @@ impl Solution {
     pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
         let mut map = HashMap::with_capacity(nums.len());
 
-        for (index, num) in nums.iter().enumerate() {
-            match map.get(&(target - num)) {
-                None => {
-                    map.insert(num, index);
+        for (idx, &num) in nums.iter().enumerate() {
+            let complement = target - num;
+
+            match map.entry(complement) {
+                std::collections::hash_map::Entry::Occupied(e) => {
+                    return vec![*e.get() as i32, idx as i32]
                 }
-                Some(sub_index) => {
-                    return vec![*sub_index as i32, index as i32];
-                }
-            }
+                std::collections::hash_map::Entry::Vacant(_) => map.insert(num, idx),
+            };
         }
         vec![]
     }

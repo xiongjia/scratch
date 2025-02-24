@@ -15,7 +15,9 @@ type (
 		Logger LogAdapterHandler
 
 		Disable bool
-		DBPath  string
+
+		StorageType   string
+		StorageFsPath string
 
 		QuerierMaxMaxSamples int
 		QuerierTimeout       time.Duration
@@ -68,8 +70,9 @@ func NewEngine(opts EngineOptions) (*Engine, error) {
 		return nil, err
 	}
 	promStorage, err := NewPromStorage(PromStorageOpts{
-		Log:    promLog,
-		DBPath: opts.DBPath,
+		Log:        promLog,
+		Type:       opts.StorageType,
+		FsTsdbPath: opts.StorageFsPath,
 	})
 	if err != nil {
 		_ = level.Error(promLog).Log("msg", "create storage", "err", err)

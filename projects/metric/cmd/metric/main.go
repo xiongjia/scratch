@@ -23,7 +23,8 @@ func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 	eng, err := prom.NewEngine(prom.EngineOptions{
 		Logger:               prom.NewSLogAdapterHandler(),
 		Disable:              false,
-		DBPath:               "c:/wrk/tmp/tsdb3",
+		StorageType:          prom.STORAGE_FS,
+		StorageFsPath:        "c:/wrk/tmp/tsdb3",
 		QuerierMaxMaxSamples: 999999999999999,
 		QuerierTimeout:       20 * time.Second,
 	})
@@ -72,7 +73,10 @@ func main() {
 			slog.Error("engine error", slog.Any("err", err))
 		}
 	})
+
 	<-time.After(10 * time.Second)
+
+	// Updating scrape jobs
 
 	wg.Wait()
 }

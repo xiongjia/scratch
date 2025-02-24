@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"math"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,12 +18,17 @@ import (
 	"github.com/prometheus/prometheus/tsdb"
 )
 
+const (
+	STORAGE_FS = "fs"
+	STORAGE_DB = "db"
+)
+
 type (
 	PromStorageOpts struct {
 		Log kitlog.Logger
 
-		// TODO save TSDB to database
-		DBPath string
+		Type       string
+		FsTsdbPath string
 	}
 
 	PromStorage struct {
@@ -35,23 +41,36 @@ type (
 	}
 )
 
-func NewPromStorage(opts PromStorageOpts) (*PromStorage, error) {
-	storageLog := kitlog.With(opts.Log, LOG_COMPONENT_KEY, COMPONENT_STORAGE)
-
-	_ = level.Debug(storageLog).Log("msg", "open tsdb", "path", opts.DBPath)
-
-	dbStats := tsdb.NewDBStats()
-	db, err := tsdb.Open(opts.DBPath, storageLog, prometheus.DefaultRegisterer,
-		tsdb.DefaultOptions(), dbStats)
+func createFsStorage(dbPath string, dbStats *tsdb.DBStats, l kitlog.Logger) (storage.Storage, error) {
+	db, err := tsdb.Open(dbPath, l, prometheus.DefaultRegisterer, tsdb.DefaultOptions(), dbStats)
 	if err != nil {
 		return nil, err
 	}
+	return db, nil
+}
 
-	return &PromStorage{
-		stats: dbStats,
-		db:    db,
-		log:   storageLog,
-	}, nil
+func createDbStorage() (storage.Storage, error) {
+	// xxx
+	return nil, nil
+}
+
+func createStorage(opts PromStorageOpts, l kitlog.Logger, dbStats *tsdb.DBStats) (storage.Storage, error) {
+	if strings.EqualFold(opts.Type, STORAGE_FS) {
+		return createFsStorage(opts.FsTsdbPath, dbStats, l)
+	}
+	return createDbStorage()
+}
+
+func NewPromStorage(opts PromStorageOpts) (*PromStorage, error) {
+	log := kitlog.With(opts.Log, LOG_COMPONENT_KEY, COMPONENT_STORAGE)
+	_ = level.Debug(log).Log("msg", "open tsdb", "type", opts.Type)
+
+	dbStats := tsdb.NewDBStats()
+	db, err := createStorage(opts, log, dbStats)
+	if err != nil {
+		return nil, err
+	}
+	return &PromStorage{stats: dbStats, db: db, log: log}, nil
 }
 
 func (s *PromStorage) get() storage.Storage {

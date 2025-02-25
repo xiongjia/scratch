@@ -19,13 +19,49 @@ func makeCollector(mux *http.ServeMux) error {
 	return nil
 }
 
+func touchJobs(eng *prom.Engine) {
+	// jobNode1 = http://172.24.6.50:9100/metrics
+	// update jobs
+	err := eng.ApplyScrapeJobs([]prom.ScrapeJob{
+		{
+			JobName:     "jobNode1",
+			Scheme:      "http",
+			MetricsPath: "/metrics",
+			Interval:    time.Second * 60,
+			Timeout:     time.Second * 20,
+		},
+	})
+	if err != nil {
+		slog.Error("scrape job apply config", slog.Any("err", err))
+		return
+	}
+
+	// Updating scrape jobs
+	err = eng.ApplyDiscoveryConfig([]prom.StaticDiscoveryConfig{
+		{
+			JobName: "jobNode1",
+			Targets: []prom.StaticTargetGroup{
+				{
+					Source:    "test",
+					Addresses: []string{"172.24.6.50:9100"},
+				},
+			},
+		},
+	})
+	if err != nil {
+		slog.Error("service discovery apply config", slog.Any("err", err))
+	}
+}
+
 func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 	eng, err := prom.NewEngine(prom.EngineOptions{
 		Logger:  prom.NewSLogAdapterHandler(),
 		Disable: false,
 		// StorageType:          prom.STORAGE_FS,
-		StorageType:          prom.STORAGE_DB,
-		StorageFsPath:        "c:/wrk/tmp/tsdb3",
+		// StorageFsPath:        "c:/wrk/tmp/tsdb3",
+		StorageType: prom.STORAGE_DB,
+		// StorageFsPath:        ":memory:",
+		StorageFsPath:        "C:/wrk/tmp/tsdb-test1.db",
 		QuerierMaxMaxSamples: 999999999999999,
 		QuerierTimeout:       20 * time.Second,
 	})
@@ -76,22 +112,6 @@ func main() {
 	})
 
 	<-time.After(10 * time.Second)
-
-	// Updating scrape jobs
-	// update target
-	err = eng.ApplyDiscoveryConfig([]prom.StaticDiscoveryConfig{
-		{
-			JobName: "jobNode1",
-			Targets: []prom.StaticTargetGroup{
-				{
-					Source:    "test",
-					Addresses: []string{"172.24.6.50:9100"},
-				},
-			},
-		},
-	})
-	if err != nil {
-		slog.Error("service discovery apply config", slog.Any("err", err))
-	}
+	touchJobs(eng)
 	wg.Wait()
 }

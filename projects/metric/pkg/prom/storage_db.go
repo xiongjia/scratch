@@ -22,8 +22,10 @@ type (
 	storageDb struct {
 		log kitlog.Logger
 
-		db    *sql.DB
+		db *sql.DB
+
 		rwMtx sync.RWMutex
+		labs  map[uint64]rcdLabs
 	}
 
 	rcdLab struct {
@@ -38,44 +40,193 @@ type (
 		LabId uint64
 	}
 
-	tsdbHdr struct {
-		labs map[uint64]rcdLabs
-	}
-
 	dbAppender struct {
-		log kitlog.Logger
-		ctx context.Context
-		db  *storageDb
+		log     kitlog.Logger
+		ctx     context.Context
+		storage *storageDb
 	}
 )
 
-func makeStorageDb(log kitlog.Logger) (*storageDb, error) {
-	db, err := sql.Open("sqlite3", ":memory:")
+func makeStorageDb(dbPath string, log kitlog.Logger) (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
+		_ = level.Error(log).Log("msg", "open db error", "err", err)
 		return nil, err
 	}
-	// Init DB schema
-
 	_, err = db.Exec(`
-		create table label (id integer not null primary key, labs text, metadata text);
+        CREATE TABLE IF NOT EXISTS lab (id integer not null primary key, labs text, metadata text);
 
-		create table rcd (id integer not null primary key, ts integer not null, val REAL );
+        CREATE TABLE IF NOT EXISTS rcd (id integer not null primary key, lid integer not null, ts integer not null, val REAL );
 	`)
 	if err != nil {
 		db.Close()
+		_ = level.Error(log).Log("msg", "init db schema", "err", err)
 		return nil, err
 	}
-	return &storageDb{log: log, db: db}, nil
+	return db, nil
 }
 
-func createDbStorage(l kitlog.Logger) (storage.Storage, error) {
-	db, err := sql.Open("sqlite3", ":memory:")
+func loadLabs(db *sql.DB, log kitlog.Logger) (map[uint64]rcdLabs, error) {
+	sql := "SELECT id, labs, metadata FROM lab"
+	rows, err := db.Query(sql)
 	if err != nil {
-		_ = level.Debug(l).Log("msg", "WALReplayStatus")
+		_ = level.Error(log).Log("msg", "load cache", "err", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	labs := make(map[uint64]rcdLabs)
+	for rows.Next() {
+		var id uint64
+		var content string
+		var metadata string
+		err = rows.Scan(&id, &content, &metadata)
+		if err != nil {
+			continue
+		}
+
+		item, err := labsFromJson(content)
+		if err != nil {
+			continue
+		}
+
+		itemHash := item.Hash()
+		rcd := rcdLab{Id: id, Lab: item}
+		buckets, ok := labs[itemHash]
+		if ok {
+			labs[itemHash] = append(buckets, rcd)
+		} else {
+			labs[itemHash] = append(make(rcdLabs, 0), rcd)
+		}
+
+	}
+
+	return labs, nil
+}
+
+func createDbStorage(dbPath string, log kitlog.Logger) (storage.Storage, error) {
+	db, err := makeStorageDb(dbPath, log)
+	if err != nil {
+		_ = level.Error(log).Log("msg", "open db", "err", err)
 		return nil, err
 	}
 
-	return &storageDb{log: l, db: db}, nil
+	// load cache to memory
+	labs, err := loadLabs(db, log)
+	if err != nil {
+		db.Close()
+		_ = level.Error(log).Log("msg", "load db", "err", err)
+		return nil, err
+	}
+	return &storageDb{log: log, db: db, labs: labs}, nil
+}
+
+func (s *storageDb) dbAddRcd(labsId uint64, t int64, v float64) error {
+	sql := "INSERT INTO rcd (lid, ts, val) values (?, ?, ?)"
+	statement, err := s.db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(labsId, t, v)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *storageDb) dbAddRcdLab(l labels.Labels) (uint64, error) {
+	content, err := labsToJson(l)
+	if err != nil {
+		return 0, nil
+	}
+
+	sql := "INSERT INTO lab (labs) values (?)"
+	statement, err := s.db.Prepare(sql)
+	if err != nil {
+		return 0, err
+	}
+	defer statement.Close()
+
+	result, err := statement.Exec(content)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return (uint64)(id), nil
+}
+
+func (s *storageDb) rcdFindLabs(labHash uint64, l labels.Labels) uint64 {
+	s.rwMtx.RLock()
+	defer s.rwMtx.RUnlock()
+
+	buckets, ok := s.labs[labHash]
+	if !ok {
+		return 0
+	}
+	for _, bucket := range buckets {
+		if labels.Equal(l, bucket.Lab) {
+			return bucket.Id
+		}
+	}
+	return 0
+}
+
+func (s *storageDb) rcdPutLabs(labHash uint64, l labels.Labels) (uint64, error) {
+	labId := s.rcdFindLabs(labHash, l)
+	if labId != 0 {
+		return labId, nil
+	}
+
+	s.rwMtx.Lock()
+	defer s.rwMtx.Unlock()
+
+	labId, err := s.dbAddRcdLab(l)
+	if err != nil {
+		return 0, err
+	}
+
+	// Insert it to DB
+	rcd := rcdLab{Id: labId, Lab: l.Copy()}
+	buckets, ok := s.labs[labHash]
+	if ok {
+		buckets = append(buckets, rcd)
+		s.labs[labHash] = buckets
+	} else {
+		labs := make(rcdLabs, 0)
+		labs = append(labs, rcd)
+		s.labs[labHash] = labs
+	}
+	return rcd.Id, nil
+}
+
+func (s *storageDb) rcdPut(labsId uint64, t int64, v float64) error {
+	err := s.dbAddRcd(labsId, t, v)
+	if err != nil {
+		_ = level.Error(s.log).Log("msg", "rcd add", "err", err)
+	}
+	return err
+}
+
+func (s *storageDb) rcdAppend(ref storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
+	if v == 0.0 {
+		_ = level.Debug(s.log).Log("msg", "0.0", "l", l)
+	}
+
+	if ref != 0 {
+		return ref, s.rcdPut(uint64(ref), t, v)
+	}
+	srcLabs := labsSort(l)
+	srcLabsHash := srcLabs.Hash()
+	labsId, err := s.rcdPutLabs(srcLabsHash, srcLabs)
+	if err != nil {
+		return 0, err
+	}
+	_ = level.Debug(s.log).Log("msg", "rcd append", "labsId", labsId, "labsHash", srcLabsHash)
+	return storage.SeriesRef(labsId), s.rcdPut(labsId, t, v)
 }
 
 func (s *storageDb) Querier(ctx context.Context, mint, maxt int64) (storage.Querier, error) {
@@ -92,7 +243,7 @@ func (s *storageDb) ChunkQuerier(ctx context.Context, mint, maxt int64) (storage
 
 func (s *storageDb) Appender(ctx context.Context) storage.Appender {
 	_ = level.Debug(s.log).Log("msg", "Appender")
-	return &dbAppender{log: s.log, db: s, ctx: ctx}
+	return &dbAppender{log: s.log, storage: s, ctx: ctx}
 }
 
 func (s *storageDb) ApplyConfig(conf *config.Config) error {
@@ -142,8 +293,7 @@ func (s *storageDb) StartTime() (int64, error) {
 }
 
 func (db *dbAppender) Append(ref storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
-	// TODO
-	return 0, nil
+	return db.storage.rcdAppend(ref, l, t, v)
 }
 
 func (db *dbAppender) UpdateMetadata(ref storage.SeriesRef, l labels.Labels, m metadata.Metadata) (storage.SeriesRef, error) {

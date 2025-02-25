@@ -44,7 +44,7 @@ func createStorage(opts PromStorageOpts, l kitlog.Logger, dbStats *tsdb.DBStats)
 	if strings.EqualFold(opts.Type, STORAGE_FS) {
 		return createFsStorage(opts.FsTsdbPath, dbStats, l)
 	}
-	return createDbStorage(l)
+	return createDbStorage(opts.FsTsdbPath, l)
 }
 
 func NewPromStorage(opts PromStorageOpts) (*PromStorage, error) {

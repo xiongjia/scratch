@@ -7,8 +7,6 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/prometheus/config"
-	"github.com/prometheus/prometheus/model/exemplar"
-	"github.com/prometheus/prometheus/model/histogram"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/model/metadata"
 	"github.com/prometheus/prometheus/storage"
@@ -39,11 +37,13 @@ type (
 		Id    uint64
 		LabId uint64
 	}
-
-	dbAppender struct {
+	dbQuerier struct {
 		log     kitlog.Logger
 		ctx     context.Context
 		storage *storageDb
+
+		mint int64
+		maxt int64
 	}
 )
 
@@ -67,7 +67,7 @@ func makeStorageDb(dbPath string, log kitlog.Logger) (*sql.DB, error) {
 }
 
 func loadLabs(db *sql.DB, log kitlog.Logger) (map[uint64]rcdLabs, error) {
-	sql := "SELECT id, labs, metadata FROM lab"
+	sql := `SELECT id, ifnull(labs, "") as labs, ifnull(metadata, "") as metadata FROM lab`
 	rows, err := db.Query(sql)
 	if err != nil {
 		_ = level.Error(log).Log("msg", "load cache", "err", err)
@@ -89,18 +89,15 @@ func loadLabs(db *sql.DB, log kitlog.Logger) (map[uint64]rcdLabs, error) {
 		if err != nil {
 			continue
 		}
-
 		itemHash := item.Hash()
-		rcd := rcdLab{Id: id, Lab: item}
+		rcd := rcdLab{Id: id, Lab: item, Metadata: labMetadataFromJsonDefault(metadata, nil)}
 		buckets, ok := labs[itemHash]
 		if ok {
 			labs[itemHash] = append(buckets, rcd)
 		} else {
 			labs[itemHash] = append(make(rcdLabs, 0), rcd)
 		}
-
 	}
-
 	return labs, nil
 }
 
@@ -128,6 +125,23 @@ func (s *storageDb) dbAddRcd(labsId uint64, t int64, v float64) error {
 		return err
 	}
 	_, err = statement.Exec(labsId, t, v)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *storageDb) dbAddRcdLabMetadata(labId uint64, m *metadata.Metadata) error {
+	content, err := labMetadataToJson(m)
+	if err != nil {
+		return err
+	}
+	sql := "UPDATE lab set metadata = ? WHERE id = ?"
+	statement, err := s.db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(content, labId)
 	if err != nil {
 		return err
 	}
@@ -211,6 +225,43 @@ func (s *storageDb) rcdPut(labsId uint64, t int64, v float64) error {
 	return err
 }
 
+func (s *storageDb) updateBucket(bucket *rcdLab, m *metadata.Metadata) {
+	if bucket == nil || m == nil {
+		return
+	}
+
+	if labMetadataEqual(m, bucket.Metadata) {
+		return
+	}
+
+	bucket.Metadata = labMetadataCopy(m)
+	err := s.dbAddRcdLabMetadata(bucket.Id, m)
+	if err != nil {
+		_ = level.Error(s.log).Log("msg", "lab metadata", "err", err)
+	}
+}
+
+func (s *storageDb) rcdLabsUpdateMetadata(ref storage.SeriesRef, l labels.Labels, m *metadata.Metadata) (storage.SeriesRef, error) {
+	if m == nil {
+		return ref, nil
+	}
+
+	labHash := l.Hash()
+	s.rwMtx.Lock()
+	defer s.rwMtx.Unlock()
+	buckets, ok := s.labs[labHash]
+	if !ok {
+		return ref, nil
+	}
+	for _, bucket := range buckets {
+		if labels.Equal(l, bucket.Lab) {
+			s.updateBucket(&bucket, m)
+			return storage.SeriesRef(bucket.Id), nil
+		}
+	}
+	return ref, nil
+}
+
 func (s *storageDb) rcdAppend(ref storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
 	if v == 0.0 {
 		_ = level.Debug(s.log).Log("msg", "0.0", "l", l)
@@ -231,13 +282,16 @@ func (s *storageDb) rcdAppend(ref storage.SeriesRef, l labels.Labels, t int64, v
 
 func (s *storageDb) Querier(ctx context.Context, mint, maxt int64) (storage.Querier, error) {
 	_ = level.Debug(s.log).Log("msg", "Querier", "mint", mint, "maxt", maxt)
-	// TODO
-	return nil, tsdb.ErrNotReady
+	return &dbQuerier{log: s.log, ctx: ctx, storage: s, mint: mint, maxt: maxt}, nil
 }
 
 func (s *storageDb) ChunkQuerier(ctx context.Context, mint, maxt int64) (storage.ChunkQuerier, error) {
 	_ = level.Debug(s.log).Log("msg", "ChunkQuerier", "mint", mint, "maxt", maxt)
-	// TODO
+	return nil, tsdb.ErrNotReady
+}
+
+func (s *storageDb) ExemplarQuerier(ctx context.Context) (storage.ExemplarQuerier, error) {
+	_ = level.Debug(s.log).Log("msg", "ExemplarQuerier")
 	return nil, tsdb.ErrNotReady
 }
 
@@ -249,11 +303,6 @@ func (s *storageDb) Appender(ctx context.Context) storage.Appender {
 func (s *storageDb) ApplyConfig(conf *config.Config) error {
 	_ = level.Debug(s.log).Log("msg", "ApplyConfig", "conf", conf)
 	return nil
-}
-
-func (s *storageDb) ExemplarQuerier(ctx context.Context) (storage.ExemplarQuerier, error) {
-	_ = level.Debug(s.log).Log("msg", "ExemplarQuerier")
-	return nil, tsdb.ErrNotReady
 }
 
 func (s *storageDb) Close() error {
@@ -292,32 +341,19 @@ func (s *storageDb) StartTime() (int64, error) {
 	return 0, nil
 }
 
-func (db *dbAppender) Append(ref storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
-	return db.storage.rcdAppend(ref, l, t, v)
-}
+func (q *dbQuerier) Select(sortSeries bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
 
-func (db *dbAppender) UpdateMetadata(ref storage.SeriesRef, l labels.Labels, m metadata.Metadata) (storage.SeriesRef, error) {
-	return 0, nil
-}
-
-func (db *dbAppender) Commit() error {
-	// Don't support commit & rollback
-	_ = level.Debug(db.log).Log("msg", "db appender commit")
 	return nil
 }
 
-func (db *dbAppender) Rollback() error {
-	// Don't support commit & rollback
-	_ = level.Debug(db.log).Log("msg", "db appender rollback")
+func (q *dbQuerier) LabelValues(name string, matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
+	return nil, nil, nil
+}
+
+func (q *dbQuerier) LabelNames(matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
+	return nil, nil, nil
+}
+
+func (q *dbQuerier) Close() error {
 	return nil
-}
-
-func (dbAppender) AppendExemplar(ref storage.SeriesRef, l labels.Labels, v exemplar.Exemplar) (storage.SeriesRef, error) {
-	// TODO
-	return 0, nil
-}
-
-func (dbAppender) AppendHistogram(storage.SeriesRef, labels.Labels, int64, *histogram.Histogram, *histogram.FloatHistogram) (storage.SeriesRef, error) {
-	// TODO
-	return 0, nil
 }

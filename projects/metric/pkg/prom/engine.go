@@ -113,6 +113,22 @@ func NewEngine(opts EngineOptions) (*Engine, error) {
 	}, nil
 }
 
+func (e *Engine) ApplyDiscoveryConfig(groups []StaticDiscoveryConfig) error {
+	if e.disable {
+		_ = level.Info(e.logger).Log("msg", "ignored service discovery config (engine is disabled)", "group", groups)
+		return nil
+	}
+	return e.promDiscovery.ApplyStaticTargetGroup(groups)
+}
+
+func (e *Engine) ApplyScrapeJobs(jobs []ScrapeJob) error {
+	if e.disable {
+		_ = level.Info(e.logger).Log("msg", "ignored scrape jobs (engine is disabled)", "jobs", jobs)
+		return nil
+	}
+	return e.promScrape.ApplyJobs(jobs)
+}
+
 func (e *Engine) Run() error {
 	var runGroup run.Group
 

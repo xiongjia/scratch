@@ -3,7 +3,6 @@ package prom
 import (
 	"context"
 	"errors"
-	"math"
 	"strings"
 	"sync"
 	"time"
@@ -11,7 +10,6 @@ import (
 	kitlog "github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
@@ -37,28 +35,16 @@ type (
 
 		stats           *tsdb.DBStats
 		db              storage.Storage
+		dbType          string
 		startTimeMargin int64
 	}
 )
-
-func createFsStorage(dbPath string, dbStats *tsdb.DBStats, l kitlog.Logger) (storage.Storage, error) {
-	db, err := tsdb.Open(dbPath, l, prometheus.DefaultRegisterer, tsdb.DefaultOptions(), dbStats)
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
-}
-
-func createDbStorage() (storage.Storage, error) {
-	// xxx
-	return nil, nil
-}
 
 func createStorage(opts PromStorageOpts, l kitlog.Logger, dbStats *tsdb.DBStats) (storage.Storage, error) {
 	if strings.EqualFold(opts.Type, STORAGE_FS) {
 		return createFsStorage(opts.FsTsdbPath, dbStats, l)
 	}
-	return createDbStorage()
+	return createDbStorage(l)
 }
 
 func NewPromStorage(opts PromStorageOpts) (*PromStorage, error) {
@@ -70,7 +56,11 @@ func NewPromStorage(opts PromStorageOpts) (*PromStorage, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &PromStorage{stats: dbStats, db: db, log: log}, nil
+	return &PromStorage{stats: dbStats, db: db, dbType: opts.FsTsdbPath, log: log}, nil
+}
+
+func (s *PromStorage) isLocalFs() bool {
+	return strings.EqualFold(s.dbType, STORAGE_FS)
 }
 
 func (s *PromStorage) get() storage.Storage {
@@ -94,28 +84,28 @@ func (s *PromStorage) Set(db storage.Storage, startTimeMargin int64) {
 
 func (s *PromStorage) StartTime() (int64, error) {
 	_ = level.Debug(s.log).Log("msg", "StartTime")
-
-	if x := s.get(); x != nil {
-		switch db := x.(type) {
-		case *tsdb.DB:
-			var startTime int64
-			if len(db.Blocks()) > 0 {
-				startTime = db.Blocks()[0].Meta().MinTime
-			} else {
-				startTime = time.Now().Unix() * 1000
+	if s.isLocalFs() {
+		if x := s.get(); x != nil {
+			switch db := x.(type) {
+			case *tsdb.DB:
+				var startTime int64
+				if len(db.Blocks()) > 0 {
+					startTime = db.Blocks()[0].Meta().MinTime
+				} else {
+					startTime = time.Now().Unix() * 1000
+				}
+				return startTime + s.startTimeMargin, nil
 			}
-			// Add a safety margin as it may take a few minutes for everything to spin up.
-			return startTime + s.startTimeMargin, nil
-		default:
-			return 0, errors.New("TSDB not implement")
 		}
+		return 0, errors.New("TSDB not implement")
+	} else {
+		startTime := time.Now().Unix() * 1000
+		return startTime + s.startTimeMargin, nil
 	}
-	return math.MaxInt64, tsdb.ErrNotReady
 }
 
 func (s *PromStorage) Querier(ctx context.Context, mint, maxt int64) (storage.Querier, error) {
 	_ = level.Debug(s.log).Log("msg", "Querier", "mint", mint, "maxt", maxt)
-
 	if x := s.get(); x != nil {
 		return x.Querier(ctx, mint, maxt)
 	}
@@ -190,6 +180,8 @@ func (s *PromStorage) CleanTombstones() error {
 
 func (s *PromStorage) Delete(mint, maxt int64, ms ...*labels.Matcher) error {
 	_ = level.Debug(s.log).Log("msg", "delete", "mint", mint, "maxt", maxt, "ms", ms)
+
+	// TODO
 
 	if x := s.get(); x != nil {
 		switch db := x.(type) {

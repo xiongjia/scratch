@@ -21,9 +21,10 @@ func makeCollector(mux *http.ServeMux) error {
 
 func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 	eng, err := prom.NewEngine(prom.EngineOptions{
-		Logger:               prom.NewSLogAdapterHandler(),
-		Disable:              false,
-		StorageType:          prom.STORAGE_FS,
+		Logger:  prom.NewSLogAdapterHandler(),
+		Disable: false,
+		// StorageType:          prom.STORAGE_FS,
+		StorageType:          prom.STORAGE_DB,
 		StorageFsPath:        "c:/wrk/tmp/tsdb3",
 		QuerierMaxMaxSamples: 999999999999999,
 		QuerierTimeout:       20 * time.Second,
@@ -77,6 +78,20 @@ func main() {
 	<-time.After(10 * time.Second)
 
 	// Updating scrape jobs
-
+	// update target
+	err = eng.ApplyDiscoveryConfig([]prom.StaticDiscoveryConfig{
+		{
+			JobName: "jobNode1",
+			Targets: []prom.StaticTargetGroup{
+				{
+					Source:    "test",
+					Addresses: []string{"172.24.6.50:9100"},
+				},
+			},
+		},
+	})
+	if err != nil {
+		slog.Error("service discovery apply config", slog.Any("err", err))
+	}
 	wg.Wait()
 }

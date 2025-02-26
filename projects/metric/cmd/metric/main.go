@@ -54,17 +54,23 @@ func touchJobs(eng *prom.Engine) {
 }
 
 func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
-	eng, err := prom.NewEngine(prom.EngineOptions{
+	engOption := prom.EngineOptions{
 		Logger:  prom.NewSLogAdapterHandler(),
 		Disable: false,
-		// StorageType:          prom.STORAGE_FS,
-		// StorageFsPath:        "c:/wrk/tmp/tsdb3",
+		// StorageType:   prom.STORAGE_FS,
+		// StorageFsPath: "c:/wrk/tmp/tsdb3",
 		StorageType: prom.STORAGE_DB,
 		// StorageFsPath:        ":memory:",
 		StorageFsPath:        "C:/wrk/tmp/tsdb-test1.db",
 		QuerierMaxMaxSamples: 999999999999999,
 		QuerierTimeout:       20 * time.Second,
-	})
+	}
+
+	// xxx Enable for local prom test
+	engOption.StorageType = prom.STORAGE_FS
+	engOption.StorageFsPath = "c:/wrk/tmp/tsdb3"
+
+	eng, err := prom.NewEngine(engOption)
 	if err != nil {
 		slog.Error("new engine", slog.Any("err", err))
 		return nil, err

@@ -107,7 +107,11 @@ func (s *PromStorage) StartTime() (int64, error) {
 func (s *PromStorage) Querier(ctx context.Context, mint, maxt int64) (storage.Querier, error) {
 	_ = level.Debug(s.log).Log("msg", "Querier", "mint", mint, "maxt", maxt)
 	if x := s.get(); x != nil {
-		return x.Querier(ctx, mint, maxt)
+		q, err := x.Querier(ctx, mint, maxt)
+		if err != nil {
+			return nil, err
+		}
+		return makeStorageQuerier(q), nil
 	}
 	return nil, tsdb.ErrNotReady
 }

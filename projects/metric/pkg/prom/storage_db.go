@@ -37,6 +37,7 @@ type (
 		Id    uint64
 		LabId uint64
 	}
+
 	dbQuerier struct {
 		log     kitlog.Logger
 		ctx     context.Context
@@ -342,16 +343,20 @@ func (s *storageDb) StartTime() (int64, error) {
 }
 
 func (q *dbQuerier) Select(sortSeries bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
-
+	_ = level.Debug(q.log).Log("msg", "Select", "sortSeries", sortSeries, "hints", hints, "matchers", matchers)
 	return nil
 }
 
 func (q *dbQuerier) LabelValues(name string, matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
+	_ = level.Debug(q.log).Log("msg", "LabelValues", "name", name, "matchers", matchers)
+
 	return nil, nil, nil
 }
 
 func (q *dbQuerier) LabelNames(matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
-	return nil, nil, nil
+	_ = level.Debug(q.log).Log("msg", "LabelNames", "matchers", matchers)
+
+	return []string{}, []error{}, nil
 }
 
 func (q *dbQuerier) Close() error {

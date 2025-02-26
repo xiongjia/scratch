@@ -111,7 +111,7 @@ func (s *PromStorage) Querier(ctx context.Context, mint, maxt int64) (storage.Qu
 		if err != nil {
 			return nil, err
 		}
-		return makeStorageQuerier(q), nil
+		return makeStorageQuerier(s.log, q), nil
 	}
 	return nil, tsdb.ErrNotReady
 }

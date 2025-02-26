@@ -27,7 +27,8 @@ func (sq *storageQuerier) Select(sortSeries bool, hints *storage.SelectHints, ma
 			"begin", time.UnixMilli(hints.Start).Format("2006-01-02 15:04:05"),
 			"end", time.UnixMilli(hints.End).Format("2006-01-02 15:04:05"),
 			"step", hints.Step, "func", hints.Func, "range", hints.Range,
-			"Grouping", hints.Grouping, "by", hints.By, "DisableTrimming", hints.DisableTrimming)
+			"Grouping", hints.Grouping, "by", hints.By,
+			"DisableTrimming", hints.DisableTrimming)
 	}
 	return sq.q.Select(sortSeries, hints, matchers...)
 }

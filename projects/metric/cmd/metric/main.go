@@ -87,6 +87,9 @@ func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 func main() {
 	slog.SetLogLoggerLevel(slog.LevelDebug)
 
+	// Mon API = http://127.0.0.1:3001/mon
+	// Metric API = http://127.0.0.1:3001/metric
+
 	serverAddress := ":3001"
 	slog.Debug("Test Server", slog.String("addr", serverAddress))
 	mux := http.NewServeMux()

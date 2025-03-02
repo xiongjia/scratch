@@ -11,7 +11,7 @@ impl ListNode {
     }
 }
 
-// helper function for test
+#[allow(dead_code)]
 pub fn to_list(vec: Vec<i32>) -> Option<Box<ListNode>> {
     let mut current = None;
     for &v in vec.iter().rev() {
@@ -20,10 +20,6 @@ pub fn to_list(vec: Vec<i32>) -> Option<Box<ListNode>> {
         current = Some(Box::new(node));
     }
     current
-}
-
-pub fn list_test() {
-    print!("test list list")
 }
 
 #[macro_export]

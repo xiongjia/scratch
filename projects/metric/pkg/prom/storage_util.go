@@ -180,18 +180,6 @@ func labMatchItem(lab *labels.Label, matcher *labels.Matcher) bool {
 	return matcher.Matches(lab.Value)
 }
 
-func labMatch(lab *labels.Label, matchers ...*labels.Matcher) bool {
-	if len(matchers) == 0 {
-		return true
-	}
-	for _, m := range matchers {
-		if labMatchItem(lab, m) {
-			return true
-		}
-	}
-	return false
-}
-
 func labsMatch(labs labels.Labels, matchers ...*labels.Matcher) bool {
 	if len(labs) == 0 {
 		return false
@@ -199,15 +187,17 @@ func labsMatch(labs labels.Labels, matchers ...*labels.Matcher) bool {
 	if len(matchers) == 0 {
 		return true
 	}
-
-	// for _, m := range matchers {
-
-	// }
-
-	// for _, lab := range labs {
-	//     for _, m := range matchers {
-	//     }
-	// }
-
+	for _, m := range matchers {
+		found := false
+		for _, lab := range labs {
+			if labMatchItem(&lab, m) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
 	return true
 }

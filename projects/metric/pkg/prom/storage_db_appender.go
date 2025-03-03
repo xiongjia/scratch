@@ -21,6 +21,7 @@ type (
 )
 
 func (db *dbAppender) Append(ref storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
+	_ = level.Debug(db.log).Log("msg", "rcd appender", "l", l, "t", t, "v", v)
 	return db.storage.rcdAppend(ref, l, t, v)
 }
 

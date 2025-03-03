@@ -38,13 +38,15 @@ type (
 		LabId uint64
 	}
 
-	dbQuerier struct {
-		log     kitlog.Logger
-		ctx     context.Context
-		storage *storageDb
+	rcdSet struct {
+		rcdLabs []rcdLab
+		items   []*rcdSetItem
+	}
 
-		mint int64
-		maxt int64
+	rcdSetItem struct {
+		labs *rcdLab
+		ts   int64
+		val  float64
 	}
 )
 
@@ -117,6 +119,26 @@ func createDbStorage(dbPath string, log kitlog.Logger) (storage.Storage, error) 
 		return nil, err
 	}
 	return &storageDb{log: log, db: db, labs: labs}, nil
+}
+
+func (s *storageDb) dbFindMatchLabs(matchers ...*labels.Matcher) ([]rcdLab, error) {
+	s.rwMtx.RLocker().Lock()
+	defer s.rwMtx.RLocker().Unlock()
+
+	results := make([]rcdLab, 0)
+	for _, labsItem := range s.labs {
+		for _, labItem := range labsItem {
+			if labsMatch(labItem.Lab, matchers...) {
+				results = append(results, labItem)
+			}
+		}
+	}
+	return results, nil
+}
+
+func (s *storageDb) dbFindRcdSet(labs []rcdLab, hints *storage.SelectHints) (*rcdSet, error) {
+
+	return nil, nil
 }
 
 func (s *storageDb) dbAddRcd(labsId uint64, t int64, v float64) error {
@@ -283,7 +305,7 @@ func (s *storageDb) rcdAppend(ref storage.SeriesRef, l labels.Labels, t int64, v
 
 func (s *storageDb) Querier(ctx context.Context, mint, maxt int64) (storage.Querier, error) {
 	_ = level.Debug(s.log).Log("msg", "Querier", "mint", mint, "maxt", maxt)
-	return &dbQuerier{log: s.log, ctx: ctx, storage: s, mint: mint, maxt: maxt}, nil
+	return makeStorageQuerierAdapter(s.log, &dbQuerier{log: s.log, ctx: ctx, storage: s, mint: mint, maxt: maxt}), nil
 }
 
 func (s *storageDb) ChunkQuerier(ctx context.Context, mint, maxt int64) (storage.ChunkQuerier, error) {
@@ -340,25 +362,4 @@ func (s *storageDb) WALReplayStatus() (tsdb.WALReplayStatus, error) {
 func (s *storageDb) StartTime() (int64, error) {
 	_ = level.Debug(s.log).Log("msg", "StartTime")
 	return 0, nil
-}
-
-func (q *dbQuerier) Select(sortSeries bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
-	_ = level.Debug(q.log).Log("msg", "Select", "sortSeries", sortSeries, "hints", hints, "matchers", matchers)
-	return nil
-}
-
-func (q *dbQuerier) LabelValues(name string, matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
-	_ = level.Debug(q.log).Log("msg", "LabelValues", "name", name, "matchers", matchers)
-
-	return nil, nil, nil
-}
-
-func (q *dbQuerier) LabelNames(matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
-	_ = level.Debug(q.log).Log("msg", "LabelNames", "matchers", matchers)
-
-	return []string{}, []error{}, nil
-}
-
-func (q *dbQuerier) Close() error {
-	return nil
 }

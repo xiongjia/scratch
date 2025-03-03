@@ -11,10 +11,12 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/model/metadata"
 	"github.com/prometheus/prometheus/storage"
+	"github.com/prometheus/prometheus/tsdb/chunkenc"
 )
 
 type (
 	promSeriesSetAdapter struct {
+		log       kitlog.Logger
 		seriesSet storage.SeriesSet
 	}
 
@@ -38,7 +40,7 @@ func (sq *storageQuerierAdapter) Select(sortSeries bool, hints *storage.SelectHi
 			"Grouping", hints.Grouping, "by", hints.By,
 			"DisableTrimming", hints.DisableTrimming)
 	}
-	return makePromSeriesSetAdapter(sq.q.Select(sortSeries, hints, matchers...))
+	return makePromSeriesSetAdapter(sq.q.Select(sortSeries, hints, matchers...), sq.log)
 }
 
 func (sq *storageQuerierAdapter) LabelValues(name string, matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
@@ -56,8 +58,8 @@ func (sq *storageQuerierAdapter) Close() error {
 	return sq.q.Close()
 }
 
-func makePromSeriesSetAdapter(src storage.SeriesSet) storage.SeriesSet {
-	return &promSeriesSetAdapter{seriesSet: src}
+func makePromSeriesSetAdapter(src storage.SeriesSet, log kitlog.Logger) storage.SeriesSet {
+	return &promSeriesSetAdapter{seriesSet: src, log: log}
 }
 
 func (s *promSeriesSetAdapter) Next() bool {
@@ -66,14 +68,16 @@ func (s *promSeriesSetAdapter) Next() bool {
 
 func (s *promSeriesSetAdapter) At() storage.Series {
 	ret := s.seriesSet.At()
-	// l := ret.Labels()
-	// slog.Debug("serise", "l", l)
-	// var chkIter chunkenc.Iterator
-	// chkIter = ret.Iterator(chkIter)
-	// for chkIter.Next() == chunkenc.ValFloat {
-	// 	ts, v := chkIter.At()
-	// 	slog.Debug("serise", "ts", ts, "v", v)
-	// }
+
+	l := ret.Labels()
+	_ = level.Debug(s.log).Log("msg", "at", "l", l)
+
+	var chkIter chunkenc.Iterator
+	chkIter = ret.Iterator(chkIter)
+	for chkIter.Next() == chunkenc.ValFloat {
+		ts, v := chkIter.At()
+		_ = level.Debug(s.log).Log("msg", "at", "ts", ts, "v", v)
+	}
 	return ret
 }
 
@@ -164,4 +168,46 @@ func labsFromJson(src string) (labels.Labels, error) {
 		return nil, err
 	}
 	return labels.FromMap(m), nil
+}
+
+func labMatchItem(lab *labels.Label, matcher *labels.Matcher) bool {
+	if matcher == nil || lab == nil {
+		return false
+	}
+	if matcher.Name != lab.Name {
+		return false
+	}
+	return matcher.Matches(lab.Value)
+}
+
+func labMatch(lab *labels.Label, matchers ...*labels.Matcher) bool {
+	if len(matchers) == 0 {
+		return true
+	}
+	for _, m := range matchers {
+		if labMatchItem(lab, m) {
+			return true
+		}
+	}
+	return false
+}
+
+func labsMatch(labs labels.Labels, matchers ...*labels.Matcher) bool {
+	if len(labs) == 0 {
+		return false
+	}
+	if len(matchers) == 0 {
+		return true
+	}
+
+	// for _, m := range matchers {
+
+	// }
+
+	// for _, lab := range labs {
+	//     for _, m := range matchers {
+	//     }
+	// }
+
+	return true
 }

@@ -35,7 +35,7 @@ type (
 )
 
 func NewPromScrape(opts PromScrapeOptions) (*PromScrape, error) {
-	mgr := scrape.NewManager(&scrape.Options{EnableMetadataStorage: true},
+	mgr := scrape.NewManager(&scrape.Options{EnableMetadataStorage: false},
 		kitlog.With(opts.Logger, LOG_COMPONENT_KEY, COMPONENT_SCRAPE),
 		opts.Storage)
 	return &PromScrape{

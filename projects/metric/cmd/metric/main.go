@@ -22,8 +22,8 @@ func makeCollector(mux *http.ServeMux) error {
 func touchJobs(eng *prom.Engine) {
 	// jobNode1 = http://172.24.6.50:9100/metrics
 	// update jobs
-	// target1 := "172.24.6.50:9100"
-	target1 := "127.0.0.1:9182"
+	target1 := "172.24.6.50:9100"
+	// target1 := "127.0.0.1:9182"
 
 	err := eng.ApplyScrapeJobs([]prom.ScrapeJob{
 		{
@@ -70,9 +70,11 @@ func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 	}
 
 	// xxx Enable for local prom test
-	engOption.StorageType = prom.STORAGE_FS
+	// engOption.StorageType = prom.STORAGE_FS
+	engOption.StorageType = prom.STORAGE_DB
+
 	// engOption.StorageFsPath = "c:/wrk/tmp/tsdb3"
-	engOption.StorageFsPath = "d/tmp/tsdb1"
+	// engOption.StorageFsPath = "d/tmp/tsdb1"
 
 	eng, err := prom.NewEngine(engOption)
 	if err != nil {

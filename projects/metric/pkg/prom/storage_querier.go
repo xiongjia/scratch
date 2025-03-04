@@ -2,7 +2,6 @@ package prom
 
 import (
 	"context"
-	"errors"
 
 	kitlog "github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -23,7 +22,7 @@ type (
 	dbResultSeriesSet struct {
 		log kitlog.Logger
 		ctx context.Context
-		itr uint64
+		itr int
 
 		err  error
 		data *rcdSet
@@ -31,22 +30,28 @@ type (
 )
 
 func (s *dbResultSeriesSet) Next() bool {
-	return false
+	if s.err != nil {
+		return false
+	}
 
-	// if s.err != nil {
-	// 	return false
-	// }
+	if s.data == nil {
+		return false
+	}
 
-	// return true
+	if s.itr >= len(s.data.items) {
+		return false
+	}
+	s.itr++
+	return true
+
 }
 
 func (s *dbResultSeriesSet) At() storage.Series {
-	return nil
+	return makeSeries(s.data, s.itr-1)
 }
 
 func (s *dbResultSeriesSet) Err() error {
-	return errors.New("testing")
-	// return s.err
+	return s.err
 }
 
 func (s *dbResultSeriesSet) Warnings() storage.Warnings {
@@ -63,7 +68,6 @@ func (q *dbQuerier) Select(sortSeries bool, hints *storage.SelectHints, matchers
 			End:   q.mint,
 		}
 	}
-
 	labs, err := q.storage.dbFindMatchLabs(matchers...)
 	if err != nil {
 		result.err = err
@@ -75,21 +79,44 @@ func (q *dbQuerier) Select(sortSeries bool, hints *storage.SelectHints, matchers
 		result.err = err
 		return result
 	}
-
 	result.data = rcdSet
 	return result
 }
 
 func (q *dbQuerier) LabelValues(name string, matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
 	_ = level.Debug(q.log).Log("msg", "LabelValues", "name", name, "matchers", matchers)
+	labs, err := q.storage.dbFindMatchLabs(matchers...)
+	if err != nil {
+		return []string{}, []error{err}, nil
+	}
 
-	return nil, nil, nil
+	result := make([]string, 0)
+	for _, lab := range labs {
+		for _, itr := range lab.Lab {
+			if itr.Name != name {
+				continue
+			}
+			result = append(result, itr.Value)
+		}
+	}
+	return result, []error{}, nil
+
 }
 
 func (q *dbQuerier) LabelNames(matchers ...*labels.Matcher) ([]string, storage.Warnings, error) {
 	_ = level.Debug(q.log).Log("msg", "LabelNames", "matchers", matchers)
+	labs, err := q.storage.dbFindMatchLabs(matchers...)
+	if err != nil {
+		return []string{}, []error{err}, nil
+	}
 
-	return []string{}, []error{}, nil
+	result := make([]string, 0)
+	for _, lab := range labs {
+		for _, itr := range lab.Lab {
+			result = append(result, itr.Name)
+		}
+	}
+	return result, []error{}, nil
 }
 
 func (q *dbQuerier) Close() error {

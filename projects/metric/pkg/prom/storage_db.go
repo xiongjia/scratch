@@ -7,10 +7,12 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/prometheus/prometheus/config"
+	"github.com/prometheus/prometheus/model/histogram"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/model/metadata"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/tsdb"
+	"github.com/prometheus/prometheus/tsdb/chunkenc"
 
 	kitlog "github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -44,11 +46,84 @@ type (
 	}
 
 	rcdSetItem struct {
-		labs *rcdLab
-		ts   int64
-		val  float64
+		lab *rcdLab
+		ts  int64
+		val float64
+	}
+
+	rcdSeries struct {
+		content *rcdSetItem
+	}
+
+	rcdNoneDataSeries struct{}
+
+	rcdDataItr struct {
+		itr   int
+		cnt   int
+		items *rcdSetItem
 	}
 )
+
+func (r *rcdDataItr) Next() chunkenc.ValueType {
+	if r.itr >= r.cnt {
+		return chunkenc.ValNone
+	}
+	r.itr++
+	return chunkenc.ValFloat
+}
+
+func (rcdDataItr) Seek(t int64) chunkenc.ValueType {
+	return chunkenc.ValFloat
+}
+
+func (r *rcdDataItr) At() (int64, float64) {
+	return r.items.ts, r.items.val
+}
+
+func (rcdDataItr) AtHistogram() (int64, *histogram.Histogram) {
+	return 0, nil
+}
+
+func (rcdDataItr) AtFloatHistogram() (int64, *histogram.FloatHistogram) {
+	return 0, nil
+}
+
+func (r *rcdDataItr) AtT() int64 {
+	return r.items.ts
+}
+
+func (rcdDataItr) Err() error {
+	return nil
+}
+
+func (rcdNoneDataSeries) Labels() labels.Labels {
+	return make([]labels.Label, 0)
+}
+
+func (rcdNoneDataSeries) Iterator(chunkenc.Iterator) chunkenc.Iterator {
+	return &rcdDataItr{}
+}
+
+func (r *rcdSeries) Labels() labels.Labels {
+	if r.content == nil || r.content.lab == nil {
+		return make([]labels.Label, 0)
+	}
+	return r.content.lab.Lab
+}
+
+func (r *rcdSeries) Iterator(chunkenc.Iterator) chunkenc.Iterator {
+	return &rcdDataItr{itr: 0, cnt: 1, items: r.content}
+}
+
+func makeSeries(src *rcdSet, itr int) storage.Series {
+	if src == nil {
+		return &rcdNoneDataSeries{}
+	}
+	if itr >= len(src.items) {
+		return &rcdNoneDataSeries{}
+	}
+	return &rcdSeries{content: src.items[itr]}
+}
 
 func makeStorageDb(dbPath string, log kitlog.Logger) (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", dbPath)
@@ -136,9 +211,47 @@ func (s *storageDb) dbFindMatchLabs(matchers ...*labels.Matcher) ([]rcdLab, erro
 	return results, nil
 }
 
-func (s *storageDb) dbFindRcdSet(labs []rcdLab, hints *storage.SelectHints) (*rcdSet, error) {
+func (s *storageDb) dbFindRcdItems(lab *rcdLab, startTs int64, endTs int64) []*rcdSetItem {
+	if lab == nil {
+		return make([]*rcdSetItem, 0)
+	}
 
-	return nil, nil
+	sql := "SELECT  id, ts, val from rcd WHERE lid = ? AND ts >= ? AND ts <= ?"
+	rows, err := s.db.Query(sql, lab.Id, startTs, endTs)
+	if err != nil {
+		_ = level.Error(s.log).Log("msg", "read rcd", "err", err)
+		return make([]*rcdSetItem, 0)
+	}
+	defer rows.Close()
+
+	results := make([]*rcdSetItem, 0)
+	for rows.Next() {
+		var id uint64
+		var ts int64
+		var val float64
+		err = rows.Scan(&id, &ts, &val)
+		if err != nil {
+			continue
+		}
+		item := &rcdSetItem{lab: lab, ts: ts, val: val}
+		results = append(results, item)
+	}
+	return results
+}
+
+func (s *storageDb) dbFindRcdSet(labs []rcdLab, hints *storage.SelectHints) (*rcdSet, error) {
+	if len(labs) == 0 {
+		return &rcdSet{rcdLabs: labs, items: make([]*rcdSetItem, 0)}, nil
+	}
+	results := make([]*rcdSetItem, 0)
+	for _, lab := range labs {
+		items := s.dbFindRcdItems(&lab, hints.Start, hints.End)
+		if len(items) == 0 {
+			continue
+		}
+		results = append(results, items...)
+	}
+	return &rcdSet{rcdLabs: labs, items: results}, nil
 }
 
 func (s *storageDb) dbAddRcd(labsId uint64, t int64, v float64) error {

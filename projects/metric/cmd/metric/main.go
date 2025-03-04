@@ -22,8 +22,8 @@ func makeCollector(mux *http.ServeMux) error {
 func touchJobs(eng *prom.Engine) {
 	// jobNode1 = http://172.24.6.50:9100/metrics
 	// update jobs
-	// target1 := "172.24.6.50:9100"
-	target1 := "127.0.0.1:9182"
+	target1 := "172.24.6.50:9100"
+	// target1 := "127.0.0.1:9182"
 
 	err := eng.ApplyScrapeJobs([]prom.ScrapeJob{
 		{
@@ -75,7 +75,7 @@ func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 
 	// engOption.StorageFsPath = "c:/wrk/tmp/tsdb3"
 	// engOption.StorageFsPath = "d:/tmp/tsdb1"
-	engOption.StorageFsPath = "d:/tmp/testdb1.db"
+	// engOption.StorageFsPath = "d:/tmp/testdb1.db"
 
 	eng, err := prom.NewEngine(engOption)
 	if err != nil {
@@ -96,6 +96,9 @@ func main() {
 
 	// Mon API = http://127.0.0.1:3001/mon
 	// Metric API = http://127.0.0.1:3001/metric
+
+	// Sample of query string
+	//  - linux: node_cpu_seconds_total{instance="172.24.6.50:9100",mode="user"}
 
 	serverAddress := ":3001"
 	slog.Debug("Test Server", slog.String("addr", serverAddress))

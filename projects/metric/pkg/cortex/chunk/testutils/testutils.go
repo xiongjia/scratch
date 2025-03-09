@@ -6,19 +6,26 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cortexproject/cortex/pkg/chunk/cache"
-	"github.com/cortexproject/cortex/pkg/ingester/client"
-	"github.com/cortexproject/cortex/pkg/util/validation"
+	"metric/pkg/cortex/chunk/cache"
+
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/model/labels"
 
 	"metric/pkg/cortex/chunk"
 	promchunk "metric/pkg/cortex/chunk/encoding"
 	"metric/pkg/cortex/util/flagext"
+	"metric/pkg/cortex/util/validation"
 )
 
 const (
 	userID = "userID"
+)
+
+const (
+	offset64 = 14695981039346656037
+	prime64  = 1099511628211
+	offset32 = 2166136261
+	prime32  = 16777619
 )
 
 // Fixture type for per-backend testing.
@@ -82,6 +89,49 @@ func CreateChunks(startIndex, batchSize int, from model.Time, through model.Time
 	return keys, chunks, nil
 }
 
+// hashNew initializes a new fnv64a hash value.
+func hashNew() uint64 {
+	return offset64
+}
+
+// hashAdd adds a string to a fnv64a hash value, returning the updated hash.
+// Note this is the same algorithm as Go stdlib `sum64a.Write()`
+func hashAdd(h uint64, s string) uint64 {
+	for i := 0; i < len(s); i++ {
+		h ^= uint64(s[i])
+		h *= prime64
+	}
+	return h
+}
+
+// hashAdd adds a string to a fnv64a hash value, returning the updated hash.
+func hashAddString(h uint64, s string) uint64 {
+	for i := 0; i < len(s); i++ {
+		h ^= uint64(s[i])
+		h *= prime64
+	}
+	return h
+}
+
+// hashAddByte adds a byte to a fnv64a hash value, returning the updated hash.
+func hashAddByte(h uint64, b byte) uint64 {
+	h ^= uint64(b)
+	h *= prime64
+	return h
+}
+
+// Fingerprint runs the same algorithm as Prometheus labelSetToFingerprint()
+func Fingerprint(labels labels.Labels) model.Fingerprint {
+	sum := hashNew()
+	for _, label := range labels {
+		sum = hashAddString(sum, label.Name)
+		sum = hashAddByte(sum, model.SeparatorByte)
+		sum = hashAddString(sum, label.Value)
+		sum = hashAddByte(sum, model.SeparatorByte)
+	}
+	return model.Fingerprint(sum)
+}
+
 func dummyChunkFor(from, through model.Time, metric labels.Labels) chunk.Chunk {
 	cs := promchunk.New()
 
@@ -94,7 +144,7 @@ func dummyChunkFor(from, through model.Time, metric labels.Labels) chunk.Chunk {
 
 	chunk := chunk.NewChunk(
 		userID,
-		client.Fingerprint(metric),
+		Fingerprint(metric),
 		metric,
 		cs,
 		from,

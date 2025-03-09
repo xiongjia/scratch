@@ -2,7 +2,6 @@ package main
 
 import (
 	"log/slog"
-	_ "metric/pkg/cortex/cortex"
 	"metric/pkg/prom"
 	"net/http"
 	"time"

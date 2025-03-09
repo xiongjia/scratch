@@ -1,21 +1,23 @@
-package chunk
+package util
 
 import (
 	"context"
 	"sync"
+
+	"metric/pkg/cortex/chunk"
 )
 
 const maxParallel = 1000
 
 var decodeContextPool = sync.Pool{
 	New: func() interface{} {
-		return NewDecodeContext()
+		return chunk.NewDecodeContext()
 	},
 }
 
 // GetParallelChunks fetches chunks in parallel (up to maxParallel).
-func GetParallelChunks(ctx context.Context, chunks []Chunk, f func(context.Context, *DecodeContext, Chunk) (Chunk, error)) ([]Chunk, error) {
-	queuedChunks := make(chan Chunk)
+func GetParallelChunks(ctx context.Context, chunks []chunk.Chunk, f func(context.Context, *chunk.DecodeContext, chunk.Chunk) (chunk.Chunk, error)) ([]chunk.Chunk, error) {
+	queuedChunks := make(chan chunk.Chunk)
 
 	go func() {
 		for _, c := range chunks {
@@ -24,12 +26,12 @@ func GetParallelChunks(ctx context.Context, chunks []Chunk, f func(context.Conte
 		close(queuedChunks)
 	}()
 
-	processedChunks := make(chan Chunk)
+	processedChunks := make(chan chunk.Chunk)
 	errors := make(chan error)
 
 	for i := 0; i < min(maxParallel, len(chunks)); i++ {
 		go func() {
-			decodeContext := decodeContextPool.Get().(*DecodeContext)
+			decodeContext := decodeContextPool.Get().(*chunk.DecodeContext)
 			for c := range queuedChunks {
 				c, err := f(ctx, decodeContext, c)
 				if err != nil {
@@ -42,7 +44,7 @@ func GetParallelChunks(ctx context.Context, chunks []Chunk, f func(context.Conte
 		}()
 	}
 
-	var result = make([]Chunk, 0, len(chunks))
+	var result = make([]chunk.Chunk, 0, len(chunks))
 	var lastErr error
 	for i := 0; i < len(chunks); i++ {
 		select {

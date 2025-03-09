@@ -3,7 +3,8 @@ package astmapper
 import (
 	"fmt"
 
-	util_log "github.com/go-kit/log"
+	util_log "metric/pkg/cortex/util/log"
+
 	"github.com/go-kit/log/level"
 	"github.com/prometheus/prometheus/promql/parser"
 )

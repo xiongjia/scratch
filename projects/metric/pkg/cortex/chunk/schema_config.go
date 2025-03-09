@@ -2,6 +2,7 @@ package chunk
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
@@ -159,4 +160,27 @@ func (cfg *SchemaConfig) Validate() error {
 		}
 	}
 	return nil
+}
+
+// ChunkTableFor calculates the chunk table shard for a given point in time.
+func (cfg SchemaConfig) ChunkTableFor(t model.Time) (string, error) {
+	for i := range cfg.Configs {
+		if t >= cfg.Configs[i].From.Time && (i+1 == len(cfg.Configs) || t < cfg.Configs[i+1].From.Time) {
+			return cfg.Configs[i].ChunkTables.TableFor(t), nil
+		}
+	}
+	return "", fmt.Errorf("no chunk table found for time %v", t)
+}
+
+// TableFor calculates the table shard for a given point in time.
+func (cfg *PeriodicTableConfig) TableFor(t model.Time) string {
+	if cfg.Period == 0 { // non-periodic
+		return cfg.Prefix
+	}
+	periodSecs := int64(cfg.Period / time.Second)
+	return cfg.tableForPeriod(t.Unix() / periodSecs)
+}
+
+func (cfg *PeriodicTableConfig) tableForPeriod(i int64) string {
+	return cfg.Prefix + strconv.Itoa(int(i))
 }

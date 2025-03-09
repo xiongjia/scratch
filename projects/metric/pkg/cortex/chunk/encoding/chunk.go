@@ -23,8 +23,7 @@ import (
 
 	"github.com/prometheus/common/model"
 	errs "github.com/weaveworks/common/errors"
-
-	"github.com/cortexproject/cortex/pkg/prom1/storage/metric"
+	// "github.com/cortexproject/cortex/pkg/prom1/storage/metric"
 )
 
 const (
@@ -112,21 +111,21 @@ type Batch struct {
 	Length     int
 }
 
-// RangeValues is a utility function that retrieves all values within the given
-// range from an Iterator.
-func RangeValues(it Iterator, in metric.Interval) ([]model.SamplePair, error) {
-	result := []model.SamplePair{}
-	if !it.FindAtOrAfter(in.OldestInclusive) {
-		return result, it.Err()
-	}
-	for !it.Value().Timestamp.After(in.NewestInclusive) {
-		result = append(result, it.Value())
-		if !it.Scan() {
-			break
-		}
-	}
-	return result, it.Err()
-}
+// // RangeValues is a utility function that retrieves all values within the given
+// // range from an Iterator.
+// func RangeValues(it Iterator, in metric.Interval) ([]model.SamplePair, error) {
+// 	result := []model.SamplePair{}
+// 	if !it.FindAtOrAfter(in.OldestInclusive) {
+// 		return result, it.Err()
+// 	}
+// 	for !it.Value().Timestamp.After(in.NewestInclusive) {
+// 		result = append(result, it.Value())
+// 		if !it.Scan() {
+// 			break
+// 		}
+// 	}
+// 	return result, it.Err()
+// }
 
 // addToOverflowChunk is a utility function that creates a new chunk as overflow
 // chunk, adds the provided sample to it, and returns a chunk slice containing

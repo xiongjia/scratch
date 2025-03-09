@@ -1,13 +1,13 @@
-package chunk
+package cassandra
 
 import (
 	"context"
 	"io"
 	"os"
 
+	"metric/pkg/cortex/chunk"
+	"metric/pkg/cortex/chunk/testutils"
 	"metric/pkg/cortex/util/flagext"
-
-	"github.com/cortexproject/cortex/pkg/chunk/testutils"
 )
 
 // GOCQL doesn't provide nice mocks, so we use a real Cassandra instance.
@@ -24,7 +24,7 @@ func (f *fixture) Name() string {
 	return f.name
 }
 
-func (f *fixture) Clients() (IndexClient, Client, TableClient, SchemaConfig, io.Closer, error) {
+func (f *fixture) Clients() (chunk.IndexClient, chunk.Client, chunk.TableClient, chunk.SchemaConfig, io.Closer, error) {
 	var cfg Config
 	flagext.DefaultValues(&cfg)
 	cfg.Addresses = f.addresses

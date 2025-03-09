@@ -1,17 +1,19 @@
-package chunk
+package util
 
 import (
 	"context"
 	"testing"
+
+	"metric/pkg/cortex/chunk"
 )
 
 func BenchmarkGetParallelChunks(b *testing.B) {
 	ctx := context.Background()
-	in := make([]Chunk, 1024)
+	in := make([]chunk.Chunk, 1024)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		res, err := GetParallelChunks(ctx, in,
-			func(_ context.Context, d *DecodeContext, c Chunk) (Chunk, error) {
+			func(_ context.Context, d *chunk.DecodeContext, c chunk.Chunk) (chunk.Chunk, error) {
 				return c, nil
 			})
 		if err != nil {

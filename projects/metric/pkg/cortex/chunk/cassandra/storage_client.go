@@ -1,4 +1,4 @@
-package chunk
+package cassandra
 
 import (
 	"bytes"
@@ -6,21 +6,21 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"metric/pkg/cortex/util/flagext"
-	"os"
+	"io/ioutil"
+	"log"
 	"strings"
 	"time"
 
-	util_log "metric/pkg/cortex/util/log"
-
-	"github.com/cortexproject/cortex/pkg/chunk"
-	"github.com/cortexproject/cortex/pkg/chunk/util"
-	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	"github.com/gocql/gocql"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/sync/semaphore"
+
+	"metric/pkg/cortex/chunk"
+	"metric/pkg/cortex/chunk/util"
+	"metric/pkg/cortex/util/flagext"
+	util_log "metric/pkg/cortex/util/log"
 )
 
 // Config for a StorageClient
@@ -116,9 +116,7 @@ func (cfg *Config) session(name string, reg prometheus.Registerer) (*gocql.Sessi
 	cluster.ConnectTimeout = cfg.ConnectTimeout
 	cluster.ReconnectInterval = cfg.ReconnectInterval
 	cluster.NumConns = cfg.NumConnections
-	cluster.Logger = log.With(util_log.Logger, "module", "gocql", "client", name)
-	cluster.Registerer = prometheus.WrapRegistererWith(
-		prometheus.Labels{"client": name}, reg)
+	cluster.Logger = log.Default()
 	if cfg.Retries > 0 {
 		cluster.RetryPolicy = &gocql.ExponentialBackoffRetryPolicy{
 			NumRetries: cfg.Retries,
@@ -199,7 +197,7 @@ func (cfg *Config) setClusterConfig(cluster *gocql.ClusterConfig) error {
 	if cfg.Auth {
 		password := cfg.Password.Value
 		if cfg.PasswordFile != "" {
-			passwordBytes, err := os.ReadFile(cfg.PasswordFile)
+			passwordBytes, err := ioutil.ReadFile(cfg.PasswordFile)
 			if err != nil {
 				return errors.Errorf("Could not read Cassandra password file: %v", err)
 			}
@@ -253,14 +251,14 @@ func (cfg *Config) createKeyspace() error {
 // StorageClient implements chunk.IndexClient and chunk.ObjectClient for Cassandra.
 type StorageClient struct {
 	cfg            Config
-	schemaCfg      SchemaConfig
+	schemaCfg      chunk.SchemaConfig
 	readSession    *gocql.Session
 	writeSession   *gocql.Session
 	querySemaphore *semaphore.Weighted
 }
 
 // NewStorageClient returns a new StorageClient.
-func NewStorageClient(cfg Config, schemaCfg SchemaConfig, registerer prometheus.Registerer) (*StorageClient, error) {
+func NewStorageClient(cfg Config, schemaCfg chunk.SchemaConfig, registerer prometheus.Registerer) (*StorageClient, error) {
 	readSession, err := cfg.session("index-read", registerer)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -295,17 +293,17 @@ func (s *StorageClient) Stop() {
 // Cassandra batching isn't really useful in this case, its more to do multiple
 // atomic writes.  Therefore we just do a bunch of writes in parallel.
 type writeBatch struct {
-	entries []IndexEntry
-	deletes []IndexEntry
+	entries []chunk.IndexEntry
+	deletes []chunk.IndexEntry
 }
 
 // NewWriteBatch implement chunk.IndexClient.
-func (s *StorageClient) NewWriteBatch() WriteBatch {
+func (s *StorageClient) NewWriteBatch() chunk.WriteBatch {
 	return &writeBatch{}
 }
 
 func (b *writeBatch) Add(tableName, hashValue string, rangeValue []byte, value []byte) {
-	b.entries = append(b.entries, IndexEntry{
+	b.entries = append(b.entries, chunk.IndexEntry{
 		TableName:  tableName,
 		HashValue:  hashValue,
 		RangeValue: rangeValue,
@@ -314,7 +312,7 @@ func (b *writeBatch) Add(tableName, hashValue string, rangeValue []byte, value [
 }
 
 func (b *writeBatch) Delete(tableName, hashValue string, rangeValue []byte) {
-	b.deletes = append(b.deletes, IndexEntry{
+	b.deletes = append(b.deletes, chunk.IndexEntry{
 		TableName:  tableName,
 		HashValue:  hashValue,
 		RangeValue: rangeValue,
@@ -322,7 +320,7 @@ func (b *writeBatch) Delete(tableName, hashValue string, rangeValue []byte) {
 }
 
 // BatchWrite implement chunk.IndexClient.
-func (s *StorageClient) BatchWrite(ctx context.Context, batch WriteBatch) error {
+func (s *StorageClient) BatchWrite(ctx context.Context, batch chunk.WriteBatch) error {
 	b := batch.(*writeBatch)
 
 	for _, entry := range b.entries {
@@ -345,11 +343,11 @@ func (s *StorageClient) BatchWrite(ctx context.Context, batch WriteBatch) error 
 }
 
 // QueryPages implement chunk.IndexClient.
-func (s *StorageClient) QueryPages(ctx context.Context, queries []chunk.IndexQuery, callback func(IndexQuery, ReadBatch) bool) error {
+func (s *StorageClient) QueryPages(ctx context.Context, queries []chunk.IndexQuery, callback func(chunk.IndexQuery, chunk.ReadBatch) bool) error {
 	return util.DoParallelQueries(ctx, s.query, queries, callback)
 }
 
-func (s *StorageClient) query(ctx context.Context, query IndexQuery, callback util.Callback) error {
+func (s *StorageClient) query(ctx context.Context, query chunk.IndexQuery, callback util.Callback) error {
 	if s.querySemaphore != nil {
 		if err := s.querySemaphore.Acquire(ctx, 1); err != nil {
 			return err

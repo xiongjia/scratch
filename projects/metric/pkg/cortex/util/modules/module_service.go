@@ -8,7 +8,7 @@ import (
 	"github.com/go-kit/log/level"
 	"github.com/pkg/errors"
 
-	"github.com/cortexproject/cortex/pkg/util/services"
+	"metric/pkg/cortex/util/services"
 )
 
 // ErrStopProcess is the error returned by a service as a hint to stop the server entirely.

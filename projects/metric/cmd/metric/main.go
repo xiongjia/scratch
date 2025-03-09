@@ -2,6 +2,7 @@ package main
 
 import (
 	"log/slog"
+	_ "metric/pkg/cortex/cortex"
 	"metric/pkg/prom"
 	"net/http"
 	"time"
@@ -91,8 +92,14 @@ func makePromEng(mux *http.ServeMux) (*prom.Engine, error) {
 	return eng, nil
 }
 
+func testCortex() {
+
+}
+
 func main() {
 	slog.SetLogLoggerLevel(slog.LevelDebug)
+
+	testCortex()
 
 	// Mon API = http://127.0.0.1:3001/mon
 	// Metric API = http://127.0.0.1:3001/metric

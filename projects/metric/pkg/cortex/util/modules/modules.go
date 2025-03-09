@@ -7,7 +7,7 @@ import (
 	"github.com/go-kit/log"
 	"github.com/pkg/errors"
 
-	"github.com/cortexproject/cortex/pkg/util/services"
+	"metric/pkg/cortex/util/services"
 )
 
 // module is the basic building block of the application

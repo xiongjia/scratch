@@ -3,7 +3,7 @@ package modules
 import (
 	"github.com/go-kit/log"
 
-	"github.com/cortexproject/cortex/pkg/util/services"
+	"metric/pkg/cortex/util/services"
 )
 
 // This function wraps module service, and adds waiting for dependencies to start before starting,

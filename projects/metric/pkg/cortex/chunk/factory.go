@@ -3,8 +3,13 @@ package chunk
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"time"
+
+	"metric/pkg/cortex/chunk/cache"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 var (
@@ -13,6 +18,24 @@ var (
 	// ErrMethodNotImplemented when any of the storage clients do not implement a method
 	ErrMethodNotImplemented = errors.New("method is not implemented")
 )
+
+// Supported storage clients
+const (
+	StorageTypeCassandra = "cassandra"
+)
+
+// Config chooses which storage client to use.
+type Config struct {
+	Engine                 string          `yaml:"engine"`
+	CassandraStorageConfig CassandraConfig `yaml:"cassandra"`
+
+	IndexCacheValidity time.Duration `yaml:"index_cache_validity"`
+
+	IndexQueriesCacheConfig cache.Config `yaml:"index_queries_cache_config"`
+
+	// DeleteStoreConfig purger.DeleteStoreConfig `yaml:"delete_store"`
+
+}
 
 // IndexClient is a client for the storage of the index (e.g. DynamoDB or Bigtable).
 type IndexClient interface {
@@ -88,3 +111,13 @@ type StorageObject struct {
 // StorageCommonPrefix represents a common prefix aka a synthetic directory in Object Store.
 // It is guaranteed to always end with delimiter passed to List method.
 type StorageCommonPrefix string
+
+// NewChunkClient makes a new chunk.Client of the desired types.
+func NewChunkClient(name string, cfg Config, schemaCfg SchemaConfig, registerer prometheus.Registerer) (Client, error) {
+	switch name {
+	case StorageTypeCassandra:
+		return NewObjectClient(cfg.CassandraStorageConfig, schemaCfg, registerer)
+	default:
+		return nil, fmt.Errorf("Unrecognized storage client %v", name)
+	}
+}

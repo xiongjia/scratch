@@ -1,4 +1,4 @@
-package cassandra
+package chunk
 
 import (
 	"fmt"

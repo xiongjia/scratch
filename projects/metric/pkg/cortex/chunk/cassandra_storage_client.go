@@ -1,4 +1,4 @@
-package cassandra
+package chunk
 
 import (
 	"bytes"
@@ -6,25 +6,25 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/cortexproject/cortex/pkg/chunk"
 	"github.com/go-kit/log/level"
 	"github.com/gocql/gocql"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/sync/semaphore"
 
-	"metric/pkg/cortex/chunk"
 	"metric/pkg/cortex/chunk/util"
 	"metric/pkg/cortex/util/flagext"
 	util_log "metric/pkg/cortex/util/log"
 )
 
 // Config for a StorageClient
-type Config struct {
+type CassandraConfig struct {
 	Addresses                string              `yaml:"addresses"`
 	Port                     int                 `yaml:"port"`
 	Keyspace                 string              `yaml:"keyspace"`
@@ -60,7 +60,7 @@ const (
 )
 
 // RegisterFlags adds the flags required to config this to the given FlagSet
-func (cfg *Config) RegisterFlags(f *flag.FlagSet) {
+func (cfg *CassandraConfig) RegisterFlags(f *flag.FlagSet) {
 	f.StringVar(&cfg.Addresses, "cassandra.addresses", "", "Comma-separated hostnames or IPs of Cassandra instances.")
 	f.IntVar(&cfg.Port, "cassandra.port", 9042, "Port that Cassandra is running on")
 	f.StringVar(&cfg.Keyspace, "cassandra.keyspace", "", "Keyspace to use in Cassandra.")
@@ -90,7 +90,7 @@ func (cfg *Config) RegisterFlags(f *flag.FlagSet) {
 	f.StringVar(&cfg.TableOptions, "cassandra.table-options", "", "Table options used to create index or chunk tables. This value is used as plain text in the table `WITH` like this, \"CREATE TABLE <generated_by_cortex> (...) WITH <cassandra.table-options>\". For details, see https://cortexmetrics.io/docs/production/cassandra. By default it will use the default table options of your Cassandra cluster.")
 }
 
-func (cfg *Config) Validate() error {
+func (cfg *CassandraConfig) Validate() error {
 	if cfg.Password.Value != "" && cfg.PasswordFile != "" {
 		return errors.Errorf("The password and password_file config options are mutually exclusive.")
 	}
@@ -106,7 +106,7 @@ func (cfg *Config) Validate() error {
 	return nil
 }
 
-func (cfg *Config) session(name string, reg prometheus.Registerer) (*gocql.Session, error) {
+func (cfg *CassandraConfig) session(name string, reg prometheus.Registerer) (*gocql.Session, error) {
 	cluster := gocql.NewCluster(strings.Split(cfg.Addresses, ",")...)
 	cluster.Port = cfg.Port
 	cluster.Keyspace = cfg.Keyspace
@@ -149,7 +149,7 @@ func (cfg *Config) session(name string, reg prometheus.Registerer) (*gocql.Sessi
 }
 
 // apply config settings to a cassandra ClusterConfig
-func (cfg *Config) setClusterConfig(cluster *gocql.ClusterConfig) error {
+func (cfg *CassandraConfig) setClusterConfig(cluster *gocql.ClusterConfig) error {
 	consistency, err := gocql.ParseConsistencyWrapper(cfg.Consistency)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse the configured consistency")
@@ -197,7 +197,7 @@ func (cfg *Config) setClusterConfig(cluster *gocql.ClusterConfig) error {
 	if cfg.Auth {
 		password := cfg.Password.Value
 		if cfg.PasswordFile != "" {
-			passwordBytes, err := ioutil.ReadFile(cfg.PasswordFile)
+			passwordBytes, err := os.ReadFile(cfg.PasswordFile)
 			if err != nil {
 				return errors.Errorf("Could not read Cassandra password file: %v", err)
 			}
@@ -221,7 +221,7 @@ func (cfg *Config) setClusterConfig(cluster *gocql.ClusterConfig) error {
 }
 
 // createKeyspace will create the desired keyspace if it doesn't exist.
-func (cfg *Config) createKeyspace() error {
+func (cfg *CassandraConfig) createKeyspace() error {
 	cluster := gocql.NewCluster(strings.Split(cfg.Addresses, ",")...)
 	cluster.Port = cfg.Port
 	cluster.Keyspace = "system"
@@ -250,15 +250,15 @@ func (cfg *Config) createKeyspace() error {
 
 // StorageClient implements chunk.IndexClient and chunk.ObjectClient for Cassandra.
 type StorageClient struct {
-	cfg            Config
-	schemaCfg      chunk.SchemaConfig
+	cfg            CassandraConfig
+	schemaCfg      SchemaConfig
 	readSession    *gocql.Session
 	writeSession   *gocql.Session
 	querySemaphore *semaphore.Weighted
 }
 
 // NewStorageClient returns a new StorageClient.
-func NewStorageClient(cfg Config, schemaCfg chunk.SchemaConfig, registerer prometheus.Registerer) (*StorageClient, error) {
+func NewStorageClient(cfg CassandraConfig, schemaCfg SchemaConfig, registerer prometheus.Registerer) (*StorageClient, error) {
 	readSession, err := cfg.session("index-read", registerer)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -293,17 +293,17 @@ func (s *StorageClient) Stop() {
 // Cassandra batching isn't really useful in this case, its more to do multiple
 // atomic writes.  Therefore we just do a bunch of writes in parallel.
 type writeBatch struct {
-	entries []chunk.IndexEntry
-	deletes []chunk.IndexEntry
+	entries []IndexEntry
+	deletes []IndexEntry
 }
 
 // NewWriteBatch implement chunk.IndexClient.
-func (s *StorageClient) NewWriteBatch() chunk.WriteBatch {
+func (s *StorageClient) NewWriteBatch() WriteBatch {
 	return &writeBatch{}
 }
 
 func (b *writeBatch) Add(tableName, hashValue string, rangeValue []byte, value []byte) {
-	b.entries = append(b.entries, chunk.IndexEntry{
+	b.entries = append(b.entries, IndexEntry{
 		TableName:  tableName,
 		HashValue:  hashValue,
 		RangeValue: rangeValue,
@@ -312,7 +312,7 @@ func (b *writeBatch) Add(tableName, hashValue string, rangeValue []byte, value [
 }
 
 func (b *writeBatch) Delete(tableName, hashValue string, rangeValue []byte) {
-	b.deletes = append(b.deletes, chunk.IndexEntry{
+	b.deletes = append(b.deletes, IndexEntry{
 		TableName:  tableName,
 		HashValue:  hashValue,
 		RangeValue: rangeValue,
@@ -320,7 +320,7 @@ func (b *writeBatch) Delete(tableName, hashValue string, rangeValue []byte) {
 }
 
 // BatchWrite implement chunk.IndexClient.
-func (s *StorageClient) BatchWrite(ctx context.Context, batch chunk.WriteBatch) error {
+func (s *StorageClient) BatchWrite(ctx context.Context, batch WriteBatch) error {
 	b := batch.(*writeBatch)
 
 	for _, entry := range b.entries {
@@ -343,11 +343,11 @@ func (s *StorageClient) BatchWrite(ctx context.Context, batch chunk.WriteBatch) 
 }
 
 // QueryPages implement chunk.IndexClient.
-func (s *StorageClient) QueryPages(ctx context.Context, queries []chunk.IndexQuery, callback func(chunk.IndexQuery, chunk.ReadBatch) bool) error {
+func (s *StorageClient) QueryPages(ctx context.Context, queries []IndexQuery, callback func(IndexQuery, ReadBatch) bool) error {
 	return util.DoParallelQueries(ctx, s.query, queries, callback)
 }
 
-func (s *StorageClient) query(ctx context.Context, query chunk.IndexQuery, callback util.Callback) error {
+func (s *StorageClient) query(ctx context.Context, query IndexQuery, callback util.Callback) error {
 	if s.querySemaphore != nil {
 		if err := s.querySemaphore.Acquire(ctx, 1); err != nil {
 			return err
@@ -394,6 +394,7 @@ func (s *StorageClient) query(ctx context.Context, query chunk.IndexQuery, callb
 		if !callback(query, b) {
 			return nil
 		}
+
 	}
 	return errors.WithStack(scanner.Err())
 }
@@ -409,7 +410,7 @@ type readBatch struct {
 	value      []byte
 }
 
-func (r *readBatch) Iterator() chunk.ReadBatchIterator {
+func (r *readBatch) Iterator() ReadBatchIterator {
 	return &readBatchIter{
 		readBatch: r,
 	}
@@ -437,16 +438,16 @@ func (b *readBatchIter) Value() []byte {
 }
 
 // ObjectClient implements chunk.ObjectClient for Cassandra.
-type ObjectClient struct {
-	cfg            Config
-	schemaCfg      chunk.SchemaConfig
+type CassandraObjectClient struct {
+	cfg            CassandraConfig
+	schemaCfg      SchemaConfig
 	readSession    *gocql.Session
 	writeSession   *gocql.Session
 	querySemaphore *semaphore.Weighted
 }
 
 // NewObjectClient returns a new ObjectClient.
-func NewObjectClient(cfg Config, schemaCfg chunk.SchemaConfig, registerer prometheus.Registerer) (*ObjectClient, error) {
+func NewObjectClient(cfg CassandraConfig, schemaCfg SchemaConfig, registerer prometheus.Registerer) (*ObjectClient, error) {
 	readSession, err := cfg.session("chunks-read", registerer)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -462,7 +463,7 @@ func NewObjectClient(cfg Config, schemaCfg chunk.SchemaConfig, registerer promet
 		querySemaphore = semaphore.NewWeighted(int64(cfg.QueryConcurrency))
 	}
 
-	client := &ObjectClient{
+	client := &CassandraObjectClient{
 		cfg:            cfg,
 		schemaCfg:      schemaCfg,
 		readSession:    readSession,
@@ -473,7 +474,7 @@ func NewObjectClient(cfg Config, schemaCfg chunk.SchemaConfig, registerer promet
 }
 
 // PutChunks implements chunk.ObjectClient.
-func (s *ObjectClient) PutChunks(ctx context.Context, chunks []chunk.Chunk) error {
+func (s *CassandraObjectClient) PutChunks(ctx context.Context, chunks []chunk.Chunk) error {
 	for i := range chunks {
 		buf, err := chunks[i].Encoded()
 		if err != nil {
@@ -497,11 +498,11 @@ func (s *ObjectClient) PutChunks(ctx context.Context, chunks []chunk.Chunk) erro
 }
 
 // GetChunks implements chunk.ObjectClient.
-func (s *ObjectClient) GetChunks(ctx context.Context, input []chunk.Chunk) ([]chunk.Chunk, error) {
+func (s *CassandraObjectClient) GetChunks(ctx context.Context, input []chunk.Chunk) ([]chunk.Chunk, error) {
 	return util.GetParallelChunks(ctx, input, s.getChunk)
 }
 
-func (s *ObjectClient) getChunk(ctx context.Context, decodeContext *chunk.DecodeContext, input chunk.Chunk) (chunk.Chunk, error) {
+func (s *CassandraObjectClient) getChunk(ctx context.Context, decodeContext *chunk.DecodeContext, input chunk.Chunk) (chunk.Chunk, error) {
 	if s.querySemaphore != nil {
 		if err := s.querySemaphore.Acquire(ctx, 1); err != nil {
 			return input, err
@@ -523,7 +524,7 @@ func (s *ObjectClient) getChunk(ctx context.Context, decodeContext *chunk.Decode
 	return input, err
 }
 
-func (s *ObjectClient) DeleteChunk(ctx context.Context, userID, chunkID string) error {
+func (s *CassandraObjectClient) DeleteChunk(ctx context.Context, userID, chunkID string) error {
 	chunkRef, err := chunk.ParseExternalKey(userID, chunkID)
 	if err != nil {
 		return err
@@ -544,7 +545,7 @@ func (s *ObjectClient) DeleteChunk(ctx context.Context, userID, chunkID string) 
 }
 
 // Stop implement chunk.ObjectClient.
-func (s *ObjectClient) Stop() {
+func (s *CassandraObjectClient) Stop() {
 	s.readSession.Close()
 	s.writeSession.Close()
 }

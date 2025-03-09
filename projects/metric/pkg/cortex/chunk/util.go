@@ -1,4 +1,4 @@
-package util
+package chunk
 
 import (
 	"bytes"
@@ -7,15 +7,14 @@ import (
 	"io"
 	"os"
 
-	"metric/pkg/cortex/chunk"
 	"metric/pkg/cortex/util/math"
 )
 
 // Callback from an IndexQuery.
-type Callback func(chunk.IndexQuery, chunk.ReadBatch) bool
+type Callback func(IndexQuery, ReadBatch) bool
 
 // DoSingleQuery is the interface for indexes that don't support batching yet.
-type DoSingleQuery func(context.Context, chunk.IndexQuery, Callback) error
+type DoSingleQuery func(context.Context, IndexQuery, Callback) error
 
 // QueryParallelism is the maximum number of subqueries run in
 // parallel per higher-level query
@@ -24,14 +23,14 @@ var QueryParallelism = 100
 // DoParallelQueries translates between our interface for query batching,
 // and indexes that don't yet support batching.
 func DoParallelQueries(
-	ctx context.Context, doSingleQuery DoSingleQuery, queries []chunk.IndexQuery,
+	ctx context.Context, doSingleQuery DoSingleQuery, queries []IndexQuery,
 	callback Callback,
 ) error {
 	if len(queries) == 1 {
 		return doSingleQuery(ctx, queries[0], callback)
 	}
 
-	queue := make(chan chunk.IndexQuery)
+	queue := make(chan IndexQuery)
 	incomingErrors := make(chan error)
 	n := math.Min(len(queries), QueryParallelism)
 	// Run n parallel goroutines fetching queries from the queue
@@ -67,11 +66,11 @@ func DoParallelQueries(
 }
 
 type filteringBatch struct {
-	query chunk.IndexQuery
-	chunk.ReadBatch
+	query IndexQuery
+	ReadBatch
 }
 
-func (f filteringBatch) Iterator() chunk.ReadBatchIterator {
+func (f filteringBatch) Iterator() ReadBatchIterator {
 	return &filteringBatchIter{
 		query:             f.query,
 		ReadBatchIterator: f.ReadBatch.Iterator(),
@@ -79,8 +78,8 @@ func (f filteringBatch) Iterator() chunk.ReadBatchIterator {
 }
 
 type filteringBatchIter struct {
-	query chunk.IndexQuery
-	chunk.ReadBatchIterator
+	query IndexQuery
+	ReadBatchIterator
 }
 
 func (f *filteringBatchIter) Next() bool {
@@ -107,7 +106,7 @@ func (f *filteringBatchIter) Next() bool {
 // useful for the cache and Bigtable backend, which only ever fetches the whole
 // row.
 func QueryFilter(callback Callback) Callback {
-	return func(query chunk.IndexQuery, batch chunk.ReadBatch) bool {
+	return func(query IndexQuery, batch ReadBatch) bool {
 		return callback(query, &filteringBatch{query, batch})
 	}
 }

@@ -11,14 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cortexproject/cortex/pkg/chunk"
 	"github.com/go-kit/log/level"
 	"github.com/gocql/gocql"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/sync/semaphore"
 
-	"metric/pkg/cortex/chunk/util"
 	"metric/pkg/cortex/util/flagext"
 	util_log "metric/pkg/cortex/util/log"
 )
@@ -344,10 +342,10 @@ func (s *StorageClient) BatchWrite(ctx context.Context, batch WriteBatch) error 
 
 // QueryPages implement chunk.IndexClient.
 func (s *StorageClient) QueryPages(ctx context.Context, queries []IndexQuery, callback func(IndexQuery, ReadBatch) bool) error {
-	return util.DoParallelQueries(ctx, s.query, queries, callback)
+	return DoParallelQueries(ctx, s.query, queries, callback)
 }
 
-func (s *StorageClient) query(ctx context.Context, query IndexQuery, callback util.Callback) error {
+func (s *StorageClient) query(ctx context.Context, query IndexQuery, callback Callback) error {
 	if s.querySemaphore != nil {
 		if err := s.querySemaphore.Acquire(ctx, 1); err != nil {
 			return err
@@ -447,7 +445,7 @@ type CassandraObjectClient struct {
 }
 
 // NewObjectClient returns a new ObjectClient.
-func NewObjectClient(cfg CassandraConfig, schemaCfg SchemaConfig, registerer prometheus.Registerer) (*ObjectClient, error) {
+func NewObjectClient(cfg CassandraConfig, schemaCfg SchemaConfig, registerer prometheus.Registerer) (*CassandraObjectClient, error) {
 	readSession, err := cfg.session("chunks-read", registerer)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -474,7 +472,7 @@ func NewObjectClient(cfg CassandraConfig, schemaCfg SchemaConfig, registerer pro
 }
 
 // PutChunks implements chunk.ObjectClient.
-func (s *CassandraObjectClient) PutChunks(ctx context.Context, chunks []chunk.Chunk) error {
+func (s *CassandraObjectClient) PutChunks(ctx context.Context, chunks []Chunk) error {
 	for i := range chunks {
 		buf, err := chunks[i].Encoded()
 		if err != nil {
@@ -498,11 +496,11 @@ func (s *CassandraObjectClient) PutChunks(ctx context.Context, chunks []chunk.Ch
 }
 
 // GetChunks implements chunk.ObjectClient.
-func (s *CassandraObjectClient) GetChunks(ctx context.Context, input []chunk.Chunk) ([]chunk.Chunk, error) {
-	return util.GetParallelChunks(ctx, input, s.getChunk)
+func (s *CassandraObjectClient) GetChunks(ctx context.Context, input []Chunk) ([]Chunk, error) {
+	return GetParallelChunks(ctx, input, s.getChunk)
 }
 
-func (s *CassandraObjectClient) getChunk(ctx context.Context, decodeContext *chunk.DecodeContext, input chunk.Chunk) (chunk.Chunk, error) {
+func (s *CassandraObjectClient) getChunk(ctx context.Context, decodeContext *DecodeContext, input Chunk) (Chunk, error) {
 	if s.querySemaphore != nil {
 		if err := s.querySemaphore.Acquire(ctx, 1); err != nil {
 			return input, err
@@ -525,7 +523,7 @@ func (s *CassandraObjectClient) getChunk(ctx context.Context, decodeContext *chu
 }
 
 func (s *CassandraObjectClient) DeleteChunk(ctx context.Context, userID, chunkID string) error {
-	chunkRef, err := chunk.ParseExternalKey(userID, chunkID)
+	chunkRef, err := ParseExternalKey(userID, chunkID)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package cassandra
+package chunk
 
 import (
 	"context"
@@ -7,17 +7,15 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
-
-	"metric/pkg/cortex/chunk"
 )
 
 type tableClient struct {
-	cfg     Config
+	cfg     CassandraConfig
 	session *gocql.Session
 }
 
 // NewTableClient returns a new TableClient.
-func NewTableClient(ctx context.Context, cfg Config, registerer prometheus.Registerer) (chunk.TableClient, error) {
+func NewTableClient(ctx context.Context, cfg CassandraConfig, registerer prometheus.Registerer) (TableClient, error) {
 	session, err := cfg.session("table-manager", registerer)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -40,7 +38,7 @@ func (c *tableClient) ListTables(ctx context.Context) ([]string, error) {
 	return result, nil
 }
 
-func (c *tableClient) CreateTable(ctx context.Context, desc chunk.TableDesc) error {
+func (c *tableClient) CreateTable(ctx context.Context, desc TableDesc) error {
 	query := c.getCreateTableQuery(&desc)
 	err := c.session.Query(query).WithContext(ctx).Exec()
 	return errors.WithStack(err)
@@ -52,13 +50,13 @@ func (c *tableClient) DeleteTable(ctx context.Context, name string) error {
 	return errors.WithStack(err)
 }
 
-func (c *tableClient) DescribeTable(ctx context.Context, name string) (desc chunk.TableDesc, isActive bool, err error) {
-	return chunk.TableDesc{
+func (c *tableClient) DescribeTable(ctx context.Context, name string) (desc TableDesc, isActive bool, err error) {
+	return TableDesc{
 		Name: name,
 	}, true, nil
 }
 
-func (c *tableClient) UpdateTable(ctx context.Context, current, expected chunk.TableDesc) error {
+func (c *tableClient) UpdateTable(ctx context.Context, current, expected TableDesc) error {
 	return nil
 }
 
@@ -66,7 +64,7 @@ func (c *tableClient) Stop() {
 	c.session.Close()
 }
 
-func (c *tableClient) getCreateTableQuery(desc *chunk.TableDesc) (query string) {
+func (c *tableClient) getCreateTableQuery(desc *TableDesc) (query string) {
 	query = fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			hash text,

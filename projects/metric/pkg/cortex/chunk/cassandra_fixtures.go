@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 
-	"metric/pkg/cortex/chunk/testutils"
 	"metric/pkg/cortex/util/flagext"
 )
 
@@ -32,7 +31,7 @@ func (f *fixture) Clients() (IndexClient, Client, TableClient, SchemaConfig, io.
 	cfg.ReplicationFactor = 1
 
 	// Get a SchemaConfig with the defaults.
-	schemaConfig := testutils.DefaultSchemaConfig("cassandra")
+	schemaConfig := TestUtilDefaultSchemaConfig("cassandra")
 
 	storageClient, err := NewStorageClient(cfg, schemaConfig, nil)
 	if err != nil {
@@ -49,7 +48,7 @@ func (f *fixture) Clients() (IndexClient, Client, TableClient, SchemaConfig, io.
 		return nil, nil, nil, schemaConfig, nil, err
 	}
 
-	closer := testutils.CloserFunc(func() error {
+	closer := CloserFunc(func() error {
 		storageClient.Stop()
 		objectClient.Stop()
 		tableClient.Stop()
@@ -60,13 +59,13 @@ func (f *fixture) Clients() (IndexClient, Client, TableClient, SchemaConfig, io.
 }
 
 // Fixtures for unit testing Cassandra integration.
-func Fixtures() []testutils.Fixture {
+func Fixtures() []Fixture {
 	addresses := os.Getenv("CASSANDRA_TEST_ADDRESSES")
 	if addresses == "" {
 		return nil
 	}
 
-	return []testutils.Fixture{
+	return []Fixture{
 		&fixture{
 			name:      "Cassandra",
 			addresses: addresses,

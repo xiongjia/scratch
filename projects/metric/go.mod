@@ -8,6 +8,8 @@ replace github.com/prometheus/procfs => github.com/prometheus/procfs v0.8.0
 
 replace github.com/deepmap/oapi-codegen/v2 => github.com/deepmap/oapi-codegen/v2 v2.0.0
 
+replace github.com/thanos-io/thanos => github.com/thanos-io/thanos v0.22.0
+
 require (
 	github.com/go-kit/log v0.2.1
 	github.com/gocql/gocql v1.7.0

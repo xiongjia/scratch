@@ -6,15 +6,15 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/cortexproject/cortex/pkg/chunk/cache"
+	"github.com/cortexproject/cortex/pkg/ingester/client"
+	"github.com/cortexproject/cortex/pkg/util/validation"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/model/labels"
 
 	"metric/pkg/cortex/chunk"
-	"metric/pkg/cortex/chunk/cache"
 	promchunk "metric/pkg/cortex/chunk/encoding"
-	"metric/pkg/cortex/ingester/client"
 	"metric/pkg/cortex/util/flagext"
-	"metric/pkg/cortex/util/validation"
 )
 
 const (

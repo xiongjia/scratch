@@ -3,10 +3,9 @@ package astmapper
 import (
 	"fmt"
 
+	util_log "github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	"github.com/prometheus/prometheus/promql/parser"
-
-	util_log "metric/pkg/cortex/util/log"
 )
 
 var summableAggregates = map[parser.ItemType]struct{}{

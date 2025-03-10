@@ -10,6 +10,7 @@ replace github.com/deepmap/oapi-codegen/v2 => github.com/deepmap/oapi-codegen/v2
 
 require (
 	github.com/go-kit/log v0.2.1
+	github.com/gocql/gocql v1.7.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
 	github.com/json-iterator/go v1.1.12
 	github.com/mattn/go-sqlite3 v1.14.24
@@ -19,6 +20,7 @@ require (
 	github.com/prometheus/common v0.62.0
 	github.com/prometheus/prometheus v0.0.0-00010101000000-000000000000
 	github.com/samber/lo v1.49.1
+	github.com/scylladb/gocqlx/v2 v2.8.0
 	go.uber.org/atomic v1.11.0
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 )
@@ -52,6 +54,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
@@ -71,6 +74,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common/sigv4 v0.1.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/scylladb/go-reflectx v1.0.1 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	go.mongodb.org/mongo-driver v1.11.3 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
@@ -84,6 +88,7 @@ require (
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/protobuf v1.36.1 // indirect
+	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

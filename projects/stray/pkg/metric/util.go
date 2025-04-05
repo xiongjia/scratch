@@ -1,7 +1,6 @@
 package metric
 
 import (
-	"sync"
 	"time"
 
 	"github.com/prometheus/common/model"
@@ -15,10 +14,6 @@ import (
 )
 
 type (
-	WaitGroup struct {
-		wg sync.WaitGroup
-	}
-
 	StaticTargetGroup struct {
 		Source    string
 		Addresses []string
@@ -34,22 +29,6 @@ type (
 		series []storage.ChunkSeries
 	}
 )
-
-func NewWaitGroup() *WaitGroup {
-	return &WaitGroup{}
-}
-
-func (h *WaitGroup) Go(f func()) {
-	h.wg.Add(1)
-	go func() {
-		defer h.wg.Done()
-		f()
-	}()
-}
-
-func (h *WaitGroup) Wait() {
-	h.wg.Wait()
-}
 
 func MaxDuration(d1, d2 time.Duration) time.Duration {
 	if d1 > d2 {

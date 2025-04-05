@@ -18,10 +18,8 @@ func InitDefaultLog(opts *LogOption) {
 }
 
 func NewLog(opts *LogOption) *slog.Logger {
-	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level:     opts.Level,
-		AddSource: opts.AddSource,
-	})
+	handler := slog.NewJSONHandler(os.Stdout,
+		&slog.HandlerOptions{Level: opts.Level, AddSource: opts.AddSource})
 	return slog.New(handler)
 }
 

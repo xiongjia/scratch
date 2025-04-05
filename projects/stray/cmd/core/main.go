@@ -2,9 +2,11 @@ package main
 
 import (
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"stray/pkg/metric"
@@ -12,27 +14,11 @@ import (
 )
 
 type (
-	Server struct {
-		mux *http.ServeMux
-	}
-
 	Proc struct {
-		Engine *metric.Engine
+		Collector *metric.MetricCollector
+		Engine    *metric.Engine
 	}
 )
-
-func makeServer() *Server {
-	return &Server{mux: http.NewServeMux()}
-}
-
-func (p *Proc) ProcessShutdown() {
-	if p.Engine != nil {
-		err := p.Engine.Shutdown()
-		if err != nil {
-			slog.Error("metric engine shutdown", slog.Any("err", err))
-		}
-	}
-}
 
 func procInit(p *Proc) {
 	util.InitDefaultLog(&util.LogOption{
@@ -40,81 +26,90 @@ func procInit(p *Proc) {
 		AddSource: false,
 	})
 	util.DebugDumpDeps()
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)
 	go func() {
 		sig := <-sigs
 		slog.Debug("got os interrupt", slog.String("sig", sig.String()))
-		if p != nil {
-			p.ProcessShutdown()
-		}
-		<-time.After(5 * time.Second)
+		// if p != nil {
+		// 	p.ProcessShutdown()
+		// }
+		// <-time.After(5 * time.Second)
 		os.Exit(0)
 	}()
 }
 
+func Touch(eng *metric.Engine) {
+	// update jobs
+	if err := eng.ApplyScrapeJobs([]metric.ScrapeJob{
+		{
+			JobName:     "jobNode1",
+			Scheme:      "http",
+			MetricsPath: "/metrics",
+			Interval:    time.Second * 60,
+			Timeout:     time.Second * 20,
+		},
+	}); err != nil {
+		slog.Error("scrape job apply config", slog.Any("err", err))
+	}
+
+	// update target
+	if err := eng.ApplyDiscoveryConfig([]metric.StaticDiscoveryConfig{
+		{
+			JobName: "jobNode1",
+			Targets: []metric.StaticTargetGroup{
+				{
+					Source:    "test",
+					Addresses: []string{"127.0.0.1:8897"},
+				},
+			},
+		},
+	}); err != nil {
+		slog.Error("service discovery apply config", slog.Any("err", err))
+	}
+}
+
 func main() {
 	var proc Proc
-
 	procInit(&proc)
 
-	// serv := makeServer()
+	collector, err := metric.NewMetricCollector(metric.MetricCollectorConfig{Logger: metric.NewSLogAdapterHandler()})
+	if err != nil {
+		slog.Error("new collector", slog.Any("err", err))
+		return
+	}
+	proc.Collector = collector
 
-	// prometheus engine
-	// eng, err := metric.NewEngine(metric.EngineOpts{
-	// 	StorageFolder:        "C:/wrk/tmp/tsdb2",
-	// 	Disable:              false,
-	// 	HttpHandler:          serv.mux.Handler,
-	// 	ServeMux:             serveMux,
-	// 	QuerierMaxMaxSamples: 9999999999999,
-	// })
-	// if err != nil {
-	// 	slog.Error("new engine", slog.Any("err", err))
-	// 	return
-	// }
-	// proc.Engine = eng
+	eng, err := metric.NewEngine(metric.EngineOptions{
+		Logger:               metric.NewSLogAdapterHandler(),
+		StorageDBPath:        "C:/wrk/tmp/tsdb2",
+		QuerierMaxMaxSamples: 9999999999999,
+		QuerierTimeout:       30 * time.Second,
+	})
+	if err != nil {
+		slog.Error("new engine", slog.Any("err", err))
+		return
+	}
+	proc.Engine = eng
+	mux := http.NewServeMux()
+	mux.Handle("/metric/", proc.Collector.CollectorHandler())
+	engApiHandler, _ := proc.Engine.Register("/")
+	mux.Handle("/mon/{p...}", http.StripPrefix("/mon", engApiHandler))
 
-	// wg := util.NewWaitGroup()
-	// wg.Go(func() {
-	// 	eng.Run()
-	// })
-	// wg.Go(func() {
-	// 	slog.Info("API Server Started (0.0.0.0:8897)")
-	// 	err = server.StartServer("0.0.0.0", 8897, serv)
-	// 	if err != nil {
-	// 		slog.Error("Server error", slog.Any("err", err))
-	// 	}
-	// })
+	wg := util.NewWaitGroup()
+	wg.Go(func() { eng.Run() })
+	wg.Go(func() {
+		slog.Info("API Server Started")
+		addr := net.JoinHostPort("0.0.0.0", strconv.Itoa(8897))
+		httpServer := &http.Server{Handler: mux, Addr: addr}
+		err := httpServer.ListenAndServe()
+		if err != nil {
+			slog.Error("Server error", slog.Any("err", err))
+		}
+	})
 
-	// // update jobs
-	// err = eng.ApplyScrapeJobs([]metric.ScrapeJob{
-	// 	{
-	// 		JobName:     "jobNode1",
-	// 		Scheme:      "http",
-	// 		MetricsPath: "/metrics",
-	// 		Interval:    time.Second * 60,
-	// 		Timeout:     time.Second * 20,
-	// 	},
-	// })
-	// if err != nil {
-	// 	slog.Error("scrape job apply config", slog.Any("err", err))
-	// }
-
-	// // update target
-	// err = eng.ApplyDiscoveryConfig([]metric.StaticDiscoveryConfig{
-	// 	{
-	// 		JobName: "jobNode1",
-	// 		Targets: []metric.StaticTargetGroup{
-	// 			{
-	// 				Source:    "test",
-	// 				Addresses: []string{"172.24.6.50:9100"},
-	// 			},
-	// 		},
-	// 	},
-	// })
-	// if err != nil {
-	// 	slog.Error("service discovery apply config", slog.Any("err", err))
-	// }
-
-	// wg.Wait()
+	<-time.After(10 * time.Second)
+	Touch(eng)
+	wg.Wait()
 }

@@ -2,15 +2,9 @@ package metric
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"sync"
 	"time"
-
-	"crypto/tls"
 
 	kitlog "github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -19,24 +13,17 @@ import (
 
 type (
 	EngineOptions struct {
-		Logger LogAdapterHandler
-
-		StorageDBPath string
-
+		Logger               LogAdapterHandler
+		StorageDBPath        string
 		QuerierMaxMaxSamples int
 		QuerierTimeout       time.Duration
-
-		MasterNode        bool
-		MasterNodeApiAddr string
-		MasterNodeApiPort uint16
 	}
 
 	Engine struct {
 		mtx    sync.Mutex
 		logger kitlog.Logger
 
-		ctx     context.Context
-		disable bool
+		ctx context.Context
 
 		promDiscovery *PromDiscovery
 		promStorage   *PromStorage
@@ -46,10 +33,6 @@ type (
 
 		targetGroups []StaticDiscoveryConfig
 		scrapeJobs   []ScrapeJob
-
-		currentMasterNode bool
-		masterNodeApiAddr string
-		masterNodeApiPort uint16
 	}
 
 	PromTargetsJobs struct {
@@ -118,8 +101,6 @@ func NewEngine(opts EngineOptions) (*Engine, error) {
 		targetGroups:  []StaticDiscoveryConfig{},
 		scrapeJobs:    []ScrapeJob{},
 		promStorage:   promStorage,
-
-		currentMasterNode: opts.MasterNode,
 	}
 	return eng, nil
 }
@@ -135,10 +116,6 @@ func (e *Engine) GetStorage() *PromStorage {
 }
 
 func (e *Engine) ApplyDiscoveryConfig(groups []StaticDiscoveryConfig) error {
-	if e.disable {
-		_ = level.Info(e.logger).Log("msg", "ignored service discovery config (engine is disabled)", "group", groups)
-		return nil
-	}
 	e.mtx.Lock()
 	defer e.mtx.Unlock()
 	if compareStaticTargetConf(groups, e.targetGroups) {
@@ -155,10 +132,6 @@ func (e *Engine) ApplyDiscoveryConfig(groups []StaticDiscoveryConfig) error {
 }
 
 func (e *Engine) ApplyScrapeJobs(jobs []ScrapeJob) error {
-	if e.disable {
-		_ = level.Info(e.logger).Log("msg", "ignored scrape jobs (engine is disabled)", "jobs", jobs)
-		return nil
-	}
 	e.mtx.Lock()
 	defer e.mtx.Unlock()
 	if compareScrapeJobs(jobs, e.scrapeJobs) {
@@ -219,48 +192,4 @@ func (e *Engine) ApplyTargetsJobs(src PromTargetsJobs) error {
 		return err
 	}
 	return e.ApplyDiscoveryConfig(src.Targets)
-}
-
-func (e *Engine) SetMasterApi(addr string, port uint16) {
-	e.mtx.Lock()
-	defer e.mtx.Unlock()
-	e.masterNodeApiAddr = addr
-	e.masterNodeApiPort = port
-}
-
-func (e *Engine) SetMaster(currentMaster bool) {
-	e.mtx.Lock()
-	defer e.mtx.Unlock()
-	e.currentMasterNode = currentMaster
-}
-
-func (e *Engine) IsCurrentMaster() bool {
-	e.mtx.Lock()
-	defer e.mtx.Unlock()
-	return e.currentMasterNode
-}
-
-func (e *Engine) makeMasterUrl() (*url.URL, error) {
-	e.mtx.Lock()
-	defer e.mtx.Unlock()
-	if len(e.masterNodeApiAddr) == 0 {
-		return nil, errors.New("master not ready")
-	}
-	return url.Parse(fmt.Sprintf("https://%s:%d", e.masterNodeApiAddr, e.masterNodeApiPort))
-}
-
-func (e *Engine) ForwardHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) bool {
-	if e.IsCurrentMaster() {
-		return false
-	}
-
-	targetURL, err := e.makeMasterUrl()
-	if err != nil {
-		_ = level.Error(e.logger).Log("msg", "prom master not ready")
-		return false
-	}
-	proxy := httputil.NewSingleHostReverseProxy(targetURL)
-	proxy.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-	proxy.ServeHTTP(w, r)
-	return true
 }

@@ -3,11 +3,12 @@ package metric
 import (
 	"context"
 	"errors"
-	"math"
 	"sync"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus"
+	kitlog "github.com/go-kit/log"
+	"github.com/go-kit/log/level"
+
 	"github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
@@ -15,13 +16,32 @@ import (
 )
 
 type (
+	PromStorageOpts struct {
+		Log        kitlog.Logger
+		FsTsdbPath string
+	}
+
 	PromStorage struct {
-		mtx             sync.RWMutex
+		log kitlog.Logger
+		mtx sync.RWMutex
+
+		storageOpts PromStorageOpts
+
 		stats           *tsdb.DBStats
-		startTimeMargin int64
 		db              storage.Storage
+		startTimeMargin int64
 	}
 )
+
+func NewPromStorage(opts PromStorageOpts) (*PromStorage, error) {
+	log := kitlog.With(opts.Log, LOG_COMPONENT_KEY, COMPONENT_STORAGE)
+	dbStats := tsdb.NewDBStats()
+	db, err := createFsStorage(opts.FsTsdbPath, dbStats, log)
+	if err != nil {
+		return nil, err
+	}
+	return &PromStorage{storageOpts: opts, stats: dbStats, db: db, log: log}, nil
+}
 
 func (s *PromStorage) get() storage.Storage {
 	s.mtx.RLock()
@@ -35,19 +55,6 @@ func (s *PromStorage) getStats() *tsdb.DBStats {
 	return s.stats
 }
 
-func NewPromStorage(dbPath string) (*PromStorage, error) {
-	dbStats := tsdb.NewDBStats()
-	db, err := OpenLocalTsdb(dbPath, prometheus.DefaultRegisterer, tsdb.DefaultOptions(), dbStats)
-	if err != nil {
-		return nil, err
-	}
-
-	return &PromStorage{
-		stats: dbStats,
-		db:    db,
-	}, nil
-}
-
 func (s *PromStorage) Set(db storage.Storage, startTimeMargin int64) {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
@@ -56,6 +63,7 @@ func (s *PromStorage) Set(db storage.Storage, startTimeMargin int64) {
 }
 
 func (s *PromStorage) StartTime() (int64, error) {
+	_ = level.Debug(s.log).Log("msg", "StartTime")
 	if x := s.get(); x != nil {
 		switch db := x.(type) {
 		case *tsdb.DB:
@@ -65,37 +73,43 @@ func (s *PromStorage) StartTime() (int64, error) {
 			} else {
 				startTime = time.Now().Unix() * 1000
 			}
-			// Add a safety margin as it may take a few minutes for everything to spin up.
 			return startTime + s.startTimeMargin, nil
-		default:
-			return 0, errors.New("TSDB not implement")
 		}
 	}
-	return math.MaxInt64, tsdb.ErrNotReady
+	return 0, errors.New("TSDB not implement")
+
 }
 
-func (s *PromStorage) Querier(mint, maxt int64) (storage.Querier, error) {
+func (s *PromStorage) Querier(ctx context.Context, mint, maxt int64) (storage.Querier, error) {
+	_ = level.Debug(s.log).Log("msg", "Querier", "mint", mint, "maxt", maxt)
 	if x := s.get(); x != nil {
-		return x.Querier(mint, maxt)
+		q, err := x.Querier(ctx, mint, maxt)
+		if err != nil {
+			return nil, err
+		}
+		return makeStorageQuerierAdapter(s.log, q), nil
 	}
 	return nil, tsdb.ErrNotReady
 }
 
-func (s *PromStorage) ChunkQuerier(mint, maxt int64) (storage.ChunkQuerier, error) {
+func (s *PromStorage) ChunkQuerier(ctx context.Context, mint, maxt int64) (storage.ChunkQuerier, error) {
+	_ = level.Debug(s.log).Log("msg", "ChunkQuerier", "mint", mint, "maxt", maxt)
 	if x := s.get(); x != nil {
-		return x.ChunkQuerier(mint, maxt)
+		return x.ChunkQuerier(ctx, mint, maxt)
 	}
 	return nil, tsdb.ErrNotReady
 }
 
 func (s *PromStorage) Appender(ctx context.Context) storage.Appender {
+	_ = level.Debug(s.log).Log("msg", "Appender")
 	if x := s.get(); x != nil {
-		return x.Appender(ctx)
+		return NewFanoutAppender(x.Appender(ctx), s.log)
 	}
 	return notReadyAppend{}
 }
 
 func (s *PromStorage) ApplyConfig(conf *config.Config) error {
+	_ = level.Debug(s.log).Log("msg", "ApplyConfig", "conf", conf)
 	db := s.get()
 	if db, ok := db.(*tsdb.DB); ok {
 		return db.ApplyConfig(conf)
@@ -104,6 +118,7 @@ func (s *PromStorage) ApplyConfig(conf *config.Config) error {
 }
 
 func (s *PromStorage) ExemplarQuerier(ctx context.Context) (storage.ExemplarQuerier, error) {
+	_ = level.Debug(s.log).Log("msg", "ExemplarQuerier")
 	if x := s.get(); x != nil {
 		switch db := x.(type) {
 		case *tsdb.DB:
@@ -116,6 +131,7 @@ func (s *PromStorage) ExemplarQuerier(ctx context.Context) (storage.ExemplarQuer
 }
 
 func (s *PromStorage) Close() error {
+	_ = level.Debug(s.log).Log("msg", "Close")
 	if x := s.get(); x != nil {
 		return x.Close()
 	}
@@ -123,6 +139,7 @@ func (s *PromStorage) Close() error {
 }
 
 func (s *PromStorage) CleanTombstones() error {
+	_ = level.Debug(s.log).Log("msg", "CleanTombstones")
 	if x := s.get(); x != nil {
 		switch db := x.(type) {
 		case *tsdb.DB:
@@ -135,11 +152,12 @@ func (s *PromStorage) CleanTombstones() error {
 
 }
 
-func (s *PromStorage) Delete(ctx context.Context, mint, maxt int64, ms ...*labels.Matcher) error {
+func (s *PromStorage) Delete(mint, maxt int64, ms ...*labels.Matcher) error {
+	_ = level.Debug(s.log).Log("msg", "delete", "mint", mint, "maxt", maxt, "ms", ms)
 	if x := s.get(); x != nil {
 		switch db := x.(type) {
 		case *tsdb.DB:
-			return db.Delete(ctx, mint, maxt, ms...)
+			return db.Delete(mint, maxt, ms...)
 		default:
 			return errors.New("TSDB not implement")
 		}
@@ -148,6 +166,7 @@ func (s *PromStorage) Delete(ctx context.Context, mint, maxt int64, ms ...*label
 }
 
 func (s *PromStorage) Snapshot(dir string, withHead bool) error {
+	_ = level.Debug(s.log).Log("msg", "Snapshot", "dir", dir, "withHead", withHead)
 	if x := s.get(); x != nil {
 		switch db := x.(type) {
 		case *tsdb.DB:
@@ -160,6 +179,7 @@ func (s *PromStorage) Snapshot(dir string, withHead bool) error {
 }
 
 func (s *PromStorage) Stats(statsByLabelName string, limit int) (*tsdb.Stats, error) {
+	_ = level.Debug(s.log).Log("msg", "Snapshot", "statsByLabelName", statsByLabelName, "limit", limit)
 	if x := s.get(); x != nil {
 		switch db := x.(type) {
 		case *tsdb.DB:
@@ -172,6 +192,7 @@ func (s *PromStorage) Stats(statsByLabelName string, limit int) (*tsdb.Stats, er
 }
 
 func (s *PromStorage) WALReplayStatus() (tsdb.WALReplayStatus, error) {
+	_ = level.Debug(s.log).Log("msg", "WALReplayStatus")
 	if x := s.getStats(); x != nil {
 		return x.Head.WALReplayStatus.GetWALReplayStatus(), nil
 	}

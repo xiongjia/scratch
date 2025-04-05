@@ -2,19 +2,21 @@ package metric
 
 import (
 	"context"
-	"log/slog"
 
-	"github.com/prometheus/client_golang/prometheus"
+	kitlog "github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/prometheus/discovery"
 	"github.com/samber/lo"
 )
 
 type (
 	PromDiscoveryOpts struct {
-		PromLog *slog.Logger
+		Logger kitlog.Logger
 	}
 
 	PromDiscovery struct {
+		logger kitlog.Logger
+
 		ctx context.Context
 		mgr *discovery.Manager
 	}
@@ -26,14 +28,9 @@ type (
 )
 
 func NewPromDiscovery(ctx context.Context, opts PromDiscoveryOpts) (*PromDiscovery, error) {
-	compLog := makeComponentLog(opts.PromLog, COMPONENT_DISCOVERY)
-	sdMetrics, err := discovery.CreateAndRegisterSDMetrics(prometheus.DefaultRegisterer)
-	if err != nil {
-		slog.Error("failed to register service discovery metrics", "err", err)
-		return nil, err
-	}
-	mgr := discovery.NewManager(ctx, compLog, prometheus.DefaultRegisterer, sdMetrics)
-	return &PromDiscovery{ctx: ctx, mgr: mgr}, nil
+	_ = level.Debug(opts.Logger).Log("msg", "create prom discovery", "opts", opts)
+	mgr := discovery.NewManager(ctx, kitlog.With(opts.Logger, LOG_COMPONENT_KEY, COMPONENT_DISCOVERY))
+	return &PromDiscovery{logger: opts.Logger, ctx: ctx, mgr: mgr}, nil
 }
 
 func (d *PromDiscovery) Get() *discovery.Manager {
@@ -41,7 +38,7 @@ func (d *PromDiscovery) Get() *discovery.Manager {
 }
 
 func (d *PromDiscovery) Run() error {
-	slog.Debug("launching SD component")
+	_ = level.Debug(d.logger).Log("msg", "launching SD component")
 	return d.mgr.Run()
 }
 
@@ -52,12 +49,10 @@ func (d *PromDiscovery) ApplyStaticTargetGroup(groups []StaticDiscoveryConfig) e
 			makeDiscoveryStaticConfig(grp.Targets...),
 		}
 	})
-	slog.Debug("sd apply static config",
-		slog.Any("grp", groups),
-		slog.Any("cfg", discoveryCfg))
+	_ = level.Debug(d.logger).Log("msg", "sd apply static config", "grp", groups, "cfg", discoveryCfg)
 	err := d.mgr.ApplyConfig(discoveryCfg)
 	if err != nil {
-		slog.Error("service discovery apply config", slog.Any("err", err))
+		_ = level.Error(d.logger).Log("msg", "service discovery apply config", "err", err)
 	}
 	return err
 }

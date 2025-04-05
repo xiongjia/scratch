@@ -1,6 +1,0 @@
-components:
-  schemas:
-    VersionInfo:
-      type: object
-      required: [major, minor, patch]
-      properties: { major: { type: integer }, minor: { type: integer }, patch: { type: integer }}

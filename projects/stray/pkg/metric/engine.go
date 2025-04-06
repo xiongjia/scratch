@@ -30,6 +30,7 @@ type (
 		promQuerier   *PromQuerier
 		promScrape    *PromScrape
 		promEngApi    *EngineAPI
+		promRules     *PromRules
 
 		targetGroups []StaticDiscoveryConfig
 		scrapeJobs   []ScrapeJob
@@ -91,6 +92,16 @@ func NewEngine(opts EngineOptions) (*Engine, error) {
 		return nil, err
 	}
 
+	PromRules, err := NewPromRules(PromRulesOpts{
+		logger:      promLog,
+		PromStorage: promStorage,
+		PromQuerier: promQuerier,
+	})
+	if err != nil {
+		_ = level.Error(promLog).Log("msg", "create rules", "err", err)
+		return nil, err
+	}
+
 	eng := &Engine{
 		logger:        promLog,
 		ctx:           engCtx,
@@ -98,6 +109,7 @@ func NewEngine(opts EngineOptions) (*Engine, error) {
 		promQuerier:   promQuerier,
 		promScrape:    promScrape,
 		promEngApi:    promEngApi,
+		promRules:     PromRules,
 		targetGroups:  []StaticDiscoveryConfig{},
 		scrapeJobs:    []ScrapeJob{},
 		promStorage:   promStorage,
@@ -176,6 +188,19 @@ func (e *Engine) Run() error {
 			_ = level.Error(e.logger).Log("msg", "scrape component exit with error", "err", err)
 		}
 	})
+
+	// rules
+	runGroup.Add(func() error {
+		_ = level.Debug(e.logger).Log("msg", "rules mgr started")
+		e.promRules.Run()
+		return nil
+	}, func(err error) {
+		_ = level.Debug(e.logger).Log("msg", "rules mgr component exited")
+		if err != nil {
+			_ = level.Error(e.logger).Log("msg", "rules mgr exit with error", "err", err)
+		}
+	})
+
 	return runGroup.Run()
 }
 
@@ -192,4 +217,8 @@ func (e *Engine) ApplyTargetsJobs(src PromTargetsJobs) error {
 		return err
 	}
 	return e.ApplyDiscoveryConfig(src.Targets)
+}
+
+func (e *Engine) LoadRuleGroups() {
+	e.promRules.LoadRuleGroups()
 }

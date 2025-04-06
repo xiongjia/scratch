@@ -22,11 +22,9 @@ type (
 	}
 
 	PromStorage struct {
-		log kitlog.Logger
-		mtx sync.RWMutex
-
-		storageOpts PromStorageOpts
-
+		log             kitlog.Logger
+		mtx             sync.RWMutex
+		storageOpts     PromStorageOpts
 		stats           *tsdb.DBStats
 		db              storage.Storage
 		startTimeMargin int64

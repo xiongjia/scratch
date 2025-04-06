@@ -46,7 +46,7 @@ func Touch(eng *metric.Engine) {
 		{
 			JobName:     "jobNode1",
 			Scheme:      "http",
-			MetricsPath: "/metrics",
+			MetricsPath: "/metric",
 			Interval:    time.Second * 60,
 			Timeout:     time.Second * 20,
 		},
@@ -68,6 +68,9 @@ func Touch(eng *metric.Engine) {
 	}); err != nil {
 		slog.Error("service discovery apply config", slog.Any("err", err))
 	}
+
+	// load rules
+	eng.LoadRuleGroups()
 }
 
 func main() {

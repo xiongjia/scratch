@@ -1,0 +1,33 @@
+{% interface
+Page {
+	Title()
+	Body()
+}
+%}
+
+{% func PageTemplate(p Page) %}
+<html>
+	<head>
+		<title>{%= p.Title() %}</title>
+	</head>
+	<body>
+		{%= p.Body() %}
+	</body>
+</html>
+{% endfunc %}
+
+{% code type BasePage struct {
+    HeadTitle string
+    MainBody  string
+} %}
+
+{% func (p *BasePage) Title() %}{%s p.HeadTitle %}{% endfunc %}
+
+{% func (p *BasePage) Body() %}
+<div>
+    <a href="/users">goto users page</a>
+</div>
+<h1>{%s p.HeadTitle %}</h1>
+<p>{%s p.MainBody %}</p>
+{% endfunc %}
+

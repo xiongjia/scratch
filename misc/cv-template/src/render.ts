@@ -1,6 +1,10 @@
 import nunjucks from "nunjucks";
-nunjucks.configure({ autoescape: true });
 
 console.log("build template");
+
+
+nunjucks.configure({ autoescape: true });
+console.log(nunjucks.renderString('Hello {{ username }}', { username: 'James' }));
+
 
 

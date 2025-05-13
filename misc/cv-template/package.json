@@ -10,13 +10,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.11.0",
   "devDependencies": {
     "@types/node": "^22.15.12",
     "@types/nunjucks": "^3.2.6",
+    "jsonresume-theme-elegant": "^1.16.1",
     "md-to-pdf": "^5.2.4",
     "nunjucks": "^3.2.4",
     "puppeteer": "^24.8.0",
+    "resume-cli": "^3.1.2",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3"

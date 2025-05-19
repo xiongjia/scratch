@@ -7,7 +7,8 @@
     "check": "biome check --write",
     "dev": "rsbuild dev --open",
     "format": "biome format --write",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "storybook": "storybook dev  -p 3011"
   },
   "dependencies": {
     "@ant-design/pro-components": "^2.8.7",

@@ -5,7 +5,7 @@ function FormItemIp<Values = any>(props: FormItemProps<Values>) {
 
   return (
     <Form.Item {...itemProps}>
-      <Input placeholder="test" />
+      <Input placeholder="test" status="" />
     </Form.Item>
   )
 }

@@ -20,7 +20,7 @@ const HostTable = ({ hosts }: { hosts: HostItem[] }) => {
     setEditableKeys(map<HostItem, string>(hosts, (itr: HostItem) => itr.key))
   }, [hosts])
   const columns: ColumnProps<{
-    field: FormListFieldData
+        field: FormListFieldData
     operation: FormListOperation
   }>[] = [
     {

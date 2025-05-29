@@ -1,6 +1,16 @@
 import { Space, Button, Form, Input } from 'antd'
 import { HostTable, type HostItem, TestSteps } from '&/component'
 
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
 const hosts: HostItem[] = [
   {
     key: 'host1',
@@ -17,6 +27,16 @@ const hosts: HostItem[] = [
     outputLog: 'log123',
   },
 ]
+
+const Todos = () => {
+  const queryClient = useQueryClient()
+  const query = useQuery({ queryKey: ['todos'], queryFn: getTodos })
+  return (
+    <>
+      <div>Add Todo</div>
+    </>
+  )
+}
 
 const Playground = () => {
   const [form] = Form.useForm()
@@ -53,6 +73,11 @@ const Playground = () => {
         </Form>
 
         <HostTable hosts={hosts} />
+
+        <QueryClientProvider client={queryClient}>
+          <Todos />
+        </QueryClientProvider>
+
         <Button
           size="large"
           onClick={() => {

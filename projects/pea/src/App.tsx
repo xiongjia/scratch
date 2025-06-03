@@ -1,3 +1,4 @@
+import '@ant-design/v5-patch-for-react-19'
 import { ConfigProvider } from 'antd'
 import { HashRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { Home, Playground } from '&/view'

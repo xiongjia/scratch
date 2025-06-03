@@ -1,5 +1,9 @@
 import type { ProColumns } from '@ant-design/pro-components'
-import { ProTable } from '@ant-design/pro-components'
+import {
+  EditableProTable,
+  ProForm,
+  ProFormText,
+} from '@ant-design/pro-components'
 
 type TestTableItem = {
   id: number
@@ -20,10 +24,28 @@ const testData: TestTableItem[] = [
   { id: 2, name: 'item2' },
 ]
 
+type TestFormData = {
+  username: string
+}
+
 const TestFormTable = () => {
   return (
     <>
-      <ProTable<TestTableItem>
+      <ProForm<TestFormData>
+        onFinish={async (val: TestFormData): Promise<boolean> => {
+          console.log('finsh proform', val)
+          return true
+        }}
+        initialValues={{
+          username: '123',
+        }}
+      >
+        <ProFormText name={'username'} />
+      </ProForm>
+
+      <br />
+
+      <EditableProTable<TestTableItem>
         columns={testTableColumns}
         dataSource={testData}
         form={{

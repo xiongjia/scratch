@@ -22,11 +22,30 @@ const testTableColumns: ProColumns<TestTableItem>[] = [
   {
     title: 'TestName',
     dataIndex: 'name',
-    ellipsis: true,
+    formItemProps: () => {
+      return {
+        rules: [{ required: true, message: 'must hava a value' }],
+      }
+    },
   },
   {
     title: 'TestId',
     dataIndex: 'id',
+  },
+  {
+    title: 'Opts',
+    valueType: 'option',
+    render: (text, record, _, action) => [
+      <a
+        key="editable"
+        onClick={() => {
+          console.log('edit')
+          action?.startEditable?.(record.id, record)
+        }}
+      >
+        editOpt
+      </a>,
+    ],
   },
 ]
 
@@ -36,6 +55,8 @@ const testData: TestTableItem[] = [
 ]
 
 const TestFormTable = () => {
+  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => [])
+
   const formRef = useRef<ProFormInstance<TestTableItem>>()
   const editorFormRef = useRef<EditableFormInstance<TestTableItem>>()
   // const [controlled, setControlled] = useState<boolean>(false)
@@ -47,13 +68,27 @@ const TestFormTable = () => {
         validateTrigger="onBlur"
       >
         <EditableProTable<TestTableItem>
+          headerTitle="hdr title"
           name="srcData"
+          rowKey={'id'}
           scroll={{ x: 560 }}
           columns={testTableColumns}
           editableFormRef={editorFormRef}
           form={{
             onValuesChange: (changedValues, allValues) => {
               console.log('changedValues:', changedValues, allValues)
+            },
+          }}
+          editable={{
+            type: 'multiple',
+            editableKeys,
+            onChange: (keys, rows) => {
+              console.log('edit-keys', keys)
+              console.log('edit-rows', rows)
+              setEditableRowKeys(keys)
+            },
+            actionRender: (row, config, defaultDom) => {
+              return [defaultDom.save, defaultDom.delete, defaultDom.cancel]
             },
           }}
         />

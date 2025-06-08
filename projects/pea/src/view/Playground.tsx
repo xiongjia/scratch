@@ -3,7 +3,6 @@ import { HostTable, type HostItem, TestSteps } from '&/component'
 
 import {
   useQuery,
-  useMutation,
   useQueryClient,
   QueryClient,
   QueryClientProvider,

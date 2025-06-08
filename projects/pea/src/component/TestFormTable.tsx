@@ -1,13 +1,18 @@
-import type { ProColumns } from '@ant-design/pro-components'
-import {
-  EditableProTable,
-  ProForm,
-  ProFormText,
+import type {
+  ProColumns,
+  EditableFormInstance,
+  ProFormInstance,
 } from '@ant-design/pro-components'
-import { Button } from 'antd'
-import { useRef } from 'react'
+import {
+  ProCard,
+  ProForm,
+  EditableProTable,
+  ProFormDependency,
+  ProFormField,
+} from '@ant-design/pro-components'
+import { useRef, useState } from 'react'
 
-
+// Colume Data type
 type TestTableItem = {
   id: number
   name: string
@@ -17,62 +22,71 @@ const testTableColumns: ProColumns<TestTableItem>[] = [
   {
     title: 'TestName',
     dataIndex: 'name',
-    copyable: true,
     ellipsis: true,
+  },
+  {
+    title: 'TestId',
+    dataIndex: 'id',
   },
 ]
 
 const testData: TestTableItem[] = [
-  { id: 1, name: 'item1' },
-  { id: 2, name: 'item2' },
+  { id: 1, name: 'item-1' },
+  { id: 2, name: 'item-2' },
 ]
 
-type TestFormData = {
-  username: string
-}
-
 const TestFormTable = () => {
+  const formRef = useRef<ProFormInstance<TestTableItem>>()
+  const editorFormRef = useRef<EditableFormInstance<TestTableItem>>()
+  // const [controlled, setControlled] = useState<boolean>(false)
   return (
     <>
-      <ProForm<TestFormData>
-        onFinish={async (val: TestFormData): Promise<boolean> => {
-          console.log('finsh proform', val)
-          return true
-        }}
-        onValuesChange={(val: TestFormData) => {
-          console.log('proform on change', val)
-        }}
-        initialValues={{
-          username: '123',
-        }}
-        layout="inline"
-        submitter={{
-          resetButtonProps: { style: { display: 'none' } },
-          submitButtonProps: {},
-          render: (props): React.ReactNode[] => {
-            return [
-              <Button key="submit" onClick={() => props.form?.submit?.()}>
-                Ok submit 1
-              </Button>,
-            ]
-          },
-        }}
+      <ProForm<{ srcData: TestTableItem[] }>
+        formRef={formRef}
+        initialValues={{ srcData: testData }}
+        validateTrigger="onBlur"
       >
-        <ProFormText name={'username'} />
+        <EditableProTable<TestTableItem>
+          name="srcData"
+          scroll={{ x: 560 }}
+          columns={testTableColumns}
+          editableFormRef={editorFormRef}
+          form={{
+            onValuesChange: (changedValues, allValues) => {
+              console.log('changedValues:', changedValues, allValues)
+            },
+          }}
+        />
+
+        <ProForm.Item>
+          <ProCard
+            title="Table Data sets"
+            headerBordered
+            collapsible
+            defaultCollapsed
+          >
+            <ProFormDependency name={['srcData']}>
+              {(srcData) => {
+                return (
+                  <>
+                    <ProFormField
+                      ignoreFormItem
+                      fieldProps={{
+                        style: {
+                          width: '100%',
+                        },
+                      }}
+                      mode="read"
+                      valueType="jsonCode"
+                      text={JSON.stringify(srcData)}
+                    />
+                  </>
+                )
+              }}
+            </ProFormDependency>
+          </ProCard>
+        </ProForm.Item>
       </ProForm>
-
-      <br />
-
-      <EditableProTable<TestTableItem>
-        columns={testTableColumns}
-        dataSource={testData}
-        form={{
-          initialValues: { id: 1, name: 'a' },
-          onValuesChange: (changedValues, allValues) => {
-            console.log('changedValues:', changedValues, allValues)
-          },
-        }}
-      />
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { map } from 'lodash-es'
-import { Form, Table, Input, Button } from 'antd'
+import { Form, Input, Button } from 'antd'
 import type { FormListFieldData, FormListOperation, FormProps } from 'antd'
 import type { ColumnProps } from 'antd/es/table'
 import { ProTable } from '@ant-design/pro-components'
@@ -20,7 +20,7 @@ const HostTable = ({ hosts }: { hosts: HostItem[] }) => {
     setEditableKeys(map<HostItem, string>(hosts, (itr: HostItem) => itr.key))
   }, [hosts])
   const columns: ColumnProps<{
-        field: FormListFieldData
+    field: FormListFieldData
     operation: FormListOperation
   }>[] = [
     {

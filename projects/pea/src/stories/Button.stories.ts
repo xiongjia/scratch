@@ -1,8 +1,8 @@
-import { Button } from '&/component'
+import { TestButton } from '&/component'
 
 const meta = {
   title: 'Example/Button',
-  component: Button,
+  component: TestButton,
 }
 
 export const Primary = {

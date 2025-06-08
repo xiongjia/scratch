@@ -18,51 +18,73 @@ type TestTableItem = {
   name: string
 }
 
-const testTableColumns: ProColumns<TestTableItem>[] = [
-  {
-    title: 'TestName',
-    dataIndex: 'name',
-    formItemProps: () => {
-      return {
-        rules: [{ required: true, message: 'must hava a value' }],
-      }
-    },
-  },
-  {
-    title: 'TestId',
-    dataIndex: 'id',
-  },
-  {
-    title: 'Opts',
-    valueType: 'option',
-    render: (text, record, _, action) => [
-      <a
-        key="editable"
-        onClick={() => {
-          console.log('edit')
-          action?.startEditable?.(record.id, record)
-        }}
-      >
-        editOpt
-      </a>,
-    ],
-  },
-]
+type TestSrcData = {
+  srcData: TestTableItem[]
+}
 
 const testData: TestTableItem[] = [
   { id: 1, name: 'item-1' },
   { id: 2, name: 'item-2' },
+  { id: 3, name: 'item-3' },
 ]
 
 const TestFormTable = () => {
-  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => [])
+  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() =>
+    testData.map((i) => i.id),
+  )
 
-  const formRef = useRef<ProFormInstance<TestTableItem>>()
+  const formRef = useRef<ProFormInstance<TestSrcData>>()
   const editorFormRef = useRef<EditableFormInstance<TestTableItem>>()
   // const [controlled, setControlled] = useState<boolean>(false)
+
+  const testTableColumns: ProColumns<TestTableItem>[] = [
+    {
+      title: 'TestName',
+      dataIndex: 'name',
+      formItemProps: () => {
+        return {
+          rules: [{ required: true, message: 'must hava a value' }],
+        }
+      },
+    },
+    {
+      title: 'TestId',
+      dataIndex: 'id',
+    },
+    {
+      title: 'Opts',
+      valueType: 'option',
+      render: (text, record, _, action) => [
+        <a
+          key="editable"
+          onClick={() => {
+            console.log('edit')
+            action?.startEditable?.(record.id, record)
+          }}
+        >
+          editOpt
+        </a>,
+        <a
+          key="delete"
+          onClick={() => {
+            console.log('delete ', record.id)
+            const dataSrc = formRef.current?.getFieldValue(
+              'srcData',
+            ) as TestTableItem[]
+            formRef.current?.setFieldsValue({
+              srcData: dataSrc.filter((item) => item.id !== record.id),
+            })
+          }}
+        >
+          delOpt
+        </a>,
+      ],
+    },
+  ]
+
   return (
     <>
-      <ProForm<{ srcData: TestTableItem[] }>
+      <ProForm<TestSrcData>
         formRef={formRef}
         initialValues={{ srcData: testData }}
         validateTrigger="onBlur"

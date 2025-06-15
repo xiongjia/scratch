@@ -40,7 +40,7 @@ const TestData = () => {
   }
   return (
     <>
-      <p>{isFetching ? 'fetching' : data}</p>
+      <p>{isFetching ? 'fetching' : (data as string)}</p>
       <br />
       <Button
         onClick={() => {

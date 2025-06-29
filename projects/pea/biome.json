@@ -1,8 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.0/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -12,7 +9,6 @@
     "enabled": true,
     "indentStyle": "space",
     "formatWithErrors": false,
-    "ignore": [],
     "attributePosition": "auto",
     "indentWidth": 2,
     "lineWidth": 80,

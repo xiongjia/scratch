@@ -21,7 +21,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "&/*": ["./src/*"]
+      "&/*": ["./src/*"],
+      "@styles/*": ["./src/styles/*"]
     }
   },
   "include": ["vite.config.ts"]

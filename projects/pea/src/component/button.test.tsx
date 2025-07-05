@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import '@ant-design/v5-patch-for-react-19'
 
 import TestButton from './button'
 

@@ -18,9 +18,12 @@
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@types/lodash-es": "^4.17.12",
     "antd": "^5.26.2",
+    "autoprefixer": "^10.4.21",
     "lodash-es": "^4.17.21",
+    "postcss": "^8.5.6",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",

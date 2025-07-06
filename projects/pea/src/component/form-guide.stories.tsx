@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import '@ant-design/v5-patch-for-react-19'
 import {
   ProCard,
@@ -34,7 +28,7 @@ const PageStep1 = forwardRef<PageRef>((prop, ref) => {
   const formRef = useRef<ProFormInstance<pgStep1Data>>(null)
   useImperativeHandle(ref, () => ({
     onCurrentStep: () => {
-      console.log('on page1 step', prop)
+      console.log('on page1 step', prop, formRef.current?.getFieldsValue())
     },
   }))
 
@@ -84,10 +78,6 @@ const PageStep2 = forwardRef<PageRef>((prop, ref) => {
       console.log('on page2 setp', prop, formRef.current?.getFieldsValue())
     },
   }))
-
-  useEffect(() => {
-    console.log('effect pg2', formRef.current?.getFieldsValue())
-  })
 
   const onBtnClick = () => {
     console.log('on click', formRef.current?.getFieldsValue())
@@ -148,12 +138,11 @@ export const StoryFormGuide = () => {
 
   const onSetpsFinish = async (formData: guideData): Promise<boolean> => {
     console.log('steps finish', formData)
-    // setOpen(false)
+    setOpen(false)
     return true
   }
 
   const onStepChange = (currentStep: number) => {
-    console.log('current setp', currentStep)
     if (currentStep === 0) {
       pgStep1Ref?.current?.onCurrentStep?.()
     } else if (currentStep === 1) {

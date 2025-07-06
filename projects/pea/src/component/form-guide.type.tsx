@@ -15,6 +15,7 @@ export interface GuideFormProps<T> {
   onCurrentChange?: (current: number) => void
   closeAble?: boolean
   children: ReactNode
+  currentStepNum?: number
 }
 
 export interface GuideStepFormProps<T> {
@@ -29,7 +30,6 @@ interface BaseStepsFormProp<T> {
   onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void
   closeAble?: boolean
   onFinish?: (formData: T) => Promise<boolean>
-  onCurrentChange?: (current: number) => void
   children: ReactNode
   initialValues?: Store
 }
@@ -66,6 +66,7 @@ function BaseStepsForm<T>(prop: StepsFormProps<T> & BaseStepsFormProp<T>) {
     'onClose',
     'closeAble',
   ])
+
   return (
     <StepsForm<T>
       {...stepsFormProp}

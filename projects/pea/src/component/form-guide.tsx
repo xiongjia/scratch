@@ -1,4 +1,5 @@
 import { omit } from 'lodash-es'
+import { useEffect } from 'react'
 import {
   BaseStepForm,
   BaseStepsForm,
@@ -16,9 +17,27 @@ function GuideStepForm<T>(prop: GuideStepFormProps<T>) {
 }
 
 function GuideForm<T>(prop: GuideFormProps<T>) {
-  const formProp = omit(prop, ['children', 'open', 'formRef'])
+  const { currentStepNum, onCurrentChange } = prop
+  const formProp = omit(prop, [
+    'children',
+    'open',
+    'currentStepNum',
+    'onCurrentChange',
+  ])
+
+  useEffect(() => {
+    onCurrentChange?.(currentStepNum ?? 0)
+  }, [currentStepNum, onCurrentChange])
+
   return (
-    <BaseStepsForm<T> {...formProp} open={prop.open} formRef={prop.formRef}>
+    <BaseStepsForm<T>
+      {...formProp}
+      open={prop.open}
+      current={currentStepNum}
+      onCurrentChange={(current: number) => {
+        onCurrentChange?.(current)
+      }}
+    >
       {prop.children}
     </BaseStepsForm>
   )

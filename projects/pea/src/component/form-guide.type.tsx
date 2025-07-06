@@ -14,47 +14,37 @@ export interface GuideFormProps<T> {
   onFinish?: (formData: T) => Promise<boolean>
   onCurrentChange?: (current: number) => void
   closeAble?: boolean
-  form?: FormInstance<T>
   children: ReactNode
-  initialValues?: Store
 }
 
 export interface GuideStepFormProps<T> {
   name: string
-
-  initialValues?: Store
   onFinish?: (formData: T) => Promise<boolean>
   children?: ReactNode
+  formRef?: React.RefObject<FormInstance<T> | null>
 }
 
 interface BaseStepsFormProp<T> {
   open?: boolean
   onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void
   closeAble?: boolean
-  form?: FormInstance<T>
   onFinish?: (formData: T) => Promise<boolean>
   onCurrentChange?: (current: number) => void
   children: ReactNode
   initialValues?: Store
 }
 
-interface BaseStepFormProp {
+interface BaseStepFormProp<T> {
   children?: ReactNode
-  initialValues?: Store
+  formRef?: React.RefObject<FormInstance<T> | null>
 }
 
-function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp) {
-  const { children, initialValues, name, onFinish } = prop
-  const stepFormProp = omit(prop, [
-    'children',
-    'initialValues',
-    'name',
-    'onFinish',
-  ])
+function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp<T>) {
+  const stepFormProp = omit(prop, ['children', 'formRef', 'form'])
   return (
     <StepsForm.StepForm<T>
       {...stepFormProp}
-      name={name}
+      formRef={prop.formRef}
       colProps={{
         span: 8,
       }}
@@ -62,10 +52,8 @@ function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp) {
       labelCol={{
         style: { width: 200, whiteSpace: 'normal', textAlign: 'right' },
       }}
-      onFinish={onFinish}
-      initialValues={initialValues}
     >
-      {children}
+      {prop.children}
     </StepsForm.StepForm>
   )
 }

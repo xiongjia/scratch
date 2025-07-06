@@ -1,5 +1,6 @@
 import './App.css'
 import { TestButton } from '&/component'
+import './styles/tailwind.css'
 
 function App() {
   return (

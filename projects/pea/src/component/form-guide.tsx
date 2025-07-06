@@ -1,3 +1,4 @@
+import { omit } from 'lodash-es'
 import {
   BaseStepForm,
   BaseStepsForm,
@@ -5,40 +6,16 @@ import {
   type GuideStepFormProps,
 } from './form-guide.type'
 
-function GuideStepForm<T>({
-  children,
-  name,
-  initialValues,
-}: GuideStepFormProps) {
-  return (
-    <BaseStepForm<T> name={name} initialValues={initialValues}>
-      {children}
-    </BaseStepForm>
-  )
+function GuideStepForm<T>(prop: GuideStepFormProps<T>) {
+  const formProp = omit(prop, ['children'])
+  return <BaseStepForm<T> {...formProp}>{prop.children}</BaseStepForm>
 }
 
-function GuideForm<T>({
-  children,
-  closeAble,
-  open,
-  onClose,
-  form,
-}: GuideFormProps<T>) {
+function GuideForm<T>(prop: GuideFormProps<T>) {
+  const formProp = omit(prop, ['children', 'open'])
   return (
-    <BaseStepsForm<T>
-      open={open}
-      onClose={onClose}
-      closeAble={closeAble}
-      onCurrentChange={(current: number) => {
-        console.log('current step: ', current)
-      }}
-      onFinish={async (val: T): Promise<boolean> => {
-        console.log('val: ', val)
-        return true
-      }}
-      form={form}
-    >
-      {children}
+    <BaseStepsForm<T> {...formProp} open={prop.open}>
+      {prop.children}
     </BaseStepsForm>
   )
 }

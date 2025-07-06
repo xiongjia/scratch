@@ -11,14 +11,19 @@ import type { ReactNode } from 'react'
 export interface GuideFormProps<T> {
   open?: boolean
   onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void
+  onFinish?: (formData: T) => Promise<boolean>
+  onCurrentChange?: (current: number) => void
   closeAble?: boolean
   form?: FormInstance<T>
   children: ReactNode
+  initialValues?: Store
 }
 
-export interface GuideStepFormProps {
+export interface GuideStepFormProps<T> {
   name: string
+
   initialValues?: Store
+  onFinish?: (formData: T) => Promise<boolean>
   children?: ReactNode
 }
 
@@ -26,9 +31,11 @@ interface BaseStepsFormProp<T> {
   open?: boolean
   onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void
   closeAble?: boolean
-
   form?: FormInstance<T>
+  onFinish?: (formData: T) => Promise<boolean>
+  onCurrentChange?: (current: number) => void
   children: ReactNode
+  initialValues?: Store
 }
 
 interface BaseStepFormProp {
@@ -37,12 +44,17 @@ interface BaseStepFormProp {
 }
 
 function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp) {
-  const { children, initialValues } = prop
-  const stepFormProp = omit(prop, ['children'])
-
+  const { children, initialValues, name, onFinish } = prop
+  const stepFormProp = omit(prop, [
+    'children',
+    'initialValues',
+    'name',
+    'onFinish',
+  ])
   return (
     <StepsForm.StepForm<T>
       {...stepFormProp}
+      name={name}
       colProps={{
         span: 8,
       }}
@@ -50,6 +62,7 @@ function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp) {
       labelCol={{
         style: { width: 200, whiteSpace: 'normal', textAlign: 'right' },
       }}
+      onFinish={onFinish}
       initialValues={initialValues}
     >
       {children}
@@ -58,8 +71,13 @@ function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp) {
 }
 
 function BaseStepsForm<T>(prop: StepsFormProps<T> & BaseStepsFormProp<T>) {
-  const { children, closeAble, onClose, open, form } = prop
-  const stepsFormProp = omit(prop, ['children'])
+  const stepsFormProp = omit(prop, [
+    'children',
+    'initialValues',
+    'open',
+    'onClose',
+    'closeAble',
+  ])
   return (
     <StepsForm<T>
       {...stepsFormProp}
@@ -80,17 +98,14 @@ function BaseStepsForm<T>(prop: StepsFormProps<T> & BaseStepsFormProp<T>) {
       layoutRender={(layoutDom) => {
         return (
           <div className="flex">
-            <Form
-              className="w-60 relative *:first:sticky *:first:top-0"
-              form={form}
-            >
+            <Form className="w-60 relative *:first:sticky *:first:top-0">
               {layoutDom.stepsDom}
             </Form>
             <div className="flex-1">{layoutDom.formDom}</div>
           </div>
         )
       }}
-      formProps={{ labelAlign: 'left' }}
+      formProps={{ labelAlign: 'left', initialValues: prop.initialValues }}
       stepsFormRender={(dom, submitter) => {
         return (
           <Drawer
@@ -99,15 +114,15 @@ function BaseStepsForm<T>(prop: StepsFormProps<T> & BaseStepsFormProp<T>) {
                 Test
               </Space>
             }
+            closeIcon={prop.closeAble}
+            onClose={prop.onClose}
+            open={prop.open}
             maskClosable={false}
             destroyOnHidden={true}
-            closeIcon={closeAble}
             size="large"
             width="100%"
             style={{ minWidth: '1100px' }}
             placement="left"
-            open={open}
-            onClose={onClose}
             footer={
               <div
                 style={{
@@ -125,7 +140,7 @@ function BaseStepsForm<T>(prop: StepsFormProps<T> & BaseStepsFormProp<T>) {
         )
       }}
     >
-      {children}
+      {prop.children}
     </StepsForm>
   )
 }

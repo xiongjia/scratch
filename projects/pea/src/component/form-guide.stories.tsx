@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import '@ant-design/v5-patch-for-react-19'
 import { ProCard, ProFormText } from '@ant-design/pro-components'
 import { Button, Form, Space } from 'antd'
@@ -16,13 +16,28 @@ type pgStep2Data = {
 
 type guideData = pgStep1Data | pgStep2Data
 
-const pageStep1 = () => {
+interface PageRef {
+  onCurrentStep: () => void
+}
+
+const PageStep1 = forwardRef<PageRef>((prop, ref) => {
+  // const formRef = ProForm.useFormInstance()
+
+  useImperativeHandle(ref, () => ({
+    onCurrentStep: () => {
+      console.log('on page1 setp', prop)
+    },
+  }))
+
   return (
     <GuideStepForm<pgStep1Data>
       name="step1"
       initialValues={{
-        username1: 'user1',
-        password1: 'passowrd1',
+        pg1Name: 'u1',
+      }}
+      onFinish={async (formData: pgStep1Data): Promise<boolean> => {
+        console.log(formData)
+        return true
       }}
     >
       <ProCard
@@ -52,11 +67,21 @@ const pageStep1 = () => {
       </ProCard>
     </GuideStepForm>
   )
-}
+})
 
-const pageStep2 = () => {
+const PageStep2 = forwardRef<PageRef>((prop, ref) => {
+  useImperativeHandle(ref, () => ({
+    onCurrentStep: () => {
+      console.log('on page2 setp', prop)
+    },
+  }))
   return (
-    <GuideStepForm<pgStep2Data> name="step2">
+    <GuideStepForm<pgStep2Data>
+      name="step2"
+      initialValues={{
+        pg2Name: 'u2',
+      }}
+    >
       <ProCard
         title={
           <div className="inline-flex">
@@ -84,11 +109,13 @@ const pageStep2 = () => {
       </ProCard>
     </GuideStepForm>
   )
-}
+})
 
 export const StoryFormGuide = () => {
   const [open, setOpen] = useState(false)
   const [form] = Form.useForm<guideData>()
+  const pgStep1Ref = useRef<PageRef>(null)
+  const pgStep2Ref = useRef<PageRef>(null)
 
   const showGuideForm = () => {
     setOpen(true)
@@ -98,19 +125,41 @@ export const StoryFormGuide = () => {
     setOpen(false)
   }
 
+  const onSetpsFinish = async (formData: guideData): Promise<boolean> => {
+    console.log('steps finish', formData)
+    setOpen(false)
+    return true
+  }
+
+  const onStepChange = (currentStep: number) => {
+    console.log('current setp', currentStep)
+    if (currentStep === 0) {
+      pgStep1Ref?.current?.onCurrentStep?.()
+    } else if (currentStep === 1) {
+      pgStep2Ref?.current?.onCurrentStep?.()
+    }
+  }
+
   return (
     <>
       <Space>
         <Button onClick={showGuideForm}>Show Guide</Button>
       </Space>
+
       <GuideForm<guideData>
         closeAble={true}
         open={open}
         onClose={onGuideFormClose}
+        onFinish={onSetpsFinish}
+        onCurrentChange={onStepChange}
         form={form}
+        initialValues={{
+          pg1Name: 'u1',
+          pg2Name: 'u2',
+        }}
       >
-        {pageStep1()}
-        {pageStep2()}
+        <PageStep1 ref={pgStep1Ref} />
+        <PageStep2 ref={pgStep2Ref} />
       </GuideForm>
     </>
   )

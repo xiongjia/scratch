@@ -24,7 +24,8 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "&/*": ["./src/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@component/*": ["./src/component/*"]
     }
   },
   "include": ["src"]

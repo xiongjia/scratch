@@ -1,13 +1,13 @@
 import './App.css'
-import { TestButton } from '&/component'
+import { Playground } from '&/view'
+import { Route, Routes } from 'react-router-dom'
 import './styles/tailwind.css'
 
 function App() {
   return (
-    <>
-      <p>hello</p>
-      <TestButton />
-    </>
+    <Routes>
+      <Route path="/" element={<Playground />} />
+    </Routes>
   )
 }
 

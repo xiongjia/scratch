@@ -117,6 +117,7 @@ export const StoryFormGuide = () => {
   const [open, setOpen] = useState(false)
   const pgStep1Ref = useRef<GuideStepFormRef>(null)
   const pgStep2Ref = useRef<GuideStepFormRef>(null)
+  const pgSteps = [pgStep1Ref, pgStep2Ref]
 
   const showGuideForm = () => {
     setOpen(true)
@@ -133,11 +134,10 @@ export const StoryFormGuide = () => {
   }
 
   const onStepChange = (currentStep: number) => {
-    if (currentStep === 0) {
-      pgStep1Ref?.current?.actionStepShow()
-    } else if (currentStep === 1) {
-      pgStep2Ref?.current?.actionStepShow()
+    if (currentStep > pgSteps.length) {
+      return
     }
+    pgSteps[currentStep]?.current?.actionStepShow()
   }
 
   return (

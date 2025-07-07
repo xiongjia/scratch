@@ -21,8 +21,13 @@ export interface GuideFormProps<T> {
 export interface GuideStepFormProps<T> {
   name: string
   onFinish?: (formData: T) => Promise<boolean>
+  onStepShow?: () => void
   children?: ReactNode
   formRef?: React.RefObject<FormInstance<T> | null>
+}
+
+export interface GuideStepFormRef {
+  actionStepShow: () => void
 }
 
 interface BaseStepsFormProp<T> {

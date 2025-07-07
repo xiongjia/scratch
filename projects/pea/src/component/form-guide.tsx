@@ -1,22 +1,38 @@
 import { omit } from 'lodash-es'
-import { useEffect } from 'react'
+import {
+  type ForwardedRef,
+  forwardRef,
+  type ReactElement,
+  useEffect,
+  useImperativeHandle,
+} from 'react'
 import {
   BaseStepForm,
   BaseStepsForm,
   type GuideFormProps,
   type GuideStepFormProps,
+  type GuideStepFormRef,
 } from './form-guide.type'
 
-function GuideStepForm<T>(prop: GuideStepFormProps<T>) {
-  const formProp = omit(prop, ['children', 'formRef'])
-  return (
-    <BaseStepForm<T> {...formProp} formRef={prop.formRef}>
-      {prop.children}
-    </BaseStepForm>
-  )
-}
+export const GuideStepForm = forwardRef(
+  <T,>(prop: GuideStepFormProps<T>, ref: ForwardedRef<GuideStepFormRef>) => {
+    const formProp = omit(prop, ['children', 'formRef', 'ref', 'onStepShow'])
+    useImperativeHandle(ref, () => ({
+      actionStepShow: () => {
+        prop?.onStepShow?.()
+      },
+    }))
+    return (
+      <BaseStepForm<T> {...formProp} formRef={prop.formRef}>
+        {prop.children}
+      </BaseStepForm>
+    )
+  },
+) as <T>(
+  props: GuideStepFormProps<T> & { ref?: ForwardedRef<GuideStepFormRef> },
+) => ReactElement
 
-function GuideForm<T>(prop: GuideFormProps<T>) {
+export const GuideForm = <T,>(prop: GuideFormProps<T>) => {
   const { currentStepNum, onCurrentChange } = prop
   const formProp = omit(prop, [
     'children',
@@ -42,5 +58,3 @@ function GuideForm<T>(prop: GuideFormProps<T>) {
     </BaseStepsForm>
   )
 }
-
-export { GuideForm, GuideStepForm }

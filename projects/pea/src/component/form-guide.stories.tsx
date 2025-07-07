@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { type ForwardedRef, useRef, useState } from 'react'
 import '@ant-design/v5-patch-for-react-19'
 import {
   ProCard,
@@ -6,7 +6,7 @@ import {
   ProFormText,
 } from '@ant-design/pro-components'
 import { Button, Space } from 'antd'
-import { GuideForm, GuideStepForm } from './'
+import { GuideForm, GuideStepForm, type GuideStepFormRef } from './'
 
 type pgStep1Data = {
   pg1Name: string
@@ -20,25 +20,17 @@ type pgStep2Data = {
 
 type guideData = pgStep1Data | pgStep2Data
 
-interface PageRef {
-  onCurrentStep: () => void
-}
-
-const PageStep1 = forwardRef<PageRef>((prop, ref) => {
-  const formRef = useRef<ProFormInstance<pgStep1Data>>(null)
-  useImperativeHandle(ref, () => ({
-    onCurrentStep: () => {
-      console.log('on page1 step', prop, formRef.current?.getFieldsValue())
-    },
-  }))
-
+const PageStep1 = ({ ref }: { ref: ForwardedRef<GuideStepFormRef> }) => {
   return (
     <GuideStepForm<pgStep1Data>
-      formRef={formRef}
+      ref={ref}
       name="step1"
       onFinish={async (formData: pgStep1Data): Promise<boolean> => {
         console.log(formData)
         return true
+      }}
+      onStepShow={() => {
+        console.log('on step 1 show')
       }}
     >
       <ProCard
@@ -68,16 +60,10 @@ const PageStep1 = forwardRef<PageRef>((prop, ref) => {
       </ProCard>
     </GuideStepForm>
   )
-})
+}
 
-const PageStep2 = forwardRef<PageRef>((prop, ref) => {
-  const formRef = useRef<ProFormInstance<pgStep2Data>>(null)
-  useImperativeHandle(ref, () => ({
-    onCurrentStep: () => {
-      formRef.current?.setFieldValue('pg2Name', 'init')
-      console.log('on page2 setp', prop, formRef.current?.getFieldsValue())
-    },
-  }))
+const PageStep2 = ({ ref }: { ref: ForwardedRef<GuideStepFormRef> }) => {
+  const formRef = useRef<ProFormInstance>(null)
 
   const onBtnClick = () => {
     console.log('on click', formRef.current?.getFieldsValue())
@@ -87,10 +73,14 @@ const PageStep2 = forwardRef<PageRef>((prop, ref) => {
   return (
     <GuideStepForm<pgStep2Data>
       name="step2"
+      ref={ref}
       formRef={formRef}
       onFinish={async (formData: pgStep2Data): Promise<boolean> => {
         console.log(formData)
         return true
+      }}
+      onStepShow={() => {
+        console.log('on step 2 show')
       }}
     >
       <Button onClick={onBtnClick}>Test</Button>
@@ -121,12 +111,12 @@ const PageStep2 = forwardRef<PageRef>((prop, ref) => {
       </ProCard>
     </GuideStepForm>
   )
-})
+}
 
 export const StoryFormGuide = () => {
   const [open, setOpen] = useState(false)
-  const pgStep1Ref = useRef<PageRef>(null)
-  const pgStep2Ref = useRef<PageRef>(null)
+  const pgStep1Ref = useRef<GuideStepFormRef>(null)
+  const pgStep2Ref = useRef<GuideStepFormRef>(null)
 
   const showGuideForm = () => {
     setOpen(true)
@@ -144,9 +134,9 @@ export const StoryFormGuide = () => {
 
   const onStepChange = (currentStep: number) => {
     if (currentStep === 0) {
-      pgStep1Ref?.current?.onCurrentStep?.()
+      pgStep1Ref?.current?.actionStepShow()
     } else if (currentStep === 1) {
-      pgStep2Ref?.current?.onCurrentStep?.()
+      pgStep2Ref?.current?.actionStepShow()
     }
   }
 

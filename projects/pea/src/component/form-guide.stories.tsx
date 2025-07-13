@@ -25,6 +25,7 @@ const PageStep1 = ({ ref }: { ref: ForwardedRef<GuideStepFormRef> }) => {
     <GuideStepForm<pgStep1Data>
       ref={ref}
       name="step1"
+      title="title step1"
       onFinish={async (formData: pgStep1Data): Promise<boolean> => {
         console.log(formData)
         return true
@@ -73,6 +74,7 @@ const PageStep2 = ({ ref }: { ref: ForwardedRef<GuideStepFormRef> }) => {
   return (
     <GuideStepForm<pgStep2Data>
       name="step2"
+      title="title step1"
       ref={ref}
       formRef={formRef}
       onFinish={async (formData: pgStep2Data): Promise<boolean> => {

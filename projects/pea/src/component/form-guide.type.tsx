@@ -19,11 +19,14 @@ export interface GuideFormProps<T> {
 }
 
 export interface GuideStepFormProps<T> {
+  children?: ReactNode
+
   name: string
+  title: string
+  formRef?: React.RefObject<FormInstance<T> | null>
+
   onFinish?: (formData: T) => Promise<boolean>
   onStepShow?: () => void
-  children?: ReactNode
-  formRef?: React.RefObject<FormInstance<T> | null>
 }
 
 export interface GuideStepFormRef {
@@ -42,10 +45,11 @@ interface BaseStepsFormProp<T> {
 interface BaseStepFormProp<T> {
   children?: ReactNode
   formRef?: React.RefObject<FormInstance<T> | null>
+  title?: string
 }
 
 function BaseStepForm<T>(prop: StepFormProps<T> & BaseStepFormProp<T>) {
-  const stepFormProp = omit(prop, ['children', 'formRef', 'form'])
+  const stepFormProp = omit(prop, ['children', 'formRef'])
   return (
     <StepsForm.StepForm<T>
       {...stepFormProp}

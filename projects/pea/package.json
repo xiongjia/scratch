@@ -17,6 +17,8 @@
     "@ant-design/icons": "^6.0.0",
     "@ant-design/pro-components": "^2.8.9",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@mdx-js/react": "^3.1.0",
+    "@mdx-js/rollup": "^3.1.0",
     "@types/lodash-es": "^4.17.12",
     "antd": "^5.26.2",
     "autoprefixer": "^10.4.21",

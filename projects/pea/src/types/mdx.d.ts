@@ -1,11 +1,7 @@
 declare module '*.mdx' {
   import type { ComponentType } from 'react'
 
-  interface MDXProps {
-    components?: Record<string, React.ComponentType<any>>
-  }
+  const MDXContent: ComponentType
 
-  const MDXComponent: ComponentType<MDXProps>
-
-  export default MDXComponent
+  export default MDXContent
 }
